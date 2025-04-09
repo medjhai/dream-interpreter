@@ -13,11 +13,17 @@ const errorContainer = document.getElementById('error-container');
 const errorMessage = document.getElementById('error-message');
 
 /**
- * Send the dream text to the server for interpretation
+ * Send the dream text and preferences to the server for interpretation
  */
 function sendDream() {
     // Get dream text from textarea
     const dreamText = dreamInput.value.trim();
+    
+    // Get selected mood and style
+    const moodSelect = document.getElementById('mood-select');
+    const styleSelect = document.getElementById('style-select');
+    const mood = moodSelect.value;
+    const style = styleSelect.value;
     
     // Validate input
     if (!dreamText) {
@@ -31,13 +37,17 @@ function sendDream() {
     // Show loading indicator
     showLoading();
     
-    // Make the request to the server
+    // Make the request to the server with additional parameters
     fetch('/interpret', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ dream: dreamText })
+        body: JSON.stringify({ 
+            dream: dreamText,
+            mood: mood,
+            style: style
+        })
     })
     .then(response => {
         // Check if response is ok

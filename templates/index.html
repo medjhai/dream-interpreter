@@ -34,6 +34,35 @@
                                     placeholder="Descrivi qui il tuo sogno nel maggior dettaglio possibile..."
                                 ></textarea>
                             </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-2 mb-md-0">
+                                    <label for="mood-select" class="form-label">
+                                        <i class="fas fa-smile me-1"></i> Come ti sentivi nel sogno?
+                                    </label>
+                                    <select id="mood-select" class="form-select">
+                                        <option value="">Scegli l'umore... (opzionale)</option>
+                                        <option value="felice">Felice</option>
+                                        <option value="triste">Triste</option>
+                                        <option value="ansioso">Ansioso</option>
+                                        <option value="rabbioso">Rabbioso</option>
+                                        <option value="confuso">Confuso</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="style-select" class="form-label">
+                                        <i class="fas fa-feather-alt me-1"></i> Come vuoi che venga interpretato?
+                                    </label>
+                                    <select id="style-select" class="form-select">
+                                        <option value="neutro">Neutro (standard)</option>
+                                        <option value="poetico">Poetico (come una favola)</option>
+                                        <option value="scientifico">Scientifico (psicologico)</option>
+                                        <option value="spirituale">Spirituale (simbolico)</option>
+                                        <option value="consolatorio">Consolatorio (empatico)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
                             <div class="d-grid gap-2">
                                 <button id="interpret-btn" class="btn btn-primary" onclick="sendDream()">
                                     <i class="fas fa-magic me-2"></i>Interpreta

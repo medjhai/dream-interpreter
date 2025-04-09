@@ -16,7 +16,11 @@ def interpret():
     """
     Process the dream interpretation request.
     
-    Expects JSON with 'dream' key containing the dream text.
+    Expects JSON with:
+    - 'dream' key containing the dream text
+    - 'mood' key containing the emotional state (optional)
+    - 'style' key containing the interpretation style (optional)
+    
     Returns JSON with 'interpretation' key containing the interpretation.
     """
     try:
@@ -28,7 +32,12 @@ def interpret():
         if not dream_text:
             return jsonify({'error': 'Dream text cannot be empty'}), 400
         
-        interpretation = interpret_dream(dream_text)
+        # Get optional mood and style parameters
+        mood = data.get('mood', '')
+        style = data.get('style', 'neutro')
+        
+        # Pass all parameters to the interpreter
+        interpretation = interpret_dream(dream_text, mood=mood, style=style)
         return jsonify({'interpretation': interpretation})
     
     except Exception as e:
