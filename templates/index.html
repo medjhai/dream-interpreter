@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interprete dei Sogni</title>
+    <!-- Bootstrap CSS (Replit theme) -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container py-4">
+        <header class="text-center mb-5">
+            <h1 class="display-4">
+                <i class="fas fa-moon me-2"></i>Interprete dei Sogni
+            </h1>
+            <p class="lead">Racconta il tuo sogno e scopri il suo significato</p>
+        </header>
+
+        <main>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title mb-3">Racconta il tuo sogno</h2>
+                            <div class="form-group mb-3">
+                                <textarea 
+                                    id="dream-input" 
+                                    class="form-control" 
+                                    rows="6" 
+                                    placeholder="Descrivi qui il tuo sogno nel maggior dettaglio possibile..."
+                                ></textarea>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button id="interpret-btn" class="btn btn-primary" onclick="sendDream()">
+                                    <i class="fas fa-magic me-2"></i>Interpreta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="result-container" class="card shadow-sm d-none">
+                        <div class="card-body">
+                            <h2 class="card-title mb-3">
+                                <i class="fas fa-book-open me-2"></i>Interpretazione
+                            </h2>
+                            <div id="loading" class="text-center d-none">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Analisi in corso...</span>
+                                </div>
+                                <p class="mt-2">Analizzo il tuo sogno...</p>
+                            </div>
+                            <div id="result" class="interpretation-text"></div>
+                        </div>
+                    </div>
+
+                    <div id="error-container" class="alert alert-danger mt-3 d-none" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="error-message"></span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-5 text-center text-muted">
+            <p>
+                <small>Dream Interpreter Web App &copy; 2023</small>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

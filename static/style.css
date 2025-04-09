@@ -1,0 +1,46 @@
+/* Custom styles for Dream Interpreter Web App */
+
+/* General styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make textarea more comfortable for longer text */
+#dream-input {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* Style for the interpretation text */
+.interpretation-text {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+/* Transitions for smoother UI */
+.card {
+    transition: all 0.3s ease;
+}
+
+/* Style for empty space when no interpretation yet */
+#result-container:not(.d-none) {
+    animation: fadeIn 0.5s;
+}
+
+/* Simple fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Enhance focus on the textarea */
+#dream-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Add space between paragraphs in result */
+#result p {
+    margin-bottom: 1rem;
+}
