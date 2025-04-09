@@ -15,8 +15,29 @@ body {
 
 /* Style for the interpretation text */
 .interpretation-text {
-    line-height: 1.6;
+    line-height: 1.7;
     font-size: 1.1rem;
+    text-align: justify;
+}
+
+/* Style for horizontal separators in interpretations */
+hr {
+    margin: 2rem 0;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(var(--bs-primary-rgb), 0), rgba(var(--bs-primary-rgb), 0.75), rgba(var(--bs-primary-rgb), 0));
+}
+
+/* Style for section titles */
+.interpretation-text strong {
+    font-size: 1.2rem;
+    color: var(--bs-info);
+}
+
+/* Style for emphasis in interpretation */
+.interpretation-text em {
+    color: var(--bs-warning);
+    font-weight: 500;
 }
 
 /* Transitions for smoother UI */
