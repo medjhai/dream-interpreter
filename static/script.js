@@ -19,10 +19,15 @@ function sendDream() {
     // Get dream text from textarea
     const dreamText = dreamInput.value.trim();
     
-    // Get selected mood and style
-    const moodSelect = document.getElementById('mood-select');
+    // Get selected mood from radio buttons
+    let mood = "";
+    const moodRadios = document.querySelectorAll('input[name="mood"]:checked');
+    if (moodRadios.length > 0) {
+        mood = moodRadios[0].value;
+    }
+    
+    // Get selected style
     const styleSelect = document.getElementById('style-select');
-    const mood = moodSelect.value;
     const style = styleSelect.value;
     
     // Validate input

@@ -5,19 +5,282 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
 }
 
-/* Make textarea more comfortable for longer text */
-#dream-input {
+.dream-app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Left side panel styles */
+.side-panel {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.dream-logo {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.dream-logo-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(145deg, #6c5ce7, #a29bfe);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dream-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dream-stars i {
+    position: absolute;
+    color: #fff;
+    opacity: 0.8;
+}
+
+.dream-stars i:nth-child(1) {
+    top: 10%;
+    right: 20%;
+    font-size: 0.8rem;
+    animation: twinkle 2s infinite alternate;
+}
+
+.dream-stars i:nth-child(2) {
+    top: 30%;
+    left: 15%;
+    font-size: 0.6rem;
+    animation: twinkle 3s infinite alternate;
+}
+
+@keyframes twinkle {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+.dream-title {
+    color: var(--bs-primary);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.dream-subtitle {
+    color: var(--bs-secondary-color);
+    max-width: 80%;
+    margin: 0 auto 2rem;
+}
+
+.dream-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.feature-item i {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-item span {
+    font-size: 1.1rem;
+}
+
+/* Card styles */
+.dream-card {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-color: var(--bs-body-bg);
+}
+
+.section-title {
+    color: var(--bs-primary);
+    font-weight: 600;
+}
+
+/* Textarea styles */
+.dream-textarea {
     resize: vertical;
     min-height: 150px;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: var(--bs-body-bg);
+    transition: all 0.3s ease;
 }
 
-/* Style for the interpretation text */
+.dream-textarea:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Mood selector styles */
+.mood-title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--bs-body-color);
+    font-weight: 500;
+}
+
+.mood-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.mood-option {
+    position: relative;
+}
+
+.mood-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mood-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.7rem 0.5rem;
+    border-radius: 0.8rem;
+    border: 2px solid transparent;
+    background-color: var(--bs-tertiary-bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 5.5rem;
+}
+
+.mood-emoji {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+}
+
+.mood-text {
+    font-size: 0.85rem;
+}
+
+.mood-option input[type="radio"]:checked + .mood-label {
+    background-color: rgba(var(--bs-primary-rgb), 0.15);
+    border-color: var(--bs-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.mood-option input[type="radio"]:focus + .mood-label {
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+/* Style selector */
+.style-label {
+    font-size: 1.1rem;
+    color: var(--bs-body-color);
+    font-weight: 500;
+}
+
+.style-select {
+    border-radius: 0.8rem;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
+    padding: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.style-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Button styles */
+.btn-interpret {
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.8rem;
+    background: linear-gradient(145deg, #6c5ce7, #a29bfe);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.btn-interpret:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.btn-interpret:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(var(--bs-primary-rgb), 0.2);
+}
+
+/* Result card styles */
+.result-card {
+    margin-top: 2rem;
+}
+
+.spinner-effect {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.spinner-moon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: var(--bs-primary);
+    animation: spin 2s infinite linear;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Interpretation text styles */
 .interpretation-text {
     line-height: 1.7;
     font-size: 1.1rem;
     text-align: justify;
+    padding: 0.5rem;
 }
 
 /* Style for horizontal separators in interpretations */
@@ -28,7 +291,7 @@ hr {
     background-image: linear-gradient(to right, rgba(var(--bs-primary-rgb), 0), rgba(var(--bs-primary-rgb), 0.75), rgba(var(--bs-primary-rgb), 0));
 }
 
-/* Style for section titles */
+/* Style for section titles in interpretation */
 .interpretation-text strong {
     font-size: 1.2rem;
     color: var(--bs-info);
@@ -40,28 +303,27 @@ hr {
     font-weight: 500;
 }
 
-/* Transitions for smoother UI */
-.card {
-    transition: all 0.3s ease;
-}
-
-/* Style for empty space when no interpretation yet */
-#result-container:not(.d-none) {
-    animation: fadeIn 0.5s;
-}
-
-/* Simple fade-in animation */
+/* Animation effects */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* Enhance focus on the textarea */
-#dream-input:focus {
-    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+#result-container:not(.d-none) {
+    animation: fadeIn 0.5s;
 }
 
-/* Add space between paragraphs in result */
-#result p {
-    margin-bottom: 1rem;
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .side-panel {
+        margin-bottom: 3rem;
+    }
+    
+    .mood-options {
+        justify-content: center;
+    }
+    
+    .mood-label {
+        width: 5rem;
+    }
 }
