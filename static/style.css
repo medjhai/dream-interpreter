@@ -7,6 +7,7 @@ body {
     flex-direction: column;
     background-color: var(--bs-tertiary-bg);
     color: var(--bs-body-color);
+    position: relative;
 }
 
 .dream-app-container {
@@ -18,7 +19,11 @@ body {
 /* Left side panel styles */
 .side-panel {
     padding: 2rem 1rem;
-    margin-bottom: 2rem;
+    position: sticky;
+    top: 1rem;
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .dream-logo {
@@ -313,9 +318,127 @@ hr {
     animation: fadeIn 0.5s;
 }
 
+/* Feedback system styles */
+.rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.star {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--bs-gray-400);
+    transition: all 0.2s ease;
+}
+
+.star.hover,
+.star.selected {
+    color: var(--bs-warning);
+    transform: scale(1.2);
+}
+
+#feedback-comment {
+    resize: vertical;
+    min-height: 100px;
+    border-radius: 0.8rem;
+    margin: 1rem 0;
+}
+
+/* Statistics styles */
+.stats-section {
+    background: var(--bs-tertiary-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bs-body-bg);
+    border-radius: 0.8rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--bs-secondary-color);
+    font-size: 0.9rem;
+}
+
+.sentiment-distribution {
+    height: 8px;
+    background: var(--bs-gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    margin: 1rem 0;
+}
+
+.sentiment-distribution .positive {
+    background-color: var(--bs-success);
+}
+
+.sentiment-distribution .neutral {
+    background-color: var(--bs-info);
+}
+
+.sentiment-distribution .negative {
+    background-color: var(--bs-danger);
+}
+
+.sentiment-indicator {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.sentiment-indicator .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Personalizzazione scrollbar per il side panel */
+.side-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.side-panel::-webkit-scrollbar-track {
+    background: var(--bs-tertiary-bg);
+    border-radius: 3px;
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+    border-radius: 3px;
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-primary-dark);
+}
+
 /* Responsive adjustments */
 @media (max-width: 991.98px) {
     .side-panel {
+        position: relative;
+        height: auto;
+        top: 0;
         margin-bottom: 3rem;
     }
     
@@ -325,5 +448,20 @@ hr {
     
     .mood-label {
         width: 5rem;
+    }
+}
+
+/* Responsive adjustments for feedback and stats */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .star {
+        font-size: 1.8rem;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
     }
 }
