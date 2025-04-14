@@ -319,6 +319,29 @@ function displayStats(stats) {
     }
 }
 
+/**
+ * Funzione per mantenere l'applicazione attiva su Render
+ */
+function setupKeepAlive() {
+    // Esegui il ping ogni 14 minuti (il limite di Render è 15 minuti)
+    const PING_INTERVAL = 14 * 60 * 1000;
+    
+    function ping() {
+        fetch('/healthcheck')
+            .then(response => response.json())
+            .catch(error => console.error('Errore nel ping:', error));
+    }
+    
+    // Esegui il primo ping
+    ping();
+    
+    // Imposta il ping periodico
+    setInterval(ping, PING_INTERVAL);
+}
+
+// Inizializza il sistema di keep-alive quando la pagina è caricata
+document.addEventListener('DOMContentLoaded', setupKeepAlive);
+
 // Add event listener for Enter key in textarea
 dreamInput.addEventListener('keydown', function(event) {
     // Check if Enter key was pressed while holding Ctrl or Command

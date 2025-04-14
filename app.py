@@ -204,6 +204,11 @@ def get_stats():
             'error': 'Si è verificato un errore nel recupero delle statistiche'
         }), 500
 
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    """Endpoint per mantenere l'applicazione attiva"""
+    return jsonify({'status': 'ok', 'timestamp': datetime.now().isoformat()})
+
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return jsonify({
