@@ -1,7 +1,3 @@
-Ecco una versione ristrutturata e dettagliata del progetto, suddivisa per punti chiari e completi:
-
----
-
 ### 💡 1. Obiettivo del Progetto
 
 - **Nome del progetto**: *Dream Interpreter Web App*
