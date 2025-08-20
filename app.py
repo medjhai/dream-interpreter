@@ -21,13 +21,16 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     'pool_pre_ping': True,
     "pool_recycle": 300,
+    "pool_timeout": 20,
+    "pool_size": 5,
+    "max_overflow": 10,
 }
 
 # Initialize extensions
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Effettua il login per accedere a questa pagina.'
 
 @login_manager.user_loader

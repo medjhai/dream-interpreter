@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Ricerca Sogni - Interprete dei Sogni{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Search Header -->
+    <div class="search-header mb-4">
+        <h1 class="page-title">
+            <i class="fas fa-search me-2"></i>Ricerca nei Tuoi Sogni
+        </h1>
+        <p class="text-muted">Trova sogni per parole chiave, mood o data</p>
+    </div>
+
+    <!-- Advanced Search Form -->
+    <div class="search-form-card mb-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="search-query" class="form-label">Cerca parole chiave</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" 
+                           id="search-query" 
+                           class="form-control" 
+                           placeholder="es. volare, casa, animali..."
+                           value="{{ request.args.get('q', '') }}">
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="mood-filter" class="form-label">Filtro Mood</label>
+                <select id="mood-filter" class="form-select">
+                    <option value="">Tutti i mood</option>
+                    <option value="felice" {% if request.args.get('mood') == 'felice' %}selected{% endif %}>😊 Felice</option>
+                    <option value="triste" {% if request.args.get('mood') == 'triste' %}selected{% endif %}>😢 Triste</option>
+                    <option value="ansioso" {% if request.args.get('mood') == 'ansioso' %}selected{% endif %}>😰 Ansioso</option>
+                    <option value="rabbioso" {% if request.args.get('mood') == 'rabbioso' %}selected{% endif %}>😠 Rabbioso</option>
+                    <option value="confuso" {% if request.args.get('mood') == 'confuso' %}selected{% endif %}>😕 Confuso</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="style-filter" class="form-label">Stile Interpretativo</label>
+                <select id="style-filter" class="form-select">
+                    <option value="">Tutti gli stili</option>
+                    <option value="neutro" {% if request.args.get('style') == 'neutro' %}selected{% endif %}>Neutro</option>
+                    <option value="poetico" {% if request.args.get('style') == 'poetico' %}selected{% endif %}>Poetico</option>
+                    <option value="scientifico" {% if request.args.get('style') == 'scientifico' %}selected{% endif %}>Scientifico</option>
+                    <option value="spirituale" {% if request.args.get('style') == 'spirituale' %}selected{% endif %}>Spirituale</option>
+                    <option value="consolatorio" {% if request.args.get('style') == 'consolatorio' %}selected{% endif %}>Consolatorio</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row g-3 mt-2">
+            <div class="col-md-4">
+                <label for="date-from" class="form-label">Dal</label>
+                <input type="date" 
+                       id="date-from" 
+                       class="form-control"
+                       value="{{ request.args.get('date_from', '') }}">
+            </div>
+            
+            <div class="col-md-4">
+                <label for="date-to" class="form-label">Al</label>
+                <input type="date" 
+                       id="date-to" 
+                       class="form-control"
+                       value="{{ request.args.get('date_to', '') }}">
+            </div>
+            
+            <div class="col-md-4 d-flex align-items-end">
+                <button id="search-btn" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i>Cerca
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    <div id="search-results">
+        {% if dreams %}
+        <div class="search-results-header mb-3">
+            <h5>Trovati {{ dreams|length }} sogni</h5>
+            <div class="result-actions">
+                <button class="btn btn-outline-primary btn-sm" onclick="exportResults()">
+                    <i class="fas fa-download me-1"></i>Esporta Risultati
+                </button>
+            </div>
+        </div>
+
+        <div class="dreams-grid">
+            {% for dream in dreams %}
+            <div class="dream-card" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+                <div class="dream-header">
+                    <h5 class="dream-title">{{ dream.title }}</h5>
+                    <span class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y') }}</span>
+                </div>
+                <div class="dream-content">
+                    <p class="dream-preview">
+                        {{ dream.content[:120] }}{% if dream.content|length > 120 %}...{% endif %}
+                    </p>
+                </div>
+                <div class="dream-footer">
+                    {% if dream.mood %}
+                    <span class="dream-mood">
+                        {% if dream.mood == 'felice' %}😊{% endif %}
+                        {% if dream.mood == 'triste' %}😢{% endif %}
+                        {% if dream.mood == 'ansioso' %}😰{% endif %}
+                        {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                        {% if dream.mood == 'confuso' %}😕{% endif %}
+                        {{ dream.mood.title() }}
+                    </span>
+                    {% endif %}
+                    <span class="dream-style">{{ dream.interpretation_style.title() }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% elif request.args.get('q') or request.args.get('mood') or request.args.get('style') %}
+        <div class="empty-search">
+            <div class="empty-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h4>Nessun sogno trovato</h4>
+            <p class="text-muted">Prova a modificare i filtri di ricerca</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Popular Keywords -->
+    <div class="popular-keywords mt-5">
+        <h5 class="mb-3">Parole chiave popolari nei tuoi sogni:</h5>
+        <div class="keywords-cloud">
+            {% for keyword in popular_keywords %}
+            <span class="keyword-tag" onclick="searchKeyword('{{ keyword.word }}')">
+                {{ keyword.word }} <span class="count">({{ keyword.count }})</span>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function performSearch() {
+    const query = document.getElementById('search-query').value;
+    const mood = document.getElementById('mood-filter').value;
+    const style = document.getElementById('style-filter').value;
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    const params = new URLSearchParams();
+    if (query) params.append('q', query);
+    if (mood) params.append('mood', mood);
+    if (style) params.append('style', style);
+    if (dateFrom) params.append('date_from', dateFrom);
+    if (dateTo) params.append('date_to', dateTo);
+    
+    window.location.href = `{{ url_for('search_dreams') }}?${params.toString()}`;
+}
+
+function searchKeyword(keyword) {
+    document.getElementById('search-query').value = keyword;
+    performSearch();
+}
+
+function exportResults() {
+    const params = new URLSearchParams(window.location.search);
+    params.append('export', 'csv');
+    window.location.href = `{{ url_for('search_dreams') }}?${params.toString()}`;
+}
+
+document.getElementById('search-btn').addEventListener('click', performSearch);
+
+// Enter key search
+document.getElementById('search-query').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
+</script>
+{% endblock %}

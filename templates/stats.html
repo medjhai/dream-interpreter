@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiche - Interprete dei Sogni{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Stats Header -->
+    <div class="stats-header mb-4">
+        <h1 class="page-title">
+            <i class="fas fa-chart-line me-2"></i>Le Tue Statistiche Oniriche
+        </h1>
+        <p class="text-muted">Analisi dettagliata dei tuoi sogni e pattern ricorrenti</p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-overview-card">
+                <div class="card-icon dreams">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div class="card-content">
+                    <h3>{{ total_dreams }}</h3>
+                    <p>Sogni Totali</p>
+                    <small class="trend positive">
+                        <i class="fas fa-arrow-up"></i> +{{ dreams_this_month }} questo mese
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-overview-card">
+                <div class="card-icon mood">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="card-content">
+                    <h3>{{ most_common_mood.emoji if most_common_mood }}</h3>
+                    <p>Mood Prevalente</p>
+                    <small>{{ most_common_mood.name if most_common_mood else 'Nessun mood' }}</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-overview-card">
+                <div class="card-icon frequency">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="card-content">
+                    <h3>{{ dream_frequency }}</h3>
+                    <p>Sogni per Settimana</p>
+                    <small>Media degli ultimi 30 giorni</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-overview-card">
+                <div class="card-icon streak">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="card-content">
+                    <h3>{{ current_streak }}</h3>
+                    <p>Giorni di Fila</p>
+                    <small>Streak attuale</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Dream Activity Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-area me-2"></i>Attività Onirica</h5>
+                    <div class="chart-controls">
+                        <select id="chart-period" class="form-select form-select-sm">
+                            <option value="7">Ultimi 7 giorni</option>
+                            <option value="30" selected>Ultimi 30 giorni</option>
+                            <option value="90">Ultimi 3 mesi</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="dreamActivityChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Distribution -->
+        <div class="col-lg-4 mb-4">
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-smile me-2"></i>Distribuzione Mood</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="moodChart" height="300"></canvas>
+                    <div class="mood-legend mt-3">
+                        {% for mood in mood_distribution %}
+                        <div class="mood-item">
+                            <span class="mood-indicator" style="background-color: {{ mood.color }}"></span>
+                            <span class="mood-name">{{ mood.emoji }} {{ mood.name }}</span>
+                            <span class="mood-count">{{ mood.count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Dream Themes -->
+        <div class="col-lg-6 mb-4">
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tags me-2"></i>Temi Ricorrenti</h5>
+                </div>
+                <div class="card-body">
+                    <div class="themes-list">
+                        {% for theme in common_themes %}
+                        <div class="theme-item">
+                            <div class="theme-info">
+                                <span class="theme-name">{{ theme.word }}</span>
+                                <span class="theme-frequency">{{ theme.count }} volte</span>
+                            </div>
+                            <div class="theme-bar">
+                                <div class="theme-progress" style="width: {{ (theme.count / common_themes[0].count * 100) if common_themes else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interpretation Styles -->
+        <div class="col-lg-6 mb-4">
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-feather-alt me-2"></i>Stili Preferiti</h5>
+                </div>
+                <div class="card-body">
+                    <div class="styles-grid">
+                        {% for style in style_preferences %}
+                        <div class="style-card">
+                            <div class="style-icon">
+                                {% if style.name == 'poetico' %}<i class="fas fa-feather"></i>{% endif %}
+                                {% if style.name == 'scientifico' %}<i class="fas fa-microscope"></i>{% endif %}
+                                {% if style.name == 'spirituale' %}<i class="fas fa-om"></i>{% endif %}
+                                {% if style.name == 'consolatorio' %}<i class="fas fa-heart"></i>{% endif %}
+                                {% if style.name == 'neutro' %}<i class="fas fa-balance-scale"></i>{% endif %}
+                            </div>
+                            <h6>{{ style.name.title() }}</h6>
+                            <p class="count">{{ style.count }} sogni</p>
+                            <div class="usage-bar">
+                                <div class="usage-fill" style="width: {{ (style.count / total_dreams * 100) if total_dreams else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dream Calendar Heatmap -->
+    <div class="row">
+        <div class="col-12">
+            <div class="stats-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-calendar me-2"></i>Calendario dei Sogni</h5>
+                </div>
+                <div class="card-body">
+                    <div class="dream-heatmap">
+                        <!-- Heatmap will be generated by JavaScript -->
+                        <div id="dreamCalendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="stats-actions mt-4">
+        <a href="{{ url_for('export_data') }}" class="btn btn-outline-primary">
+            <i class="fas fa-download me-1"></i>Esporta Dati
+        </a>
+        <a href="{{ url_for('dreams_history') }}" class="btn btn-primary">
+            <i class="fas fa-eye me-1"></i>Vedi Tutti i Sogni
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Chart data from backend
+const chartData = {
+    dreamActivity: {{ dream_activity_data|safe }},
+    moodDistribution: {{ mood_chart_data|safe }},
+    dreamCalendar: {{ calendar_data|safe }}
+};
+
+// Dream Activity Chart
+const activityCtx = document.getElementById('dreamActivityChart').getContext('2d');
+const dreamActivityChart = new Chart(activityCtx, {
+    type: 'line',
+    data: {
+        labels: chartData.dreamActivity.labels,
+        datasets: [{
+            label: 'Sogni per Giorno',
+            data: chartData.dreamActivity.data,
+            borderColor: 'rgba(108, 92, 231, 1)',
+            backgroundColor: 'rgba(108, 92, 231, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+
+// Mood Distribution Chart
+const moodCtx = document.getElementById('moodChart').getContext('2d');
+const moodChart = new Chart(moodCtx, {
+    type: 'doughnut',
+    data: {
+        labels: chartData.moodDistribution.labels,
+        datasets: [{
+            data: chartData.moodDistribution.data,
+            backgroundColor: chartData.moodDistribution.colors,
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Chart period change
+document.getElementById('chart-period').addEventListener('change', function(e) {
+    const period = e.target.value;
+    // Reload chart data with new period
+    fetch(`/api/dream-activity?period=${period}`)
+        .then(response => response.json())
+        .then(data => {
+            dreamActivityChart.data.labels = data.labels;
+            dreamActivityChart.data.datasets[0].data = data.data;
+            dreamActivityChart.update();
+        });
+});
+</script>
+{% endblock %}
