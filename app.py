@@ -229,3 +229,293 @@ def profile():
     """User profile page."""
     dream_count = Dream.query.filter_by(user_id=current_user.id).count()
     return render_template('profile.html', user=current_user, dream_count=dream_count)
+
+@app.route('/search')
+@login_required
+def search_dreams():
+    """Search dreams with advanced filters."""
+    query = request.args.get('q', '').strip()
+    mood = request.args.get('mood', '').strip()
+    style = request.args.get('style', '').strip()
+    date_from = request.args.get('date_from', '').strip()
+    date_to = request.args.get('date_to', '').strip()
+    export = request.args.get('export', '').strip()
+    
+    # Base query for user's dreams
+    dreams_query = Dream.query.filter_by(user_id=current_user.id)
+    
+    # Apply filters
+    if query:
+        dreams_query = dreams_query.filter(
+            (Dream.title.ilike(f'%{query}%')) | 
+            (Dream.content.ilike(f'%{query}%')) |
+            (Dream.interpretation.ilike(f'%{query}%'))
+        )
+    
+    if mood:
+        dreams_query = dreams_query.filter(Dream.mood == mood)
+    
+    if style:
+        dreams_query = dreams_query.filter(Dream.interpretation_style == style)
+    
+    if date_from:
+        try:
+            from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            dreams_query = dreams_query.filter(Dream.created_at >= from_date)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            dreams_query = dreams_query.filter(Dream.created_at <= to_date)
+        except ValueError:
+            pass
+    
+    dreams = dreams_query.order_by(Dream.created_at.desc()).all()
+    
+    # Handle CSV export
+    if export == 'csv':
+        import csv
+        from io import StringIO
+        from flask import Response
+        
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['Titolo', 'Data', 'Mood', 'Stile', 'Contenuto', 'Interpretazione'])
+        
+        for dream in dreams:
+            writer.writerow([
+                dream.title,
+                dream.created_at.strftime('%Y-%m-%d'),
+                dream.mood or '',
+                dream.interpretation_style or '',
+                dream.content,
+                dream.interpretation or ''
+            ])
+        
+        output.seek(0)
+        return Response(
+            output.getvalue(),
+            mimetype='text/csv',
+            headers={'Content-Disposition': 'attachment; filename=sogni_export.csv'}
+        )
+    
+    # Get popular keywords from user's dreams
+    popular_keywords = []
+    if current_user.id:
+        # Simple keyword extraction from dream content
+        import re
+        from collections import Counter
+        
+        all_content = ' '.join([d.content for d in Dream.query.filter_by(user_id=current_user.id).all()])
+        words = re.findall(r'\b\w{4,}\b', all_content.lower())
+        common_words = ['sono', 'stata', 'stato', 'molto', 'anche', 'della', 'nella', 'come', 'quando', 'dove']
+        filtered_words = [w for w in words if w not in common_words]
+        
+        word_counts = Counter(filtered_words).most_common(10)
+        popular_keywords = [{'word': word, 'count': count} for word, count in word_counts]
+    
+    return render_template('search.html', 
+                         dreams=dreams, 
+                         popular_keywords=popular_keywords)
+
+@app.route('/stats')
+@login_required 
+def stats():
+    """Statistics and analytics page."""
+    from datetime import datetime, timedelta
+    from collections import Counter
+    import json
+    
+    user_dreams = Dream.query.filter_by(user_id=current_user.id).all()
+    total_dreams = len(user_dreams)
+    
+    if not user_dreams:
+        # Empty state for new users
+        return render_template('stats.html', 
+                             total_dreams=0,
+                             dreams_this_month=0,
+                             most_common_mood=None,
+                             dream_frequency=0,
+                             current_streak=0,
+                             mood_distribution=[],
+                             common_themes=[],
+                             style_preferences=[],
+                             dream_activity_data='{"labels": [], "data": []}',
+                             mood_chart_data='{"labels": [], "data": [], "colors": []}',
+                             calendar_data='{}')
+    
+    # Calculate basic stats
+    now = datetime.now()
+    this_month_start = now.replace(day=1)
+    dreams_this_month = len([d for d in user_dreams if d.created_at >= this_month_start])
+    
+    # Most common mood
+    moods = [d.mood for d in user_dreams if d.mood]
+    most_common_mood = None
+    if moods:
+        mood_counter = Counter(moods)
+        common_mood_name = mood_counter.most_common(1)[0][0]
+        mood_emojis = {
+            'felice': '😊',
+            'triste': '😢', 
+            'ansioso': '😰',
+            'rabbioso': '😠',
+            'confuso': '😕'
+        }
+        most_common_mood = {
+            'name': common_mood_name.title(),
+            'emoji': mood_emojis.get(common_mood_name, '😐')
+        }
+    
+    # Dream frequency (dreams per week in last 30 days)
+    thirty_days_ago = now - timedelta(days=30)
+    recent_dreams = [d for d in user_dreams if d.created_at >= thirty_days_ago]
+    dream_frequency = round(len(recent_dreams) / 4.3, 1) if recent_dreams else 0
+    
+    # Current streak (consecutive days with dreams)
+    current_streak = 0
+    dream_dates = sorted(set([d.created_at.date() for d in user_dreams]), reverse=True)
+    if dream_dates:
+        current_date = now.date()
+        for i, dream_date in enumerate(dream_dates):
+            if dream_date == current_date - timedelta(days=i):
+                current_streak += 1
+            else:
+                break
+    
+    # Mood distribution for chart
+    mood_colors = {
+        'felice': '#00b894',
+        'triste': '#0984e3', 
+        'ansioso': '#fdcb6e',
+        'rabbioso': '#e17055',
+        'confuso': '#a29bfe'
+    }
+    
+    mood_distribution = []
+    if moods:
+        mood_counts = Counter(moods)
+        for mood, count in mood_counts.items():
+            mood_distribution.append({
+                'name': mood.title(),
+                'emoji': mood_emojis.get(mood, '😐'),
+                'count': count,
+                'color': mood_colors.get(mood, '#6c5ce7')
+            })
+    
+    # Common themes (keywords)
+    import re
+    from collections import Counter
+    
+    all_content = ' '.join([d.content for d in user_dreams])
+    words = re.findall(r'\b\w{4,}\b', all_content.lower())
+    common_words = ['sono', 'stata', 'stato', 'molto', 'anche', 'della', 'nella', 'come', 'quando', 'dove', 'casa', 'persone', 'tempo']
+    filtered_words = [w for w in words if w not in common_words]
+    
+    word_counts = Counter(filtered_words).most_common(8)
+    common_themes = [{'word': word.title(), 'count': count} for word, count in word_counts]
+    
+    # Style preferences
+    styles = [d.interpretation_style for d in user_dreams if d.interpretation_style]
+    style_counts = Counter(styles)
+    style_preferences = [{'name': style, 'count': count} for style, count in style_counts.items()]
+    
+    # Chart data for frontend
+    last_30_days = [(now - timedelta(days=i)).date() for i in range(29, -1, -1)]
+    daily_counts = []
+    for date in last_30_days:
+        count = len([d for d in user_dreams if d.created_at.date() == date])
+        daily_counts.append(count)
+    
+    dream_activity_data = json.dumps({
+        'labels': [d.strftime('%d/%m') for d in last_30_days],
+        'data': daily_counts
+    })
+    
+    mood_chart_data = json.dumps({
+        'labels': [m['name'] for m in mood_distribution],
+        'data': [m['count'] for m in mood_distribution], 
+        'colors': [m['color'] for m in mood_distribution]
+    })
+    
+    return render_template('stats.html',
+                         total_dreams=total_dreams,
+                         dreams_this_month=dreams_this_month,
+                         most_common_mood=most_common_mood,
+                         dream_frequency=dream_frequency,
+                         current_streak=current_streak,
+                         mood_distribution=mood_distribution,
+                         common_themes=common_themes,
+                         style_preferences=style_preferences,
+                         dream_activity_data=dream_activity_data,
+                         mood_chart_data=mood_chart_data,
+                         calendar_data='{}')
+
+@app.route('/api/dream-activity')
+@login_required
+def api_dream_activity():
+    """API endpoint for dream activity data."""
+    from datetime import datetime, timedelta
+    import json
+    
+    period = request.args.get('period', '30', type=int)
+    now = datetime.now()
+    
+    # Get dreams from the specified period
+    start_date = now - timedelta(days=period-1)
+    user_dreams = Dream.query.filter_by(user_id=current_user.id).filter(
+        Dream.created_at >= start_date
+    ).all()
+    
+    # Create daily counts
+    date_range = [(now - timedelta(days=i)).date() for i in range(period-1, -1, -1)]
+    daily_counts = []
+    for date in date_range:
+        count = len([d for d in user_dreams if d.created_at.date() == date])
+        daily_counts.append(count)
+    
+    return jsonify({
+        'labels': [d.strftime('%d/%m') for d in date_range],
+        'data': daily_counts
+    })
+
+@app.route('/export-data')
+@login_required
+def export_data():
+    """Export all user data as JSON."""
+    import json
+    from flask import Response
+    
+    dreams = Dream.query.filter_by(user_id=current_user.id).all()
+    
+    export_data = {
+        'user': {
+            'username': current_user.username,
+            'email': current_user.email,
+            'created_at': current_user.created_at.isoformat() if current_user.created_at else None
+        },
+        'dreams': []
+    }
+    
+    for dream in dreams:
+        export_data['dreams'].append({
+            'id': dream.id,
+            'title': dream.title,
+            'content': dream.content,
+            'mood': dream.mood,
+            'interpretation_style': dream.interpretation_style,
+            'interpretation': dream.interpretation,
+            'created_at': dream.created_at.isoformat()
+        })
+    
+    response_data = json.dumps(export_data, indent=2, ensure_ascii=False)
+    
+    return Response(
+        response_data,
+        mimetype='application/json',
+        headers={
+            'Content-Disposition': 'attachment; filename=sogni_completi_export.json'
+        }
+    )
