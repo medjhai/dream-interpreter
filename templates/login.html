@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Interprete dei Sogni{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="container py-5">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="auth-card">
+                    <div class="auth-header text-center mb-4">
+                        <div class="auth-logo">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <h2 class="auth-title">Benvenuto</h2>
+                        <p class="auth-subtitle">Accedi al tuo mondo onirico</p>
+                    </div>
+                    
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       name="username" 
+                                       required 
+                                       placeholder="Il tuo username">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required 
+                                       placeholder="La tua password">
+                            </div>
+                        </div>
+                        
+                        <div id="error-message" class="alert alert-danger d-none" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="error-text"></span>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-auth" id="loginBtn">
+                                <span class="btn-text">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Accedi
+                                </span>
+                                <span class="btn-loading d-none">
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    Accesso in corso...
+                                </span>
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="auth-switch">
+                                Non hai un account? 
+                                <a href="{{ url_for('register') }}" class="auth-link">Registrati</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtn');
+    const errorDiv = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    
+    if (!username || !password) {
+        showError('Inserisci username e password');
+        return;
+    }
+    
+    // Show loading state
+    showLoading(true);
+    hideError();
+    
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showLoading(false);
+        
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            showError(data.error || 'Errore durante il login');
+        }
+    })
+    .catch(error => {
+        showLoading(false);
+        showError('Errore di comunicazione con il server');
+        console.error('Error:', error);
+    });
+    
+    function showLoading(loading) {
+        const btnText = loginBtn.querySelector('.btn-text');
+        const btnLoading = loginBtn.querySelector('.btn-loading');
+        
+        if (loading) {
+            btnText.classList.add('d-none');
+            btnLoading.classList.remove('d-none');
+            loginBtn.disabled = true;
+        } else {
+            btnText.classList.remove('d-none');
+            btnLoading.classList.add('d-none');
+            loginBtn.disabled = false;
+        }
+    }
+    
+    function showError(message) {
+        errorText.textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+    
+    function hideError() {
+        errorDiv.classList.add('d-none');
+    }
+});
+</script>
+{% endblock %}

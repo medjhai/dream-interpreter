@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}{{ dream.title }} - Interprete dei Sogni{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('dreams_history') }}">I Miei Sogni</a></li>
+                            <li class="breadcrumb-item active">{{ dream.title }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="dream-actions">
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteDream({{ dream.id }})">
+                        <i class="fas fa-trash me-1"></i>Elimina
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dream Card -->
+            <div class="dream-detail-card">
+                <div class="dream-detail-header">
+                    <h1 class="dream-detail-title">{{ dream.title }}</h1>
+                    <div class="dream-meta">
+                        <span class="dream-date">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ dream.created_at.strftime('%d %B %Y alle %H:%M') }}
+                        </span>
+                        {% if dream.mood %}
+                        <span class="dream-mood">
+                            {% if dream.mood == 'felice' %}😊{% endif %}
+                            {% if dream.mood == 'triste' %}😢{% endif %}
+                            {% if dream.mood == 'ansioso' %}😰{% endif %}
+                            {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                            {% if dream.mood == 'confuso' %}😕{% endif %}
+                            {{ dream.mood.title() }}
+                        </span>
+                        {% endif %}
+                        <span class="dream-style">
+                            <i class="fas fa-feather-alt me-1"></i>
+                            {{ dream.interpretation_style.title() }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="dream-detail-content">
+                    <div class="dream-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-moon me-2"></i>Il Tuo Sogno
+                        </h3>
+                        <div class="dream-text">
+                            {{ dream.content|nl2br }}
+                        </div>
+                    </div>
+
+                    {% if dream.interpretation %}
+                    <div class="dream-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-book-open me-2"></i>Interpretazione
+                        </h3>
+                        <div class="interpretation-text">
+                            {{ dream.interpretation|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="dream-detail-footer">
+                    <a href="{{ url_for('dreams_history') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-1"></i>Torna ai Sogni
+                    </a>
+                    <a href="{{ url_for('interpret') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Nuovo Sogno
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Conferma Eliminazione
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler eliminare questo sogno? Questa azione non può essere annullata.</p>
+                <p class="text-muted"><strong>{{ dream.title }}</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="fas fa-trash me-1"></i>Elimina
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteDream(dreamId) {
+    // Show confirmation modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+    
+    // Handle confirmation
+    document.getElementById('confirmDelete').onclick = function() {
+        fetch(`/dream/${dreamId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redirect to dreams list
+                window.location.href = "{{ url_for('dreams_history') }}";
+            } else {
+                alert('Errore durante l\'eliminazione del sogno');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Errore di comunicazione con il server');
+        });
+        
+        modal.hide();
+    };
+}
+</script>
+{% endblock %}
