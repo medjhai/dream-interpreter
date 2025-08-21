@@ -44,7 +44,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg">
+            <button type="submit" class="btn btn-primary btn-lg" style="margin: 0 auto;">
                 <span id="btnText">🔮 Interpreta Sogno</span>
                 <div id="btnLoading" class="spinner hidden"></div>
             </button>
@@ -59,12 +59,14 @@
             </div>
             <div id="interpretation" class="mb-3"></div>
             <div class="text-center">
-                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                    ← Torna alla Dashboard
-                </a>
-                <button onclick="location.reload()" class="btn btn-primary">
-                    Interpreta Altro Sogno
-                </button>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; align-items: center;">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin: 0;">
+                        ← Torna alla Dashboard
+                    </a>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin: 0;">
+                        Interpreta Altro Sogno
+                    </button>
+                </div>
             </div>
         </div>
     </div>

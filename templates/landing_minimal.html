@@ -3,14 +3,10 @@
 {% block content %}
 <div class="container">
     <!-- Hero Section -->
-    <div class="text-center mb-5" style="padding: 3rem 0;">
-        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 1rem; color: var(--primary);">
-            🌙 Dream Interpreter
-        </h1>
-        <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-            Racconta il tuo sogno e scopri il suo significato profondo attraverso l'interpretazione psicologica
-        </p>
-        <a href="{{ url_for('register') }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">
+    <div class="hero-section mb-5">
+        <h1>🌙 Dream Interpreter</h1>
+        <p>Racconta il tuo sogno e scopri il suo significato profondo attraverso l'interpretazione psicologica</p>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
             ✨ Inizia Ora
         </a>
     </div>
@@ -56,16 +52,18 @@
     </div>
 
     <!-- Call to Action -->
-    <div class="text-center" style="margin: 4rem 0; padding: 2rem; background: rgba(var(--primary-rgb), 0.05); border-radius: var(--radius);">
+    <div class="card text-center" style="margin: 4rem 0; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(129, 140, 248, 0.05));">
         <h2 style="margin-bottom: 1rem; color: var(--primary);">Pronto a Scoprire i Tuoi Sogni?</h2>
         <p class="text-muted mb-4">Unisciti a migliaia di persone che hanno già scoperto il significato dei loro sogni</p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <a href="{{ url_for('register') }}" class="btn btn-primary">
-                🚀 Registrati Gratis
-            </a>
-            <a href="{{ url_for('login') }}" class="btn btn-secondary">
-                👤 Accedi
-            </a>
+        <div class="action-section">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">
+                    🚀 Registrati Gratis
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                    👤 Accedi
+                </a>
+            </div>
         </div>
     </div>
 </div>
