@@ -122,22 +122,63 @@
         color: var(--danger);
     }
     
+    /* Content Layout */
+    .content-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    @media (min-width: 1024px) {
+        .content-layout {
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 4rem;
+            padding: 4rem 2rem;
+        }
+        
+        .content-left {
+            flex: 1;
+            max-width: 60%;
+        }
+        
+        .content-right {
+            flex: 0 0 auto;
+            min-width: 320px;
+        }
+        
+        .modern-title {
+            font-size: 5rem !important;
+            line-height: 1.1 !important;
+            text-align: left !important;
+        }
+    }
+    
     /* Action Buttons Container */
     .action-buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-        margin: 3rem auto;
-        max-width: 320px;
+        gap: 1rem;
         width: 100%;
-        padding: 0 1rem;
+        max-width: 320px;
     }
     
     @media (min-width: 640px) {
         .action-buttons-container {
             flex-direction: row;
-            max-width: 600px;
-            gap: 2rem;
+            gap: 1rem;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .action-buttons-container {
+            flex-direction: column;
+            gap: 1.5rem;
         }
     }
     
@@ -274,32 +315,39 @@
         
         <!-- Main Content -->
         <div class="home-content">
-            <h1 class="modern-title">
-                What did<br>
-                you <span class="dream-highlight">dream</span><br>
-                about..
-            </h1>
-            
-            <!-- Fluid Waves Animation -->
-            <div class="fluid-waves">
-                <div class="wave wave-1"></div>
-                <div class="wave wave-2"></div>
-                <div class="wave wave-3"></div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons-container">
-                <button onclick="startVoiceRecording()" class="action-btn action-btn-voice" aria-label="Record your dream using voice input">
-                    <div class="btn-icon" aria-hidden="true">🎤</div>
-                    <div class="btn-text"><strong>Record Dream</strong></div>
-                    <div class="btn-subtitle">Speak naturally</div>
-                </button>
+            <div class="content-layout">
+                <!-- Left side: Title and waves -->
+                <div class="content-left">
+                    <h1 class="modern-title">
+                        What did<br>
+                        you <span class="dream-highlight">dream</span><br>
+                        about..
+                    </h1>
+                    
+                    <!-- Fluid Waves Animation -->
+                    <div class="fluid-waves">
+                        <div class="wave wave-1"></div>
+                        <div class="wave wave-2"></div>
+                        <div class="wave wave-3"></div>
+                    </div>
+                </div>
                 
-                <button onclick="window.location.href='{{ url_for('interpret') }}'" class="action-btn action-btn-text" aria-label="Write your dream using text input">
-                    <div class="btn-icon" aria-hidden="true">✍️</div>
-                    <div class="btn-text"><strong>Write Dream</strong></div>
-                    <div class="btn-subtitle">Type your story</div>
-                </button>
+                <!-- Right side: Action Buttons -->
+                <div class="content-right">
+                    <div class="action-buttons-container">
+                        <button onclick="startVoiceRecording()" class="action-btn action-btn-voice" aria-label="Record your dream using voice input">
+                            <div class="btn-icon" aria-hidden="true">🎤</div>
+                            <div class="btn-text"><strong>Record Dream</strong></div>
+                            <div class="btn-subtitle">Speak naturally</div>
+                        </button>
+                        
+                        <button onclick="window.location.href='{{ url_for('interpret') }}'" class="action-btn action-btn-text" aria-label="Write your dream using text input">
+                            <div class="btn-icon" aria-hidden="true">✍️</div>
+                            <div class="btn-text"><strong>Write Dream</strong></div>
+                            <div class="btn-subtitle">Type your story</div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
