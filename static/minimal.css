@@ -448,90 +448,138 @@ body {
     }
 }
 
-@keyframes dreamyBounce1 {
+@keyframes hugeBalloonBounce1 {
     0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
     }
-    25% { 
-        transform: translateX(30px) translateY(-40px) scale(1.1) rotate(90deg); 
-    }
-    50% { 
-        transform: translateX(-20px) translateY(-20px) scale(0.9) rotate(180deg); 
-    }
-    75% { 
-        transform: translateX(15px) translateY(25px) scale(1.05) rotate(270deg); 
-    }
-}
-
-@keyframes dreamyBounce2 {
-    0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
-    }
-    20% { 
-        transform: translateX(-40px) translateY(30px) scale(0.8) rotate(72deg); 
-    }
-    40% { 
-        transform: translateX(25px) translateY(-35px) scale(1.2) rotate(144deg); 
-    }
-    60% { 
-        transform: translateX(-15px) translateY(-10px) scale(0.95) rotate(216deg); 
-    }
-    80% { 
-        transform: translateX(35px) translateY(20px) scale(1.1) rotate(288deg); 
-    }
-}
-
-@keyframes dreamyBounce3 {
-    0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
-    }
-    33% { 
-        transform: translateX(-25px) translateY(-30px) scale(1.15) rotate(120deg); 
-    }
-    66% { 
-        transform: translateX(20px) translateY(15px) scale(0.85) rotate(240deg); 
-    }
-}
-
-@keyframes dreamyBounce4 {
-    0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    15% { 
+        transform: translateX(80px) translateY(60px) scale(0.8, 1.3) rotate(25deg); 
     }
     30% { 
-        transform: translateX(45px) translateY(-25px) scale(0.9) rotate(108deg); 
+        transform: translateX(150px) translateY(-40px) scale(1.4, 0.7) rotate(45deg); 
+    }
+    45% { 
+        transform: translateX(90px) translateY(-80px) scale(0.9, 1.2) rotate(90deg); 
     }
     60% { 
-        transform: translateX(-30px) translateY(35px) scale(1.3) rotate(216deg); 
-    }
-    90% { 
-        transform: translateX(10px) translateY(-15px) scale(1.05) rotate(324deg); 
-    }
-}
-
-@keyframes dreamyBounce5 {
-    0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
-    }
-    25% { 
-        transform: translateX(-35px) translateY(40px) scale(1.2) rotate(90deg); 
-    }
-    50% { 
-        transform: translateX(40px) translateY(-30px) scale(0.8) rotate(180deg); 
+        transform: translateX(-50px) translateY(-60px) scale(1.3, 0.8) rotate(135deg); 
     }
     75% { 
-        transform: translateX(-20px) translateY(-40px) scale(1.1) rotate(270deg); 
+        transform: translateX(-80px) translateY(40px) scale(0.85, 1.25) rotate(180deg); 
+    }
+    90% { 
+        transform: translateX(20px) translateY(80px) scale(1.2, 0.9) rotate(225deg); 
     }
 }
 
-@keyframes dreamyBounce6 {
+@keyframes hugeBalloonBounce2 {
     0%, 100% { 
-        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
+    }
+    12% { 
+        transform: translateX(-120px) translateY(80px) scale(1.5, 0.6) rotate(30deg); 
+    }
+    25% { 
+        transform: translateX(-180px) translateY(-50px) scale(0.7, 1.4) rotate(60deg); 
+    }
+    37% { 
+        transform: translateX(-100px) translateY(-120px) scale(1.3, 0.8) rotate(120deg); 
+    }
+    50% { 
+        transform: translateX(60px) translateY(-100px) scale(0.8, 1.3) rotate(180deg); 
+    }
+    62% { 
+        transform: translateX(140px) translateY(-40px) scale(1.4, 0.7) rotate(240deg); 
+    }
+    75% { 
+        transform: translateX(100px) translateY(70px) scale(0.9, 1.2) rotate(300deg); 
+    }
+    87% { 
+        transform: translateX(-40px) translateY(100px) scale(1.2, 0.9) rotate(330deg); 
+    }
+}
+
+@keyframes hugeBalloonBounce3 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
+    }
+    20% { 
+        transform: translateX(-100px) translateY(90px) scale(0.8, 1.4) rotate(45deg); 
     }
     40% { 
-        transform: translateX(30px) translateY(35px) scale(0.9) rotate(144deg); 
+        transform: translateX(-160px) translateY(-70px) scale(1.5, 0.6) rotate(90deg); 
+    }
+    60% { 
+        transform: translateX(80px) translateY(-100px) scale(0.7, 1.3) rotate(180deg); 
     }
     80% { 
-        transform: translateX(-25px) translateY(-25px) scale(1.25) rotate(288deg); 
+        transform: translateX(120px) translateY(50px) scale(1.3, 0.8) rotate(270deg); 
+    }
+}
+
+@keyframes hugeBalloonBounce4 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
+    }
+    10% { 
+        transform: translateX(100px) translateY(-80px) scale(1.4, 0.7) rotate(20deg); 
+    }
+    25% { 
+        transform: translateX(180px) translateY(-150px) scale(0.8, 1.3) rotate(70deg); 
+    }
+    40% { 
+        transform: translateX(60px) translateY(-200px) scale(1.6, 0.5) rotate(140deg); 
+    }
+    55% { 
+        transform: translateX(-90px) translateY(-120px) scale(0.9, 1.2) rotate(200deg); 
+    }
+    70% { 
+        transform: translateX(-150px) translateY(-60px) scale(1.3, 0.8) rotate(260deg); 
+    }
+    85% { 
+        transform: translateX(-80px) translateY(40px) scale(0.85, 1.25) rotate(320deg); 
+    }
+}
+
+@keyframes hugeBalloonBounce5 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
+    }
+    18% { 
+        transform: translateX(140px) translateY(110px) scale(0.7, 1.4) rotate(40deg); 
+    }
+    35% { 
+        transform: translateX(200px) translateY(-60px) scale(1.5, 0.6) rotate(100deg); 
+    }
+    50% { 
+        transform: translateX(120px) translateY(-140px) scale(0.8, 1.3) rotate(160deg); 
+    }
+    65% { 
+        transform: translateX(-70px) translateY(-90px) scale(1.4, 0.7) rotate(220deg); 
+    }
+    82% { 
+        transform: translateX(-120px) translateY(80px) scale(0.9, 1.2) rotate(280deg); 
+    }
+}
+
+@keyframes hugeBalloonBounce6 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1, 1) rotate(0deg); 
+    }
+    16% { 
+        transform: translateX(-110px) translateY(-90px) scale(1.3, 0.8) rotate(35deg); 
+    }
+    33% { 
+        transform: translateX(-170px) translateY(70px) scale(0.8, 1.3) rotate(90deg); 
+    }
+    50% { 
+        transform: translateX(-80px) translateY(130px) scale(1.5, 0.6) rotate(150deg); 
+    }
+    66% { 
+        transform: translateX(90px) translateY(100px) scale(0.7, 1.4) rotate(210deg); 
+    }
+    83% { 
+        transform: translateX(130px) translateY(-50px) scale(1.2, 0.9) rotate(270deg); 
     }
 }
 
@@ -593,62 +641,72 @@ body {
 .dream-circle {
     position: absolute;
     border-radius: 50%;
-    opacity: 0.3;
+    opacity: 0.7;
     pointer-events: none;
+    filter: blur(1px);
+    transition: filter 0.3s ease;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .dream-circle:nth-child(1) {
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0.2) 100%);
-    top: 10%;
-    left: 15%;
-    animation: dreamyBounce1 8s infinite ease-in-out;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.9) 0%, rgba(99, 102, 241, 0.3) 70%, rgba(99, 102, 241, 0.1) 100%);
+    top: 5%;
+    left: 5%;
+    animation: hugeBalloonBounce1 12s infinite ease-in-out;
+    box-shadow: 0 0 50px rgba(99, 102, 241, 0.4);
 }
 
 .dream-circle:nth-child(2) {
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0.2) 100%);
-    top: 60%;
-    right: 20%;
-    animation: dreamyBounce2 10s infinite ease-in-out -2s;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.3) 70%, rgba(139, 92, 246, 0.1) 100%);
+    top: 40%;
+    right: 0%;
+    animation: hugeBalloonBounce2 15s infinite ease-in-out -3s;
+    box-shadow: 0 0 60px rgba(139, 92, 246, 0.4);
 }
 
 .dream-circle:nth-child(3) {
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, rgba(244, 114, 182, 0.7) 0%, rgba(244, 114, 182, 0.2) 100%);
-    top: 20%;
-    right: 30%;
-    animation: dreamyBounce3 6s infinite ease-in-out;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(244, 114, 182, 0.9) 0%, rgba(244, 114, 182, 0.3) 70%, rgba(244, 114, 182, 0.1) 100%);
+    top: 10%;
+    right: 20%;
+    animation: hugeBalloonBounce3 10s infinite ease-in-out -1s;
+    box-shadow: 0 0 40px rgba(244, 114, 182, 0.4);
 }
 
 .dream-circle:nth-child(4) {
-    width: 180px;
-    height: 180px;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.5) 0%, rgba(34, 197, 94, 0.2) 100%);
-    bottom: 20%;
-    left: 25%;
-    animation: dreamyBounce4 9s infinite ease-in-out -3s;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.7) 0%, rgba(34, 197, 94, 0.3) 70%, rgba(34, 197, 94, 0.1) 100%);
+    bottom: 0%;
+    left: 10%;
+    animation: hugeBalloonBounce4 18s infinite ease-in-out -6s;
+    box-shadow: 0 0 70px rgba(34, 197, 94, 0.3);
 }
 
 .dream-circle:nth-child(5) {
-    width: 220px;
-    height: 220px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(245, 158, 11, 0.1) 100%);
-    top: 40%;
-    left: 10%;
-    animation: dreamyBounce5 7s infinite ease-in-out -1s;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.8) 0%, rgba(245, 158, 11, 0.3) 70%, rgba(245, 158, 11, 0.1) 100%);
+    top: 30%;
+    left: -5%;
+    animation: hugeBalloonBounce5 13s infinite ease-in-out -2s;
+    box-shadow: 0 0 55px rgba(245, 158, 11, 0.3);
 }
 
 .dream-circle:nth-child(6) {
-    width: 160px;
-    height: 160px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, rgba(168, 85, 247, 0.2) 100%);
-    bottom: 30%;
-    right: 15%;
-    animation: dreamyBounce6 8.5s infinite ease-in-out -4s;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, rgba(168, 85, 247, 0.3) 70%, rgba(168, 85, 247, 0.1) 100%);
+    bottom: 10%;
+    right: 5%;
+    animation: hugeBalloonBounce6 14s infinite ease-in-out -4s;
+    box-shadow: 0 0 45px rgba(168, 85, 247, 0.4);
 }
 
 .home-content {
@@ -729,26 +787,22 @@ body {
         max-width: 300px;
     }
     
-    .dream-circle:nth-child(n+5) {
-        display: none; /* Hide some circles on mobile */
+    .dream-circle:nth-child(n+4) {
+        display: none; /* Hide more circles on mobile for performance */
     }
     
-    /* Reduce circle sizes on mobile */
+    /* Reduce huge balloon sizes for mobile */
     .dream-circle:nth-child(1) {
-        width: 100px;
-        height: 100px;
+        width: 200px;
+        height: 200px;
     }
     .dream-circle:nth-child(2) {
-        width: 120px;
-        height: 120px;
+        width: 250px;
+        height: 250px;
     }
     .dream-circle:nth-child(3) {
-        width: 80px;
-        height: 80px;
-    }
-    .dream-circle:nth-child(4) {
-        width: 110px;
-        height: 110px;
+        width: 180px;
+        height: 180px;
     }
 }
 
