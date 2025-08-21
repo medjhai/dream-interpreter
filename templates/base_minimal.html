@@ -35,13 +35,17 @@
 
     <script>
     function toggleNav() {
-        document.getElementById('navMenu').classList.toggle('open');
+        const navMenu = document.getElementById('navMenu');
+        if (navMenu) {
+            navMenu.classList.toggle('open');
+        }
     }
     
     // Close nav when clicking outside
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.navbar')) {
-            document.getElementById('navMenu').classList.remove('open');
+        const navMenu = document.getElementById('navMenu');
+        if (navMenu && !e.target.closest('.navbar')) {
+            navMenu.classList.remove('open');
         }
     });
     </script>
