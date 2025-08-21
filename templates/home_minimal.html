@@ -525,16 +525,16 @@
 
         function updateRecordingButton(recording) {
             const button = document.querySelector('.action-btn-voice');
-            const icon = document.querySelector('.voice-icon');
-            const text = document.querySelector('.tap-text');
+            const icon = button?.querySelector('.btn-icon');
+            const subtitle = button?.querySelector('.btn-subtitle');
             if (recording) {
-                button.classList.add('recording');
-                icon.innerHTML = '🔴';
-                text.innerHTML = 'RECORDING...';
+                button?.classList.add('recording');
+                if (icon) icon.innerHTML = '🔴';
+                if (subtitle) subtitle.innerHTML = 'Recording...';
             } else {
-                button.classList.remove('recording');
-                icon.innerHTML = '🎤';
-                text.innerHTML = 'TAP TO RECORD';
+                button?.classList.remove('recording');
+                if (icon) icon.innerHTML = '🎤';
+                if (subtitle) subtitle.innerHTML = 'Speak naturally';
             }
         }
 

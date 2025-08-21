@@ -7,36 +7,58 @@
         <p class="text-muted">Tell us your dream and discover its meaning</p>
     </div>
 
-    <form id="dreamForm" class="card">
-        <div class="form-group">
-            <label class="form-label">Dream title</label>
-            <input type="text" class="form-input" id="title" placeholder="A title for your dream..." required>
+    <form id="dreamForm" class="card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem;">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text);">✨ Dream title</label>
+            <input type="text" class="form-input" id="title" placeholder="What should we call this dream?" required
+                   style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+                          border-radius: 12px; color: var(--text); font-size: 1rem; transition: all 0.3s ease;">
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Tell us your dream</label>
-            <textarea class="form-textarea" id="content" placeholder="Describe your dream in detail..." style="min-height: 150px;" required></textarea>
+        <div class="form-group" style="margin-bottom: 2rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text);">💭 Tell us your dream</label>
+            <textarea class="form-textarea" id="content" placeholder="Take your time... describe every detail you remember" required
+                      style="width: 100%; min-height: 180px; padding: 1rem; background: rgba(255,255,255,0.03); 
+                             border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--text); 
+                             font-size: 1rem; line-height: 1.6; resize: vertical; transition: all 0.3s ease;"></textarea>
         </div>
 
         <div class="text-center">
-            <button type="button" id="continueBtn" class="btn btn-primary btn-lg" style="margin: 0 auto;">
-                Continue
+            <button type="button" id="continueBtn" class="btn btn-primary btn-lg" 
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                           border: none; padding: 1rem 2.5rem; border-radius: 12px; color: white; 
+                           font-size: 1.1rem; font-weight: 600; cursor: pointer; 
+                           transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                🔮 Continue to Interpretation
             </button>
         </div>
     </form>
 </div>
 
-<!-- Mood & Style Selection Modal -->
-<div id="dreamModal" class="voice-modal hidden">
-    <div class="voice-modal-content" style="max-width: 500px;">
-        <div class="voice-modal-header">
-            <h3>🎭 Customize Interpretation</h3>
-            <button class="voice-modal-close" onclick="closeDreamModal()">×</button>
+<!-- Mood & Style Selection Modal - Lailah inspired design -->
+<div id="dreamModal" class="voice-modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div class="voice-modal-content" style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); 
+                                            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); 
+                                            border-radius: 24px; padding: 2rem; max-width: 450px; width: 90%; 
+                                            box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <div class="voice-modal-header" style="text-align: center; margin-bottom: 2rem;">
+            <h3 style="color: var(--text); margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 600;">🌙 Dream Settings</h3>
+            <p style="color: rgba(var(--text-rgb), 0.7); margin: 0; font-size: 0.9rem;">Customize your interpretation experience</p>
+            <button class="voice-modal-close" onclick="closeDreamModal()" 
+                    style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.1); 
+                           border: none; border-radius: 50%; width: 32px; height: 32px; color: var(--text); 
+                           font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
         <div class="voice-modal-body">
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">How did you feel in the dream?</label>
-                <select id="dreamMood" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 1rem; font-weight: 500; color: var(--text); font-size: 1rem;">
+                    🎭 How did you feel in the dream?
+                </label>
+                <select id="dreamMood" style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.05); 
+                                            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; 
+                                            color: var(--text); font-size: 1rem; appearance: none; cursor: pointer;
+                                            background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23fff%22><path d=%22M7 10l5 5 5-5z%22/></svg>');
+                                            background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem;">
                     <option value="neutro">😐 Neutral</option>
                     <option value="felice">😊 Happy</option>
                     <option value="triste">😢 Sad</option>
@@ -46,20 +68,34 @@
                 </select>
             </div>
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Interpretation style:</label>
-                <select id="dreamStyle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
-                    <option value="psicologico">🔍 Psychological</option>
-                    <option value="spirituale">🕉️ Spiritual</option>
-                    <option value="neutro">📖 Neutral</option>
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; margin-bottom: 1rem; font-weight: 500; color: var(--text); font-size: 1rem;">
+                    ✨ Interpretation style
+                </label>
+                <select id="dreamStyle" style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.05); 
+                                            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; 
+                                            color: var(--text); font-size: 1rem; appearance: none; cursor: pointer;
+                                            background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23fff%22><path d=%22M7 10l5 5 5-5z%22/></svg>');
+                                            background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem;">
+                    <option value="psicologico">🔍 Psychological Analysis</option>
+                    <option value="spirituale">🕉️ Spiritual Guidance</option>
+                    <option value="neutro">📖 Neutral Overview</option>
                 </select>
             </div>
             
-            <div style="text-align: center;">
-                <button onclick="submitTextDream()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer; margin-right: 1rem;">
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="submitTextDream()" 
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                               color: white; border: none; padding: 1rem 2rem; border-radius: 16px; 
+                               font-size: 1rem; font-weight: 600; cursor: pointer; flex: 1;
+                               transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
                     🔮 Interpret Dream
                 </button>
-                <button onclick="closeDreamModal()" style="background: var(--surface-light); color: var(--text); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer;">
+                <button onclick="closeDreamModal()" 
+                        style="background: rgba(255,255,255,0.1); color: var(--text); 
+                               border: 1px solid rgba(255,255,255,0.2); padding: 1rem 1.5rem; 
+                               border-radius: 16px; font-size: 1rem; cursor: pointer; 
+                               transition: all 0.3s ease;">
                     Cancel
                 </button>
             </div>
