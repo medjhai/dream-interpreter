@@ -134,9 +134,9 @@
         <button class="home-nav-close" onclick="toggleHomeNav()" aria-label="Chiudi menu">
             ×
         </button>
-        <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ Nuovo Sogno</a>
-        <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profilo</a>
-        <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Impostazioni</a>
+        <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ New Dream</a>
+        <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profile</a>
+        <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Settings</a>
     </nav>
 
     <!-- Dreamy Home Content -->
@@ -154,7 +154,9 @@
         <!-- Main Content -->
         <div class="home-content">
             <h1 class="modern-title">
-                Di cosa hai <span class="dream-highlight">sognato</span>..
+                What did<br>
+                you <span class="dream-highlight">dream</span><br>
+                about..
             </h1>
             
             <!-- Fluid Waves Animation -->
@@ -169,7 +171,7 @@
                 <button onclick="startVoiceRecording()" class="voice-record-btn" aria-label="Tocca per registrare">
                     <div class="voice-icon">🎤</div>
                 </button>
-                <p class="tap-text">TOCCA PER REGISTRARE</p>
+                <p class="tap-text">TAP TO RECORD</p>
             </div>
             
             <!-- Text Button (Secondary) -->
@@ -281,7 +283,7 @@
 
         function startVoiceRecording() {
             if (!recognition && !initSpeechRecognition()) {
-                alert('Il riconoscimento vocale non è supportato in questo browser. Usa Chrome o Edge.');
+                alert('Voice recognition is not supported in this browser. Use Chrome or Edge.');
                 return;
             }
             
@@ -325,11 +327,11 @@
             if (recording) {
                 button.classList.add('recording');
                 icon.innerHTML = '🔴';
-                text.innerHTML = 'REGISTRANDO...';
+                text.innerHTML = 'RECORDING...';
             } else {
                 button.classList.remove('recording');
                 icon.innerHTML = '🎤';
-                text.innerHTML = 'TOCCA PER REGISTRARE';
+                text.innerHTML = 'TAP TO RECORD';
             }
         }
 
@@ -340,7 +342,7 @@
             modal.innerHTML = `
                 <div class="voice-modal-content">
                     <div class="voice-modal-header">
-                        <h3>🎤 Racconta il tuo sogno</h3>
+                        <h3>🎤 Record your dream</h3>
                         <button class="voice-modal-close" onclick="stopVoiceRecording()">×</button>
                     </div>
                     <div class="voice-modal-body">
@@ -350,14 +352,14 @@
                             <div class="voice-wave"></div>
                             <div class="voice-wave"></div>
                         </div>
-                        <p class="voice-status">Ascoltando... Parla tranquillamente</p>
+                        <p class="voice-status">Listening... Speak naturally</p>
                         <div class="voice-transcript" id="voiceTranscript">
-                            <em>Inizia a parlare del tuo sogno...</em>
+                            <em>Start telling your dream...</em>
                         </div>
                     </div>
                     <div class="voice-modal-footer">
                         <button class="btn btn-danger" onclick="stopVoiceRecording()">
-                            🔴 Termina Registrazione
+                            🔴 Stop Recording
                         </button>
                     </div>
                 </div>
@@ -368,7 +370,7 @@
         function updateVoiceModalText(text) {
             const transcript = document.getElementById('voiceTranscript');
             if (transcript) {
-                transcript.innerHTML = text || '<em>Continua a parlare...</em>';
+                transcript.innerHTML = text || '<em>Keep talking...</em>';
             }
         }
 

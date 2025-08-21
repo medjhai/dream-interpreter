@@ -235,15 +235,15 @@ def voice_interpret():
     voice_transcript = request.form.get('voice_transcript', '').strip()
     
     if not voice_transcript:
-        flash('Registrazione vocale vuota. Riprova.', 'error')
+        flash('Empty voice recording. Please try again.', 'error')
         return redirect(url_for('home'))
     
     # Create dream title from voice transcript
-    dream_title = f"Sogno Vocale - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    dream_title = f"Voice Dream - {datetime.now().strftime('%m/%d/%Y %H:%M')}"
     
     # Default mood and style for voice dreams (user can edit later)
-    mood = 'neutro'
-    style = 'psicologico'
+    mood = 'neutral'
+    style = 'psychological'
     
     # Generate interpretation
     interpretation = interpret_dream(voice_transcript, mood=mood, style=style)
@@ -261,7 +261,7 @@ def voice_interpret():
     db.session.commit()
     
     # Redirect to view the dream with a success message
-    flash('Sogno registrato vocalmente e interpretato con successo!', 'success')
+    flash('Dream recorded and interpreted successfully!', 'success')
     return redirect(url_for('view_dream', dream_id=dream.id))
 
 @app.route('/dreams')
