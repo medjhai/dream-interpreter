@@ -1,0 +1,72 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="card" style="max-width: 400px; margin: 2rem auto;">
+        <h1 class="card-title text-center mb-4">🌙 Accedi</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Nome Utente</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">
+                Accedi
+            </button>
+            
+            <div id="loginError" class="text-center mt-3 hidden" style="color: var(--error);"></div>
+        </form>
+        
+        <div class="text-center mt-4">
+            <p class="text-muted">Non hai un account?</p>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">
+                Registrati
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+    };
+    
+    const errorDiv = document.getElementById('loginError');
+    errorDiv.classList.add('hidden');
+    
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = result.redirect;
+        } else {
+            errorDiv.textContent = result.error;
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'Errore di connessione';
+        errorDiv.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}

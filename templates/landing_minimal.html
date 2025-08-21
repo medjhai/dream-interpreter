@@ -1,125 +1,72 @@
 {% extends "base_minimal.html" %}
 
 {% block content %}
-<div class="container-sm">
-    <div class="text-center py-4">
-        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-light);">🌙</h1>
-        <h2 style="margin-bottom: 2rem;">Interprete dei Sogni</h2>
-        <p class="text-muted mb-4" style="font-size: 1.1rem;">
-            Scopri il significato dei tuoi sogni con interpretazioni personalizzate
+<div class="container">
+    <!-- Hero Section -->
+    <div class="text-center mb-5" style="padding: 3rem 0;">
+        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 1rem; color: var(--primary);">
+            🌙 Dream Interpreter
+        </h1>
+        <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Racconta il tuo sogno e scopri il suo significato profondo attraverso l'interpretazione psicologica
         </p>
+        <a href="{{ url_for('register') }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">
+            ✨ Inizia Ora
+        </a>
+    </div>
+
+    <!-- Features Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 4rem 0;">
         
-        <div class="grid grid-2 mb-4">
-            <div class="card text-center">
-                <h3 class="mb-2">Registrati</h3>
-                <p class="text-muted mb-3">Nuovo utente? Crea il tuo account</p>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Nome utente" id="regUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder="Email" id="regEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-input" placeholder="Password" id="regPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Registrati</button>
-                </form>
-            </div>
-            
-            <div class="card text-center">
-                <h3 class="mb-2">Accedi</h3>
-                <p class="text-muted mb-3">Hai già un account? Entra</p>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Nome utente" id="loginUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-input" placeholder="Password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-secondary">Accedi</button>
-                </form>
-            </div>
+        <!-- Feature 1 -->
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔮</div>
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">Interpretazione AI</h3>
+            <p class="text-muted">
+                Interpretazioni profonde basate su simbolismo psicologico e analisi dei sogni
+            </p>
         </div>
-        
-        <div class="card">
-            <h3 class="mb-3">Come funziona</h3>
-            <div class="grid grid-3">
-                <div class="text-center">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">✍️</div>
-                    <h4>Scrivi</h4>
-                    <p class="text-muted">Racconta il tuo sogno</p>
-                </div>
-                <div class="text-center">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">🎭</div>
-                    <h4>Scegli</h4>
-                    <p class="text-muted">Seleziona mood e stile</p>
-                </div>
-                <div class="text-center">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">🔮</div>
-                    <h4>Scopri</h4>
-                    <p class="text-muted">Ricevi l'interpretazione</p>
-                </div>
-            </div>
+
+        <!-- Feature 2 -->
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">😊</div>
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">Analisi dell'Umore</h3>
+            <p class="text-muted">
+                Considera il tuo stato emotivo per interpretazioni più accurate e personalizzate
+            </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">Diario Personale</h3>
+            <p class="text-muted">
+                Salva e organizza tutti i tuoi sogni con interpretazioni per tracciare i pattern
+            </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">Statistiche</h3>
+            <p class="text-muted">
+                Visualizza tendenze, temi ricorrenti e l'evoluzione dei tuoi sogni nel tempo
+            </p>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center" style="margin: 4rem 0; padding: 2rem; background: rgba(var(--primary-rgb), 0.05); border-radius: var(--radius);">
+        <h2 style="margin-bottom: 1rem; color: var(--primary);">Pronto a Scoprire i Tuoi Sogni?</h2>
+        <p class="text-muted mb-4">Unisciti a migliaia di persone che hanno già scoperto il significato dei loro sogni</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('register') }}" class="btn btn-primary">
+                🚀 Registrati Gratis
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                👤 Accedi
+            </a>
         </div>
     </div>
 </div>
-
-<div id="loading" class="loading hidden">
-    <div class="spinner"></div>
-    Caricamento...
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-async function handleAuth(form, endpoint) {
-    const loading = document.getElementById('loading');
-    loading.classList.remove('hidden');
-    
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            window.location.href = result.redirect || '/dashboard';
-        } else {
-            alert(result.error || 'Errore durante l\'operazione');
-        }
-    } catch (error) {
-        alert('Errore di connessione');
-    } finally {
-        loading.classList.add('hidden');
-    }
-}
-
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const data = {
-        username: document.getElementById('regUsername').value,
-        email: document.getElementById('regEmail').value,
-        password: document.getElementById('regPassword').value
-    };
-    
-    handleAuth(this, '/register').then(() => {}, () => {});
-});
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const data = {
-        username: document.getElementById('loginUsername').value,
-        password: document.getElementById('loginPassword').value
-    };
-    
-    handleAuth(this, '/login').then(() => {}, () => {});
-});
-</script>
 {% endblock %}

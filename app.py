@@ -85,7 +85,7 @@ def login():
         else:
             return jsonify({'error': 'Credenziali non valide'}), 401
     
-    return render_template('login.html')
+    return render_template('login_minimal.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -128,7 +128,7 @@ def register():
             app.logger.error(f"Error creating user: {str(e)}")
             return jsonify({'error': 'Errore durante la registrazione'}), 500
     
-    return render_template('register.html')
+    return render_template('register_minimal.html')
 
 @app.route('/dashboard')
 @login_required

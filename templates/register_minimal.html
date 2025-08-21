@@ -1,0 +1,79 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="card" style="max-width: 400px; margin: 2rem auto;">
+        <h1 class="card-title text-center mb-4">🌙 Registrati</h1>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Nome Utente</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+                <small class="text-muted">Almeno 6 caratteri</small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">
+                Registrati
+            </button>
+            
+            <div id="registerError" class="text-center mt-3 hidden" style="color: var(--error);"></div>
+        </form>
+        
+        <div class="text-center mt-4">
+            <p class="text-muted">Hai già un account?</p>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                Accedi
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+    
+    const errorDiv = document.getElementById('registerError');
+    errorDiv.classList.add('hidden');
+    
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = result.redirect;
+        } else {
+            errorDiv.textContent = result.error;
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'Errore di connessione';
+        errorDiv.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}
