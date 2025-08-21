@@ -153,19 +153,29 @@
         
         <!-- Main Content -->
         <div class="home-content">
-            <h1 class="home-title">🌙 Interprete dei Sogni</h1>
-            <p class="home-subtitle">
-                Scopri i significati nascosti nei tuoi sogni attraverso un'analisi psicologica approfondita e personalizzata
-            </p>
+            <h1 class="modern-title">
+                Di cosa hai <span class="dream-highlight">sognato</span>..
+            </h1>
             
-            <div class="dream-buttons-container">
-                <a href="{{ url_for('interpret') }}" class="dream-button dream-button-text" aria-label="Scrivi il tuo sogno">
-                    ✏️ Scrivi Sogno
-                </a>
-                <button onclick="startVoiceRecording()" class="dream-button dream-button-voice" aria-label="Registra il tuo sogno vocalmente">
-                    🎤 Racconta Sogno
-                </button>
+            <!-- Fluid Waves Animation -->
+            <div class="fluid-waves">
+                <div class="wave wave-1"></div>
+                <div class="wave wave-2"></div>
+                <div class="wave wave-3"></div>
             </div>
+            
+            <!-- Voice Recording Button (Main) -->
+            <div class="voice-record-container">
+                <button onclick="startVoiceRecording()" class="voice-record-btn" aria-label="Tocca per registrare">
+                    <div class="voice-icon">🎤</div>
+                </button>
+                <p class="tap-text">TOCCA PER REGISTRARE</p>
+            </div>
+            
+            <!-- Text Button (Secondary) -->
+            <button onclick="window.location.href='{{ url_for('interpret') }}'" class="use-text-btn">
+                Use text
+            </button>
         </div>
     </div>
 
@@ -309,13 +319,17 @@
         }
 
         function updateRecordingButton(recording) {
-            const button = document.querySelector('.dream-button-voice');
+            const button = document.querySelector('.voice-record-btn');
+            const icon = document.querySelector('.voice-icon');
+            const text = document.querySelector('.tap-text');
             if (recording) {
                 button.classList.add('recording');
-                button.innerHTML = '🔴 Registrando...';
+                icon.innerHTML = '🔴';
+                text.innerHTML = 'REGISTRANDO...';
             } else {
                 button.classList.remove('recording');
-                button.innerHTML = '🎤 Racconta Sogno';
+                icon.innerHTML = '🎤';
+                text.innerHTML = 'TOCCA PER REGISTRARE';
             }
         }
 
