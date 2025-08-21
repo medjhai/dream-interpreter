@@ -263,24 +263,31 @@ def generate_ai_interpretation(dream_text, mood='', style='neutro'):
     mood_en = mood_mapping.get(mood, 'neutral')
     style_en = style_mapping.get(style, 'psychological')
     
-    # Craft a sophisticated prompt for dream interpretation
+    # Craft an enhanced, more sophisticated prompt for dream interpretation
     prompt = f"""
-    Act as a professional dream analyst with expertise in psychology, symbolism, and dream interpretation. 
+    Act as an expert dream analyst with deep knowledge in Jungian psychology, symbolic interpretation, and contemporary dream research. 
     
-    Analyze this dream with the following context:
-    - Dreamer's emotional state during dream: {mood_en}
-    - Requested interpretation style: {style_en}
+    Context for analysis:
+    - Dreamer's emotional state: {mood_en}
+    - Interpretation approach: {style_en}
+    - Dream content: "{dream_text}"
     
-    Dream text: "{dream_text}"
+    Provide a rich, personalized interpretation following this structure:
     
-    Please provide a comprehensive interpretation that includes:
-    1. Main symbolic elements and their psychological meanings
-    2. Connection to the dreamer's emotional state
-    3. Potential insights about unconscious thoughts or current life situation
-    4. Practical guidance or reflection questions
+    **SIMBOLI PRINCIPALI**
+    Identifica e analizza 2-3 simboli chiave del sogno, spiegando il loro significato psicologico profondo.
     
-    Respond in Italian with a warm, insightful tone. Structure your response with clear paragraphs.
-    Focus on being helpful, not predictive. Emphasize that dreams are personal and symbolic.
+    **CONNESSIONE EMOTIVA**
+    Collega il contenuto del sogno allo stato emotivo del sognatore, esplorando cosa potrebbe rappresentare a livello inconscio.
+    
+    **INSIGHT PERSONALI**
+    Offri intuizioni sui possibili messaggi dell'inconscio relativi alla vita attuale del sognatore.
+    
+    **RIFLESSIONI PRATICHE**
+    Suggerisci domande riflessive o azioni concrete che possano aiutare il sognatore a integrare il messaggio del sogno.
+    
+    Scrivi in italiano con tono caldo e professionale. Evita previsioni, concentrati sui significati simbolici e la crescita personale.
+    Ricorda: ogni sogno è unico e personale, la tua interpretazione è una guida, non una verità assoluta.
     """
     
     try:
@@ -296,11 +303,12 @@ def generate_ai_interpretation(dream_text, mood='', style='neutro'):
                     "content": prompt
                 }
             ],
-            max_tokens=800,
-            temperature=0.7
+            max_tokens=1200,
+            temperature=0.8
         )
         
-        return response.choices[0].message.content.strip()
+        ai_interpretation = response.choices[0].message.content
+        return ai_interpretation.strip() if ai_interpretation else None
         
     except Exception as e:
         print(f"Error generating AI interpretation: {e}")
