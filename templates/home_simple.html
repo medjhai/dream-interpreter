@@ -1,273 +1,491 @@
 {% extends "base_minimal.html" %}
 
 {% block content %}
-    <!-- User Greeting -->
-    <div class="user-greeting">
-        <a href="{{ url_for('profile') }}" class="greeting-link">
-            Ciao, {{ current_user.username if current_user.is_authenticated else 'Guest' }}
-        </a>
-    </div>
+    <div class="mobile-app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="status-icons">
+                <span class="signal">●●●●</span>
+                <span class="wifi">📶</span>
+                <span class="battery">🔋</span>
+            </div>
+        </div>
 
-    <!-- Home Navigation Toggle -->
-    <button class="home-menu-toggle" onclick="toggleHomeNav()" aria-label="Menu">
-        ☰
-    </button>
-    
-    <!-- Full Screen Navigation -->
-    <nav class="home-nav" id="homeNav">
-        <button class="home-nav-close" onclick="toggleHomeNav()" aria-label="Chiudi menu">
-            ×
-        </button>
-        <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Settings</a>
-        <a href="{{ url_for('faq') }}" class="home-nav-link">❓ FAQ</a>
-        <a href="{{ url_for('contacts') }}" class="home-nav-link">📧 Contacts</a>
-    </nav>
+        <!-- Header -->
+        <div class="app-header">
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ddd'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='40' fill='%23666'%3E{{ current_user.username[0].upper() if current_user.is_authenticated else 'G' }}%3C/text%3E%3C/svg%3E" alt="Avatar">
+                </div>
+                <div class="greeting-text">
+                    <div class="hello">Hello {{ current_user.username if current_user.is_authenticated else 'Guest' }}</div>
+                    <div class="welcome">Welcome back.</div>
+                </div>
+            </div>
+            <button class="menu-dots" onclick="toggleHomeNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
 
-    <!-- Main Content -->
-    <div class="simple-home">
-        <div class="center-content">
-            <!-- Main Title -->
-            <h1 class="main-title">What did you dream about..</h1>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button onclick="showTextInput()" class="action-btn write-btn">
-                    ✍️ Write
+        <!-- Navigation -->
+        <nav class="slide-nav" id="homeNav">
+            <button class="nav-close" onclick="toggleHomeNav()">×</button>
+            <a href="{{ url_for('settings') }}" class="nav-item">⚙️ Settings</a>
+            <a href="{{ url_for('faq') }}" class="nav-item">❓ FAQ</a>
+            <a href="{{ url_for('contacts') }}" class="nav-item">📧 Contacts</a>
+            <a href="{{ url_for('profile') }}" class="nav-item">👤 Profile</a>
+        </nav>
+
+        <!-- Main Title -->
+        <div class="main-section">
+            <h1 class="dream-title">
+                What did<br>
+                you <span class="dream-gray">dream</span><br>
+                about..
+            </h1>
+
+            <!-- Fluid Waves -->
+            <div class="wave-container">
+                <svg class="wave-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#d97706;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path class="wave-path wave1" d="M0,100 C50,120 100,80 150,100 C200,120 250,80 300,100 C350,120 400,80 450,100 L450,150 L0,150 Z" fill="url(#waveGrad1)" opacity="0.7"/>
+                    <path class="wave-path wave2" d="M0,120 C50,100 100,140 150,120 C200,100 250,140 300,120 C350,100 400,140 450,120 L450,170 L0,170 Z" fill="url(#waveGrad2)" opacity="0.5"/>
+                </svg>
+            </div>
+
+            <!-- Voice Record Button -->
+            <div class="voice-section">
+                <button class="voice-record-circle" onclick="toggleVoiceRecording()" id="voiceBtn">
+                    <div class="mic-icon">🎤</div>
                 </button>
-                
-                <button onclick="toggleVoiceRecording()" id="voiceBtn" class="action-btn voice-btn">
-                    <span class="voice-icon">🎤</span>
-                    <span class="voice-text">Record</span>
+                <div class="tap-text">TAP TO RECORD</div>
+            </div>
+
+            <!-- Text Button -->
+            <button class="text-button" onclick="showTextInput()">Use text</button>
+
+            <!-- Text Input Area (Hidden) -->
+            <div class="text-input-panel" id="textInputArea" style="display: none;">
+                <textarea id="dreamTextInput" placeholder="Tell me about your dream..." class="dream-textarea"></textarea>
+                <button onclick="interpretTextDream()" class="interpret-button">
+                    Interpret Dream
                 </button>
             </div>
-            
-            <!-- Text Input (Initially Hidden) -->
-            <div class="text-input-area" id="textInputArea" style="display: none;">
-                <textarea id="dreamTextInput" placeholder="Tell me about your dream..." 
-                        style="width: 100%; min-height: 150px; padding: 1.5rem; 
-                               background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
-                               border-radius: 16px; color: var(--text); resize: vertical; 
-                               font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem;"></textarea>
-                <button onclick="interpretTextDream()" class="submit-btn">
-                    Interpret Dream ➤
-                </button>
-            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item">📚</div>
+            <div class="nav-item">😊</div>
+            <div class="nav-item">📋</div>
+            <div class="nav-item">🌙</div>
+            <div class="nav-item">👤</div>
         </div>
     </div>
 
     <style>
-    /* Simple Home Layout */
-    .simple-home {
+    /* Mobile App Container */
+    .mobile-app {
+        background: #000000;
         min-height: 100vh;
-        background: linear-gradient(135deg, 
-            rgba(13, 17, 29, 1) 0%, 
-            rgba(28, 34, 52, 1) 50%, 
-            rgba(13, 17, 29, 1) 100%);
+        max-width: 375px;
+        margin: 0 auto;
+        position: relative;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Status Bar */
+    .status-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 20px;
+        font-size: 17px;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .time {
+        letter-spacing: -0.3px;
+    }
+
+    .status-icons {
+        display: flex;
+        gap: 2px;
+        font-size: 16px;
+    }
+
+    /* App Header */
+    .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px 40px;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .greeting-text .hello {
+        font-size: 16px;
+        color: #888;
+        margin-bottom: 2px;
+    }
+
+    .greeting-text .welcome {
+        font-size: 17px;
+        color: #ffffff;
+        font-weight: 500;
+    }
+
+    .menu-dots {
+        background: none;
+        border: none;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+
+    .menu-dots span {
+        width: 4px;
+        height: 4px;
+        background: #888;
+        border-radius: 50%;
+    }
+
+    /* Navigation */
+    .slide-nav {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 280px;
+        height: 100vh;
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(20px);
+        transition: right 0.3s ease;
+        z-index: 1000;
+        padding: 60px 20px;
+    }
+
+    .slide-nav.active {
+        right: 0;
+    }
+
+    .nav-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .nav-item {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 16px 0;
+        font-size: 18px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-item:hover {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    /* Main Section */
+    .main-section {
+        padding: 0 24px;
+        text-align: left;
+    }
+
+    /* Dream Title */
+    .dream-title {
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 1.1;
+        margin: 40px 0;
+        color: white;
+    }
+
+    .dream-gray {
+        color: #666;
+    }
+
+    /* Wave Container */
+    .wave-container {
+        margin: 60px -24px 80px;
+        height: 120px;
+        overflow: hidden;
+    }
+
+    .wave-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .wave-path {
+        animation: waveFlow 4s ease-in-out infinite;
+    }
+
+    .wave1 {
+        animation-delay: 0s;
+    }
+
+    .wave2 {
+        animation-delay: -2s;
+    }
+
+    @keyframes waveFlow {
+        0%, 100% { 
+            transform: translateX(-10px) scaleY(0.9); 
+        }
+        50% { 
+            transform: translateX(10px) scaleY(1.1); 
+        }
+    }
+
+    /* Voice Section */
+    .voice-section {
+        text-align: center;
+        margin: 80px 0 40px;
+    }
+
+    .voice-record-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.2);
+        border: 2px solid rgba(59, 130, 246, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
-    }
-    
-    .center-content {
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-    }
-    
-    /* User Greeting */
-    .user-greeting {
-        position: fixed;
-        top: 2rem;
-        left: 2rem;
-        z-index: 100;
-    }
-    
-    .greeting-link {
-        color: rgba(255,255,255,0.9);
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-    
-    .greeting-link:hover {
-        color: rgba(102, 126, 234, 1);
-        text-decoration: none;
-    }
-    
-    /* Main Title */
-    .main-title {
-        color: rgba(255,255,255,0.95);
-        font-size: 3rem;
-        font-weight: 300;
-        margin: 0 0 3rem 0;
-        line-height: 1.2;
-    }
-    
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 2rem;
-        justify-content: center;
-        margin-bottom: 2rem;
-    }
-    
-    .action-btn {
-        background: rgba(255,255,255,0.08);
-        border: 2px solid rgba(255,255,255,0.2);
-        border-radius: 16px;
-        padding: 1.5rem 3rem;
-        color: rgba(255,255,255,0.95);
+        margin: 0 auto 16px;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 1.1rem;
-        font-weight: 500;
         backdrop-filter: blur(10px);
-        min-width: 120px;
     }
-    
-    .action-btn:hover {
-        background: rgba(255,255,255,0.15);
-        border-color: rgba(255,255,255,0.4);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+
+    .voice-record-circle:hover {
+        background: rgba(59, 130, 246, 0.3);
+        transform: scale(1.05);
     }
-    
-    .write-btn:hover {
-        border-color: rgba(102, 126, 234, 0.6);
-        background: rgba(102, 126, 234, 0.1);
+
+    .voice-record-circle.recording {
+        background: rgba(239, 68, 68, 0.3);
+        border-color: rgba(239, 68, 68, 0.6);
+        animation: recordPulse 1.5s infinite;
     }
-    
-    .voice-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+
+    @keyframes recordPulse {
+        0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); 
+        }
+        50% { 
+            box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); 
+        }
     }
-    
-    .voice-btn:hover {
-        border-color: rgba(220, 38, 38, 0.6);
-        background: rgba(220, 38, 38, 0.1);
+
+    .mic-icon {
+        font-size: 36px;
     }
-    
-    .voice-btn.recording {
-        background: rgba(220, 38, 38, 0.2);
-        border-color: rgba(220, 38, 38, 0.5);
-        animation: pulse-record 1.5s infinite;
+
+    .tap-text {
+        font-size: 12px;
+        color: #888;
+        letter-spacing: 1px;
+        font-weight: 500;
     }
-    
-    @keyframes pulse-record {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.8; transform: scale(1.05); }
-    }
-    
-    /* Text Input Area */
-    .text-input-area {
-        animation: slideDown 0.3s ease;
-        margin-top: 2rem;
-    }
-    
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .submit-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    /* Text Button */
+    .text-button {
+        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
         border: none;
-        border-radius: 12px;
-        padding: 1rem 2rem;
+        border-radius: 25px;
+        padding: 12px 32px;
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .text-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Text Input Panel */
+    .text-input-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 30px 24px 40px;
+        border-radius: 20px 20px 0 0;
+        animation: slideUp 0.3s ease;
+        z-index: 999;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    .dream-textarea {
+        width: 100%;
+        min-height: 120px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 16px;
+        padding: 16px;
         color: white;
-        font-size: 1.1rem;
+        font-size: 16px;
+        resize: none;
+        margin-bottom: 20px;
+    }
+
+    .dream-textarea:focus {
+        outline: none;
+        border-color: #007AFF;
+        background: rgba(255,255,255,0.15);
+    }
+
+    .interpret-button {
+        width: 100%;
+        background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 16px;
+        color: white;
+        font-size: 17px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
-    
-    .submit-btn:hover {
+
+    .interpret-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
     }
-    
-    /* Navigation */
-    .home-menu-toggle {
+
+    /* Bottom Navigation */
+    .bottom-nav {
         position: fixed;
-        top: 2rem;
-        left: 2rem;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 8px;
-        color: rgba(255,255,255,0.9);
-        padding: 0.75rem;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 320px;
+        background: rgba(40, 40, 40, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0 20px;
+        margin-bottom: env(safe-area-inset-bottom);
+    }
+
+    .bottom-nav .nav-item {
+        font-size: 24px;
+        padding: 8px;
         cursor: pointer;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-        z-index: 90;
-        margin-top: 3rem;
+        transition: transform 0.2s ease;
     }
-    
-    .home-menu-toggle:hover {
-        background: rgba(255,255,255,0.15);
+
+    .bottom-nav .nav-item:hover {
+        transform: scale(1.1);
     }
-    
+
     /* Responsive */
-    @media (max-width: 768px) {
-        .main-title {
-            font-size: 2.5rem;
+    @media (max-width: 375px) {
+        .mobile-app {
+            max-width: 100%;
         }
         
-        .action-buttons {
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
+        .dream-title {
+            font-size: 40px;
         }
         
-        .action-btn {
-            padding: 1.2rem 2rem;
-            min-width: 200px;
+        .bottom-nav {
+            width: 100%;
+            border-radius: 0;
         }
-        
-        .user-greeting {
-            top: 1rem;
-            left: 1rem;
-        }
-        
-        .home-menu-toggle {
-            top: 1rem;
-            left: 1rem;
-            margin-top: 2.5rem;
-        }
-        
-        .simple-home {
-            padding: 1rem;
+    }
+
+    @media (min-width: 376px) {
+        .mobile-app {
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
     }
     </style>
 
     <script>
-        // Home navigation toggle
+        // Navigation toggle
         function toggleHomeNav() {
             const nav = document.getElementById('homeNav');
-            nav.classList.toggle('open');
+            nav.classList.toggle('active');
         }
 
-        // Close nav when clicking on a link
-        document.querySelectorAll('.home-nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('homeNav').classList.remove('open');
-            });
+        // Close navigation when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('homeNav');
+            const menuBtn = document.querySelector('.menu-dots');
+            
+            if (!nav.contains(event.target) && !menuBtn.contains(event.target)) {
+                nav.classList.remove('active');
+            }
         });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'n') {
-                e.preventDefault();
-                window.location.href = '{{ url_for("interpret") }}';
-            }
             if (e.key === 'Escape') {
-                document.getElementById('homeNav').classList.remove('open');
+                document.getElementById('homeNav').classList.remove('active');
+                hideTextInput();
             }
         });
         
