@@ -335,6 +335,45 @@ def delete_dream(dream_id):
         app.logger.error(f"Error deleting dream: {str(e)}")
         return jsonify({'error': 'Errore durante l\'eliminazione'}), 500
 
+@app.route('/dreams/delete', methods=['POST'])
+@login_required
+def delete_multiple_dreams():
+    """Delete multiple dreams at once."""
+    try:
+        data = request.get_json()
+        if not data or 'dream_ids' not in data:
+            return jsonify({'error': 'IDs dei sogni mancanti'}), 400
+        
+        dream_ids = data.get('dream_ids', [])
+        if not dream_ids:
+            return jsonify({'error': 'Nessun sogno selezionato'}), 400
+        
+        # Verify all dreams belong to the current user and delete them
+        dreams = Dream.query.filter(
+            Dream.id.in_(dream_ids),
+            Dream.user_id == current_user.id
+        ).all()
+        
+        if len(dreams) != len(dream_ids):
+            return jsonify({'error': 'Alcuni sogni non sono stati trovati o non ti appartengono'}), 404
+        
+        # Delete all dreams
+        for dream in dreams:
+            db.session.delete(dream)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'{len(dreams)} sogni eliminati con successo',
+            'deleted_count': len(dreams)
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error deleting multiple dreams: {str(e)}")
+        return jsonify({'error': 'Errore durante l\'eliminazione dei sogni'}), 500
+
 @app.route('/logout')
 @login_required
 def logout():

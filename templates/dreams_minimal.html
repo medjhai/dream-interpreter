@@ -14,38 +14,74 @@
 
     <div class="main-content">
         <!-- Header -->
-        <div class="text-center mb-4">
-            <h1 class="page-title">📚 I Tuoi Sogni</h1>
-            <p class="page-subtitle">Tutti i tuoi sogni interpretati</p>
+        <div class="dreams-header">
+            <div class="header-info">
+                <h1 class="page-title">📚 I Tuoi Sogni</h1>
+                <p class="page-subtitle">Tutti i tuoi sogni interpretati</p>
+            </div>
+            <div class="header-actions">
+                <button class="select-button" onclick="toggleSelectMode()" id="selectBtn">
+                    Seleziona
+                </button>
+            </div>
+        </div>
+
+        <!-- Selection Controls (hidden by default) -->
+        <div class="selection-controls hidden" id="selectionControls">
+            <div class="selection-info">
+                <span id="selectedCount">0</span> selezionati
+            </div>
+            <div class="selection-actions">
+                <button class="select-all-btn" onclick="selectAllDreams()">Tutti</button>
+                <button class="delete-selected-btn" onclick="deleteSelectedDreams()">🗑️ Elimina</button>
+                <button class="cancel-selection-btn" onclick="cancelSelectMode()">Annulla</button>
+            </div>
         </div>
 
         {% if dreams.items %}
         <!-- Dreams Grid -->
-        <div class="dreams-grid">
+        <div class="dreams-grid" id="dreamsGrid">
             {% for dream in dreams.items %}
-            <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
-                <h3 class="dream-title">{{ dream.title }}</h3>
-                <p class="dream-preview">
-                    {{ dream.content[:150] }}{% if dream.content|length > 150 %}...{% endif %}
-                </p>
-                <div class="dream-meta">
-                    <div class="badges">
-                        {% if dream.mood %}
-                        <span class="mood-badge">
-                            {% if dream.mood == 'felice' %}😊{% endif %}
-                            {% if dream.mood == 'triste' %}😢{% endif %}
-                            {% if dream.mood == 'spaventato' %}😨{% endif %}
-                            {% if dream.mood == 'eccitato' %}🤩{% endif %}
-                            {% if dream.mood == 'confuso' %}😵‍💫{% endif %}
-                            {% if dream.mood == 'neutro' %}😐{% endif %}
-                            {{ dream.mood.title() }}
-                        </span>
-                        {% endif %}
-                        {% if dream.interpretation_style %}
-                        <span class="style-badge">{{ dream.interpretation_style.title() }}</span>
-                        {% endif %}
+            <div class="dream-item-wrapper" data-dream-id="{{ dream.id }}">
+                <!-- Swipe Delete Action -->
+                <div class="swipe-delete-action">
+                    <button class="swipe-delete-btn" onclick="deleteDreamSwipe({{ dream.id }})">
+                        🗑️ Elimina
+                    </button>
+                </div>
+                
+                <!-- Main Dream Item -->
+                <div class="dream-item" onclick="handleDreamClick(event, {{ dream.id }})">
+                    <!-- Selection Checkbox (hidden by default) -->
+                    <div class="dream-selection hidden">
+                        <input type="checkbox" class="dream-checkbox" data-dream-id="{{ dream.id }}" onchange="updateSelectedCount()">
                     </div>
-                    <small class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+                    
+                    <div class="dream-content">
+                        <h3 class="dream-title">{{ dream.title }}</h3>
+                        <p class="dream-preview">
+                            {{ dream.content[:150] }}{% if dream.content|length > 150 %}...{% endif %}
+                        </p>
+                        <div class="dream-meta">
+                            <div class="badges">
+                                {% if dream.mood %}
+                                <span class="mood-badge">
+                                    {% if dream.mood == 'felice' %}😊{% endif %}
+                                    {% if dream.mood == 'triste' %}😢{% endif %}
+                                    {% if dream.mood == 'spaventato' %}😨{% endif %}
+                                    {% if dream.mood == 'eccitato' %}🤩{% endif %}
+                                    {% if dream.mood == 'confuso' %}😵‍💫{% endif %}
+                                    {% if dream.mood == 'neutro' %}😐{% endif %}
+                                    {{ dream.mood.title() }}
+                                </span>
+                                {% endif %}
+                                {% if dream.interpretation_style %}
+                                <span class="style-badge">{{ dream.interpretation_style.title() }}</span>
+                                {% endif %}
+                            </div>
+                            <small class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -87,6 +123,22 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 class="modal-title">Conferma Eliminazione</h3>
+        <p class="modal-text" id="deleteModalText">Sei sicuro di voler eliminare questo sogno?</p>
+        <div class="modal-actions">
+            <button onclick="confirmDelete()" class="confirm-delete-button">
+                Elimina
+            </button>
+            <button onclick="hideDeleteModal()" class="cancel-button">
+                Annulla
+            </button>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Base Styles */
 body {
@@ -110,28 +162,153 @@ body {
     padding: 20px 24px 40px;
 }
 
-/* Typography */
-.page-title {
+/* Dreams Header */
+.dreams-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-info .page-title {
     font-size: 32px;
     font-weight: 700;
-    margin: 0 0 8px;
+    margin: 0 0 4px;
     color: white;
 }
 
-.page-subtitle {
+.header-info .page-subtitle {
     font-size: 16px;
     color: #888;
-    margin: 0 0 30px;
+    margin: 0;
+}
+
+.select-button {
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    color: #007AFF;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-button:hover {
+    background: rgba(0, 122, 255, 0.2);
+}
+
+.select-button.active {
+    background: #007AFF;
+    color: white;
+}
+
+/* Selection Controls */
+.selection-controls {
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selection-controls.hidden {
+    display: none;
+}
+
+.selection-info {
+    color: #007AFF;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.selection-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.select-all-btn, .cancel-selection-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-selected-btn {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: #FF3B30;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-all-btn:hover, .cancel-selection-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.delete-selected-btn:hover {
+    background: rgba(255, 59, 48, 0.2);
 }
 
 /* Dreams Grid */
 .dreams-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     margin-bottom: 30px;
 }
 
+.dream-item-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+/* Swipe Delete Action */
+.swipe-delete-action {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    background: #FF3B30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.dream-item-wrapper.swiped .swipe-delete-action {
+    transform: translateX(0);
+}
+
+.dream-item-wrapper.swiped .dream-item {
+    transform: translateX(-80px);
+}
+
+.swipe-delete-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* Dream Item */
 .dream-item {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.1);
@@ -139,12 +316,66 @@ body {
     padding: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
 }
 
 .dream-item:hover {
     background: rgba(255,255,255,0.05);
-    transform: translateY(-2px);
     border-color: rgba(0, 122, 255, 0.3);
+}
+
+.dream-item.selecting {
+    cursor: default;
+}
+
+.dream-item.selecting:hover {
+    transform: none;
+}
+
+/* Selection Checkbox */
+.dream-selection {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.dream-selection.hidden {
+    display: none;
+}
+
+.dream-checkbox {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dream-checkbox:checked {
+    background: #007AFF;
+    border-color: #007AFF;
+}
+
+.dream-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Dream Content */
+.dream-content {
+    flex: 1;
 }
 
 .dream-title {
@@ -287,10 +518,103 @@ body {
     color: white;
 }
 
-/* Responsive */
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    padding: 20px;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-card {
+    background: #1c1c1e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 350px;
+    width: 100%;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: white;
+}
+
+.modal-text {
+    color: #888;
+    margin: 0 0 24px;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.confirm-delete-button {
+    background: #FF3B30;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.confirm-delete-button:hover {
+    background: #d70015;
+    transform: translateY(-1px);
+}
+
+.cancel-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Responsive Design */
 @media (max-width: 375px) {
     .main-content {
         padding: 20px 16px 40px;
+    }
+    
+    .dreams-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .selection-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
     }
     
     .dream-item {
@@ -303,16 +627,285 @@ body {
     }
 }
 
-/* Desktop View */
-@media (min-width: 768px) {
+@media (min-width: 376px) and (max-width: 768px) {
     .page-container {
-        max-width: 414px;
+        max-width: 100%;
+        margin: 0;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .page-container {
+        max-width: 600px;
         margin: 0 auto;
         border-radius: 0;
         box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
     }
+    
+    .dreams-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .page-container {
+        max-width: 800px;
+        margin: 0 auto;
+        border-radius: 0;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+    }
+    
+    .dreams-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
 }
 </style>
+
+<script>
+let isSelectMode = false;
+let selectedDreams = new Set();
+let currentDeleteAction = null;
+
+// Touch handling for swipe
+let touchStartX = 0;
+let touchStartY = 0;
+let isSwipeActive = false;
+
+// Toggle selection mode
+function toggleSelectMode() {
+    isSelectMode = !isSelectMode;
+    const selectBtn = document.getElementById('selectBtn');
+    const selectionControls = document.getElementById('selectionControls');
+    const dreamSelections = document.querySelectorAll('.dream-selection');
+    const dreamItems = document.querySelectorAll('.dream-item');
+    
+    if (isSelectMode) {
+        selectBtn.textContent = 'Annulla';
+        selectBtn.classList.add('active');
+        selectionControls.classList.remove('hidden');
+        dreamSelections.forEach(sel => sel.classList.remove('hidden'));
+        dreamItems.forEach(item => item.classList.add('selecting'));
+    } else {
+        selectBtn.textContent = 'Seleziona';
+        selectBtn.classList.remove('active');
+        selectionControls.classList.add('hidden');
+        dreamSelections.forEach(sel => sel.classList.add('hidden'));
+        dreamItems.forEach(item => item.classList.remove('selecting'));
+        selectedDreams.clear();
+        updateSelectedCount();
+        // Reset all checkboxes
+        document.querySelectorAll('.dream-checkbox').forEach(cb => cb.checked = false);
+    }
+}
+
+function cancelSelectMode() {
+    toggleSelectMode();
+}
+
+// Handle dream click
+function handleDreamClick(event, dreamId) {
+    if (isSelectMode) {
+        event.stopPropagation();
+        const checkbox = event.currentTarget.querySelector('.dream-checkbox');
+        checkbox.checked = !checkbox.checked;
+        updateSelectedCount();
+    } else {
+        window.location.href = `/dream/${dreamId}`;
+    }
+}
+
+// Update selected count
+function updateSelectedCount() {
+    const checkboxes = document.querySelectorAll('.dream-checkbox:checked');
+    const count = checkboxes.length;
+    document.getElementById('selectedCount').textContent = count;
+    
+    // Update selected dreams set
+    selectedDreams.clear();
+    checkboxes.forEach(cb => {
+        selectedDreams.add(parseInt(cb.getAttribute('data-dream-id')));
+    });
+}
+
+// Select all dreams
+function selectAllDreams() {
+    const checkboxes = document.querySelectorAll('.dream-checkbox');
+    const allSelected = checkboxes.length > 0 && checkboxes.length === document.querySelectorAll('.dream-checkbox:checked').length;
+    
+    checkboxes.forEach(cb => {
+        cb.checked = !allSelected;
+    });
+    
+    updateSelectedCount();
+}
+
+// Delete selected dreams
+function deleteSelectedDreams() {
+    if (selectedDreams.size === 0) return;
+    
+    const count = selectedDreams.size;
+    const dreamIds = Array.from(selectedDreams);
+    
+    currentDeleteAction = {
+        type: 'multiple',
+        dreamIds: dreamIds
+    };
+    
+    document.getElementById('deleteModalText').textContent = 
+        `Sei sicuro di voler eliminare ${count} sogni selezionati?`;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+// Delete dream via swipe
+function deleteDreamSwipe(dreamId) {
+    currentDeleteAction = {
+        type: 'single',
+        dreamIds: [dreamId]
+    };
+    
+    document.getElementById('deleteModalText').textContent = 
+        'Sei sicuro di voler eliminare questo sogno?';
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+// Confirm delete
+function confirmDelete() {
+    if (!currentDeleteAction) return;
+    
+    const dreamIds = currentDeleteAction.dreamIds;
+    
+    // Send delete request
+    fetch('/dreams/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            dream_ids: dreamIds
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove dreams from DOM
+            dreamIds.forEach(dreamId => {
+                const wrapper = document.querySelector(`[data-dream-id="${dreamId}"]`);
+                if (wrapper) wrapper.remove();
+            });
+            
+            // Exit selection mode if active
+            if (isSelectMode) {
+                toggleSelectMode();
+            }
+        } else {
+            alert('Errore durante l\'eliminazione: ' + (data.error || 'Errore sconosciuto'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Errore di connessione. Riprova.');
+    })
+    .finally(() => {
+        hideDeleteModal();
+    });
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+    currentDeleteAction = null;
+}
+
+// Touch events for swipe
+document.addEventListener('DOMContentLoaded', function() {
+    const dreamWrappers = document.querySelectorAll('.dream-item-wrapper');
+    
+    dreamWrappers.forEach(wrapper => {
+        const dreamItem = wrapper.querySelector('.dream-item');
+        
+        // Touch events
+        dreamItem.addEventListener('touchstart', function(e) {
+            if (isSelectMode) return;
+            
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isSwipeActive = true;
+        }, { passive: true });
+        
+        dreamItem.addEventListener('touchmove', function(e) {
+            if (!isSwipeActive || isSelectMode) return;
+            
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const deltaX = touchX - touchStartX;
+            const deltaY = touchY - touchStartY;
+            
+            // Check if horizontal swipe
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+                e.preventDefault();
+                
+                if (deltaX < -30) { // Swipe left
+                    wrapper.classList.add('swiped');
+                } else if (deltaX > 30) { // Swipe right
+                    wrapper.classList.remove('swiped');
+                }
+            }
+        }, { passive: false });
+        
+        dreamItem.addEventListener('touchend', function(e) {
+            isSwipeActive = false;
+        }, { passive: true });
+        
+        // Mouse events for desktop testing
+        let isMouseDown = false;
+        
+        dreamItem.addEventListener('mousedown', function(e) {
+            if (isSelectMode) return;
+            
+            touchStartX = e.clientX;
+            isMouseDown = true;
+        });
+        
+        dreamItem.addEventListener('mousemove', function(e) {
+            if (!isMouseDown || isSelectMode) return;
+            
+            const deltaX = e.clientX - touchStartX;
+            
+            if (Math.abs(deltaX) > 30) {
+                if (deltaX < -30) { // Swipe left
+                    wrapper.classList.add('swiped');
+                } else if (deltaX > 30) { // Swipe right
+                    wrapper.classList.remove('swiped');
+                }
+            }
+        });
+        
+        dreamItem.addEventListener('mouseup', function(e) {
+            isMouseDown = false;
+        });
+    });
+});
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideDeleteModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideDeleteModal();
+        if (isSelectMode) {
+            toggleSelectMode();
+        }
+    }
+});
+</script>
 
 </body>
 </html>
