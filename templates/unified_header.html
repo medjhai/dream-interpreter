@@ -21,12 +21,10 @@
     <nav class="slide-nav" id="mainNav">
         <button class="nav-close" onclick="toggleNav()">×</button>
         <a href="{{ url_for('home') }}" class="nav-item">🏠 Home</a>
-        <a href="{{ url_for('interpret') }}" class="nav-item">✨ New Dream</a>
-        <a href="{{ url_for('dreams_history') }}" class="nav-item">📚 My Dreams</a>
-        <a href="{{ url_for('settings') }}" class="nav-item">⚙️ Settings</a>
-        <a href="{{ url_for('faq') }}" class="nav-item">❓ FAQ</a>
-        <a href="{{ url_for('contacts') }}" class="nav-item">📧 Contacts</a>
         <a href="{{ url_for('profile') }}" class="nav-item">👤 Profile</a>
+        <a href="{{ url_for('settings') }}" class="nav-item">⚙️ Impostazioni</a>
+        <a href="{{ url_for('faq') }}" class="nav-item">❓ FAQ</a>
+        <a href="{{ url_for('contacts') }}" class="nav-item">📧 Contatti</a>
         <a href="{{ url_for('logout') }}" class="nav-item">🚪 Logout</a>
     </nav>
 </div>
@@ -149,22 +147,25 @@
     text-decoration: none;
 }
 
-/* Global Mobile Layout */
+/* Global Mobile Layout - Full Screen */
 .page-container {
     background: #000;
     min-height: 100vh;
-    max-width: 375px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     position: relative;
     color: white;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-@media (min-width: 376px) {
+/* Desktop View - Keep mobile-like appearance */
+@media (min-width: 768px) {
     .page-container {
-        border-radius: 20px;
-        margin-top: 20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        max-width: 414px;
+        margin: 0 auto;
+        border-radius: 0;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
     }
 }
 </style>

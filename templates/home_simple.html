@@ -3,562 +3,616 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Dream Interpreter</title>
+    <title>Dream Interpreter - Home</title>
     <meta name="theme-color" content="#000000">
-    <meta name="description" content="Interpreta i tuoi sogni con analisi psicologica avanzata">
 </head>
-<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow-x: hidden;">
 
-    <div class="mobile-app">
-        <!-- Header -->
-        <div class="app-header">
-            <a href="{{ url_for('profile') }}" class="user-profile">
-                <div class="avatar">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ddd'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='40' fill='%23666'%3E{{ current_user.username[0].upper() if current_user.is_authenticated else 'G' }}%3C/text%3E%3C/svg%3E" alt="Avatar">
-                </div>
-                <div class="greeting-text">
-                    <div class="hello">Hello {{ current_user.username if current_user.is_authenticated else 'Guest' }}</div>
-                    <div class="welcome">Welcome back.</div>
-                </div>
-            </a>
-            <button class="menu-dots" onclick="toggleHomeNav()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
+<div class="page-container">
+    {% set welcome_text = "Welcome back." %}
+    {% include 'unified_header.html' %}
 
-        <!-- Navigation -->
-        <nav class="slide-nav" id="homeNav">
-            <button class="nav-close" onclick="toggleHomeNav()">×</button>
-            <a href="{{ url_for('settings') }}" class="nav-item">⚙️ Settings</a>
-            <a href="{{ url_for('faq') }}" class="nav-item">❓ FAQ</a>
-            <a href="{{ url_for('contacts') }}" class="nav-item">📧 Contacts</a>
-            <a href="{{ url_for('profile') }}" class="nav-item">👤 Profile</a>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="main-section">
-            <!-- Main Title -->
-            <h1 class="dream-title">
+    <div class="main-content">
+        <!-- Main Title -->
+        <div class="hero-section">
+            <h1 class="hero-title">
                 What did<br>
-                you <span class="dream-gray">dream</span><br>
+                you <span class="gradient-text">dream</span><br>
                 about..
             </h1>
+        </div>
 
-            <!-- Fluid Waves -->
-            <div class="wave-container">
-                <svg class="wave-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
-                        </linearGradient>
-                        <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#d97706;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <path class="wave-path wave1" d="M0,100 C50,120 100,80 150,100 C200,120 250,80 300,100 C350,120 400,80 450,100 L450,150 L0,150 Z" fill="url(#waveGrad1)" opacity="0.7"/>
-                    <path class="wave-path wave2" d="M0,120 C50,100 100,140 150,120 C200,100 250,140 300,120 C350,100 400,140 450,120 L450,170 L0,170 Z" fill="url(#waveGrad2)" opacity="0.5"/>
-                </svg>
-            </div>
-
-            <!-- Integrated Dream Input Form -->
-            <div class="dream-input-section">
-                <h3 class="form-title">Write about your dream here!</h3>
-                
-                <div class="input-container">
-                    <!-- Mood Selector -->
-                    <div class="mood-selector">
-                        <select id="moodSelect" class="mood-dropdown">
-                            <option value="felice">😊</option>
-                            <option value="triste">😢</option>
-                            <option value="spaventato">😨</option>
-                            <option value="eccitato">🤩</option>
-                            <option value="confuso">😵‍💫</option>
-                            <option value="neutro" selected>😐</option>
-                        </select>
-                    </div>
-
-                    <!-- Text Input -->
-                    <div class="text-input-wrapper">
-                        <textarea 
-                            id="dreamTextInput" 
-                            placeholder="I dreamt I was in Old trafford playing with Alozie and 11 others players with everyone wearing pink and yellow tshirt, I scored and everyone is cheering me up while I jubilate..."
-                            class="dream-textarea"
-                        ></textarea>
-                        <button onclick="interpretTextDream()" class="send-button">
-                            <div class="send-icon">➤</div>
-                        </button>
-                    </div>
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-card">
+                <div class="input-header">
+                    <p class="input-label">Write about your dream here!</p>
                 </div>
-
+                
+                <!-- Text Input -->
+                <div class="text-input-container">
+                    <div class="mood-selector">
+                        <button class="mood-button" data-mood="neutro" title="Neutro">😐</button>
+                        <button class="mood-button" data-mood="felice" title="Felice">😊</button>
+                        <button class="mood-button" data-mood="triste" title="Triste">😢</button>
+                        <button class="mood-button" data-mood="spaventato" title="Spaventato">😨</button>
+                        <button class="mood-button" data-mood="eccitato" title="Eccitato">🤩</button>
+                        <button class="mood-button" data-mood="confuso" title="Confuso">😵‍💫</button>
+                    </div>
+                    
+                    <textarea 
+                        id="dreamInput" 
+                        class="dream-input" 
+                        placeholder="I dreamt I was in Old trafford playing with..."
+                        rows="3"
+                    ></textarea>
+                    
+                    <button class="interpret-button" onclick="interpretDream()">
+                        ➤
+                    </button>
+                </div>
+                
                 <!-- Voice Button -->
-                <button class="voice-button" onclick="toggleVoiceRecording()">
-                    Use voice
+                <div class="voice-section">
+                    <button class="voice-button" onclick="startVoiceRecording()">
+                        🎤 Use voice
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('dreams_history') }}" class="action-link">
+                📚 I Tuoi Sogni
+            </a>
+            <a href="{{ url_for('profile') }}" class="action-link">
+                📊 Statistiche
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Voice Recording Modal -->
+<div id="voiceModal" class="voice-modal hidden">
+    <div class="voice-modal-content">
+        <div class="voice-modal-header">
+            <h3>🎤 Registrazione Vocale</h3>
+            <button class="voice-modal-close" onclick="closeVoiceModal()">×</button>
+        </div>
+        <div class="voice-modal-body">
+            <div class="voice-indicator">
+                <div class="voice-circle" id="voiceCircle"></div>
+                <p id="voiceStatus">Clicca per iniziare a registrare</p>
+            </div>
+            <div class="voice-controls">
+                <button id="recordBtn" class="voice-control-btn" onclick="toggleRecording()">
+                    🎤 Registra
+                </button>
+                <button id="stopBtn" class="voice-control-btn hidden" onclick="stopRecording()">
+                    ⏹️ Stop
                 </button>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-    /* Mobile App Container */
-    .mobile-app {
-        background: #000000;
-        min-height: 100vh;
-        max-width: 375px;
-        margin: 0 auto;
-        position: relative;
-        color: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        overflow-x: hidden;
+<style>
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+}
+
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    position: relative;
+    color: white;
+}
+
+.main-content {
+    padding: 0 24px 40px;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 20px 0 40px;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+    color: white;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Input Section */
+.input-section {
+    margin-bottom: 30px;
+}
+
+.input-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.input-header {
+    margin-bottom: 16px;
+}
+
+.input-label {
+    color: #888;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Text Input */
+.text-input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.mood-selector {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.mood-button {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mood-button:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(0, 122, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.mood-button.selected {
+    background: rgba(0, 122, 255, 0.2);
+    border-color: #007AFF;
+}
+
+.dream-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 16px 60px 16px 16px;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    min-height: 80px;
+}
+
+.dream-input:focus {
+    outline: none;
+    border-color: #007AFF;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.dream-input::placeholder {
+    color: #666;
+}
+
+.interpret-button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    border: none;
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.interpret-button:hover {
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+}
+
+/* Voice Section */
+.voice-section {
+    text-align: center;
+}
+
+.voice-button {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B35 100%);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.voice-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 30px;
+}
+
+.action-link {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.action-link:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(0, 122, 255, 0.3);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: white;
+}
+
+/* Voice Modal */
+.voice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    padding: 20px;
+}
+
+.voice-modal.hidden {
+    display: none;
+}
+
+.voice-modal-content {
+    background: #1c1c1e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 350px;
+    width: 100%;
+    text-align: center;
+}
+
+.voice-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.voice-modal-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+}
+
+.voice-modal-close {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voice-indicator {
+    margin-bottom: 24px;
+}
+
+.voice-circle {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #FF6B35;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.voice-circle.recording {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.voice-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.voice-control-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.voice-control-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.voice-control-btn.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .main-content {
+        padding: 0 16px 40px;
     }
-
-    /* App Header */
-    .app-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 24px 20px;
+    
+    .hero-title {
+        font-size: 40px;
     }
-
-    .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-decoration: none;
-        color: inherit;
-        transition: all 0.3s ease;
-    }
-
-    .user-profile:hover {
-        text-decoration: none;
-        color: inherit;
-        transform: scale(1.02);
-    }
-
-    .avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-
-    .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .greeting-text .hello {
-        font-size: 16px;
-        color: #888;
-        margin-bottom: 2px;
-    }
-
-    .greeting-text .welcome {
-        font-size: 17px;
-        color: #ffffff;
-        font-weight: 500;
-    }
-
-    .menu-dots {
-        background: none;
-        border: none;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 4px;
-        cursor: pointer;
-    }
-
-    .menu-dots span {
-        width: 4px;
-        height: 4px;
-        background: #888;
-        border-radius: 50%;
-    }
-
-    /* Navigation */
-    .slide-nav {
-        position: fixed;
-        top: 0;
-        right: -300px;
-        width: 280px;
-        height: 100vh;
-        background: rgba(20, 20, 20, 0.95);
-        backdrop-filter: blur(20px);
-        transition: right 0.3s ease;
-        z-index: 1000;
-        padding: 60px 20px;
-    }
-
-    .slide-nav.active {
-        right: 0;
-    }
-
-    .nav-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-    }
-
-    .nav-item {
-        display: block;
-        color: white;
-        text-decoration: none;
-        padding: 16px 0;
-        font-size: 18px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .nav-item:hover {
-        color: #007AFF;
-        text-decoration: none;
-    }
-
-    /* Main Section */
-    .main-section {
-        padding: 0 24px 40px;
-    }
-
-    /* Dream Title */
-    .dream-title {
-        font-size: 48px;
-        font-weight: 700;
-        line-height: 1.1;
-        margin: 20px 0 30px;
-        color: white;
-    }
-
-    .dream-gray {
-        color: #666;
-    }
-
-    /* Wave Container */
-    .wave-container {
-        margin: 20px -24px 30px;
-        height: 100px;
-        overflow: hidden;
-    }
-
-    .wave-svg {
-        width: 100%;
-        height: 100%;
-    }
-
-    .wave-path {
-        animation: waveFlow 4s ease-in-out infinite;
-    }
-
-    .wave1 {
-        animation-delay: 0s;
-    }
-
-    .wave2 {
-        animation-delay: -2s;
-    }
-
-    @keyframes waveFlow {
-        0%, 100% { 
-            transform: translateX(-10px) scaleY(0.9); 
-        }
-        50% { 
-            transform: translateX(10px) scaleY(1.1); 
-        }
-    }
-
-    /* Dream Input Section */
-    .dream-input-section {
-        margin-top: 30px;
-    }
-
-    .form-title {
-        font-size: 16px;
-        color: #888;
-        margin-bottom: 16px;
-        font-weight: 400;
-    }
-
-    .input-container {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        margin-bottom: 20px;
-    }
-
-    /* Mood Selector */
+    
     .mood-selector {
-        flex-shrink: 0;
-    }
-
-    .mood-dropdown {
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 12px;
-        color: white;
-        font-size: 24px;
-        padding: 12px 8px;
-        cursor: pointer;
-        outline: none;
-        width: 60px;
-        height: 60px;
-        text-align: center;
-    }
-
-    .mood-dropdown:focus {
-        border-color: #007AFF;
-        background: rgba(255,255,255,0.15);
-    }
-
-    /* Text Input Wrapper */
-    .text-input-wrapper {
-        flex: 1;
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 25px;
-        padding: 16px 60px 16px 20px;
-        min-height: 60px;
-    }
-
-    .text-input-wrapper:focus-within {
-        border-color: #007AFF;
-        background: rgba(255,255,255,0.1);
-    }
-
-    .dream-textarea {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 16px;
-        resize: none;
-        outline: none;
-        width: 100%;
-        min-height: 28px;
-        max-height: 120px;
-        line-height: 1.4;
-        font-family: inherit;
-    }
-
-    .dream-textarea::placeholder {
-        color: #666;
-    }
-
-    .send-button {
-        position: absolute;
-        right: 8px;
-        bottom: 8px;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
         justify-content: center;
-        transition: all 0.3s ease;
     }
-
-    .send-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+    
+    .mood-button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
     }
-
-    .send-icon {
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
+    
+    .quick-actions {
+        flex-direction: column;
     }
+}
 
-    /* Voice Button */
-    .voice-button {
-        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
-        border: none;
-        border-radius: 25px;
-        padding: 12px 32px;
-        color: #000;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        display: block;
+/* Desktop View */
+@media (min-width: 768px) {
+    .page-container {
+        max-width: 414px;
         margin: 0 auto;
-        transition: all 0.3s ease;
+        border-radius: 0;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
     }
+}
+</style>
 
-    .voice-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-    }
+<script>
+let selectedMood = 'neutro';
+let isRecording = false;
+let mediaRecorder;
+let audioChunks = [];
 
-    /* Responsive */
-    @media (max-width: 375px) {
-        .mobile-app {
-            max-width: 100%;
-        }
+// Mood selection
+document.querySelectorAll('.mood-button').forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove selected class from all buttons
+        document.querySelectorAll('.mood-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
         
-        .dream-title {
-            font-size: 40px;
-        }
+        // Add selected class to clicked button
+        this.classList.add('selected');
+        selectedMood = this.getAttribute('data-mood');
+    });
+});
+
+// Set default mood
+document.querySelector('[data-mood="neutro"]').classList.add('selected');
+
+// Interpret dream function
+function interpretDream() {
+    const dreamText = document.getElementById('dreamInput').value.trim();
+    
+    if (!dreamText) {
+        alert('Per favore, inserisci il tuo sogno prima di procedere.');
+        return;
     }
-
-    @media (min-width: 376px) {
-        .mobile-app {
-            border-radius: 20px;
-            margin-top: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        }
+    
+    if (dreamText.length < 10) {
+        alert('Per favore, descrivi il tuo sogno in modo più dettagliato.');
+        return;
     }
-    </style>
-
-    <script>
-        // Navigation toggle
-        function toggleHomeNav() {
-            const nav = document.getElementById('homeNav');
-            nav.classList.toggle('active');
+    
+    // Create form data
+    const formData = {
+        title: `Dream - ${new Date().toLocaleDateString('it-IT')}`,
+        content: dreamText,
+        mood: selectedMood,
+        interpretation_style: 'psicologico'
+    };
+    
+    // Submit to interpret endpoint
+    fetch('/interpret', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = `/dream/${data.dream_id}`;
+        } else {
+            alert('Errore durante l\'interpretazione: ' + (data.error || 'Errore sconosciuto'));
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Errore di connessione. Riprova.');
+    });
+}
 
-        // Close navigation when clicking outside
-        document.addEventListener('click', function(event) {
-            const nav = document.getElementById('homeNav');
-            const menuBtn = document.querySelector('.menu-dots');
+// Voice recording functions
+function startVoiceRecording() {
+    document.getElementById('voiceModal').classList.remove('hidden');
+}
+
+function closeVoiceModal() {
+    if (isRecording) {
+        stopRecording();
+    }
+    document.getElementById('voiceModal').classList.add('hidden');
+}
+
+async function toggleRecording() {
+    if (!isRecording) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
             
-            if (!nav.contains(event.target) && !menuBtn.contains(event.target)) {
-                nav.classList.remove('active');
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('homeNav').classList.remove('active');
-            }
-        });
-        
-        let isRecording = false;
-        let mediaRecorder;
-        let audioChunks = [];
-        
-        // Voice recording functionality
-        function toggleVoiceRecording() {
-            if (!isRecording) {
-                // Start recording
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ audio: true })
-                        .then(stream => {
-                            isRecording = true;
-                            
-                            mediaRecorder = new MediaRecorder(stream);
-                            audioChunks = [];
-                            
-                            mediaRecorder.ondataavailable = event => {
-                                audioChunks.push(event.data);
-                            };
-                            
-                            mediaRecorder.onstop = () => {
-                                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                                console.log('Audio recorded:', audioBlob);
-                                
-                                // Stop all tracks
-                                stream.getTracks().forEach(track => track.stop());
-                                
-                                // Here you would process the audio or send to server
-                                alert('Voice recording completed! Feature coming soon.');
-                            };
-                            
-                            mediaRecorder.start();
-                        })
-                        .catch(err => {
-                            console.error('Error accessing microphone:', err);
-                            alert('Could not access microphone. Please check permissions.');
-                        });
-                } else {
-                    // Fallback for browsers without getUserMedia
-                    fallbackVoiceRecording();
-                }
-            } else {
-                // Stop recording
-                isRecording = false;
-                
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-            }
-        }
-        
-        // Fallback voice recording simulation
-        function fallbackVoiceRecording() {
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                await processVoiceRecording(audioBlob);
+            };
+            
+            mediaRecorder.start();
             isRecording = true;
             
-            // Simulate recording for 3 seconds
-            setTimeout(() => {
-                isRecording = false;
-                alert('Voice recording completed! (Demo mode)');
-            }, 3000);
+            document.getElementById('recordBtn').classList.add('hidden');
+            document.getElementById('stopBtn').classList.remove('hidden');
+            document.getElementById('voiceCircle').classList.add('recording');
+            document.getElementById('voiceStatus').textContent = 'Registrazione in corso...';
+            
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Impossibile accedere al microfono. Controlla i permessi.');
         }
+    }
+}
 
-        // Auto-resize textarea
-        document.getElementById('dreamTextInput').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+function stopRecording() {
+    if (isRecording && mediaRecorder) {
+        mediaRecorder.stop();
+        isRecording = false;
+        
+        // Stop all tracks
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        
+        document.getElementById('recordBtn').classList.remove('hidden');
+        document.getElementById('stopBtn').classList.add('hidden');
+        document.getElementById('voiceCircle').classList.remove('recording');
+        document.getElementById('voiceStatus').textContent = 'Elaborazione...';
+    }
+}
+
+async function processVoiceRecording(audioBlob) {
+    try {
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'dream_recording.wav');
+        formData.append('mood', selectedMood);
+        
+        const response = await fetch('/voice_interpret', {
+            method: 'POST',
+            body: formData
         });
-
-        // Dream interpretation
-        function interpretTextDream() {
-            const dreamText = document.getElementById('dreamTextInput').value.trim();
-            const selectedMood = document.getElementById('moodSelect').value;
-            
-            if (!dreamText) {
-                alert('Please write your dream first!');
-                return;
-            }
-            
-            // Create form and submit
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ url_for("interpret") }}';
-            
-            const titleInput = document.createElement('input');
-            titleInput.type = 'hidden';
-            titleInput.name = 'title';
-            titleInput.value = `Dream - ${new Date().toLocaleDateString()}`;
-            
-            const contentInput = document.createElement('input');
-            contentInput.type = 'hidden';
-            contentInput.name = 'content';
-            contentInput.value = dreamText;
-            
-            const moodInput = document.createElement('input');
-            moodInput.type = 'hidden';
-            moodInput.name = 'mood';
-            moodInput.value = selectedMood;
-            
-            const styleInput = document.createElement('input');
-            styleInput.type = 'hidden';
-            styleInput.name = 'style';
-            styleInput.value = 'psicologico'; // Default style (hidden as requested)
-            
-            form.appendChild(titleInput);
-            form.appendChild(contentInput);
-            form.appendChild(moodInput);
-            form.appendChild(styleInput);
-            
-            document.body.appendChild(form);
-            form.submit();
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeVoiceModal();
+            window.location.href = '/dreams';
+        } else {
+            alert('Errore durante l\'elaborazione: ' + (data.error || 'Errore sconosciuto'));
+            document.getElementById('voiceStatus').textContent = 'Errore. Riprova.';
         }
-    </script>
+    } catch (error) {
+        console.error('Error processing voice recording:', error);
+        alert('Errore durante l\'elaborazione della registrazione.');
+        document.getElementById('voiceStatus').textContent = 'Errore. Riprova.';
+    }
+}
+
+// Auto-resize textarea
+document.getElementById('dreamInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+// Handle enter key
+document.getElementById('dreamInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        interpretDream();
+    }
+});
+</script>
+
 </body>
 </html>

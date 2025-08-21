@@ -1,67 +1,318 @@
-{% extends "base_minimal.html" %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>I Tuoi Sogni - Dream Interpreter</title>
+    <meta name="theme-color" content="#000000">
+</head>
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-{% block content %}
-<div class="container">
-    <div class="text-center mb-4">
-        <h1>📚 I Tuoi Sogni</h1>
-        <p class="text-muted">Tutti i tuoi sogni interpretati</p>
-    </div>
+<div class="page-container">
+    {% set welcome_text = "My Dreams" %}
+    {% include 'unified_header.html' %}
 
-    {% if dreams.items %}
-    <div class="grid">
-        {% for dream in dreams.items %}
-        <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
-            <h3 class="dream-title">{{ dream.title }}</h3>
-            <p class="dream-preview">
-                {{ dream.content[:150] }}{% if dream.content|length > 150 %}...{% endif %}
-            </p>
-            <div class="dream-meta">
-                <div>
-                    {% if dream.mood %}
-                    <span class="mood-badge">
-                        {% if dream.mood == 'felice' %}😊{% endif %}
-                        {% if dream.mood == 'triste' %}😢{% endif %}
-                        {% if dream.mood == 'ansioso' %}😰{% endif %}
-                        {% if dream.mood == 'rabbioso' %}😠{% endif %}
-                        {% if dream.mood == 'confuso' %}😕{% endif %}
-                        {{ dream.mood.title() }}
-                    </span>
-                    {% endif %}
-                    {% if dream.interpretation_style %}
-                    <span class="mood-badge">{{ dream.interpretation_style.title() }}</span>
-                    {% endif %}
-                </div>
-                <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
-            </div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="page-title">📚 I Tuoi Sogni</h1>
+            <p class="page-subtitle">Tutti i tuoi sogni interpretati</p>
         </div>
-        {% endfor %}
-    </div>
 
-    <!-- Pagination -->
-    {% if dreams.pages > 1 %}
-    <div class="text-center mt-4">
-        {% if dreams.has_prev %}
-        <a href="{{ url_for('dreams_history', page=dreams.prev_num) }}" class="btn btn-secondary btn-sm">← Precedente</a>
-        {% endif %}
-        <span class="text-muted" style="margin: 0 1rem;">
-            Pagina {{ dreams.page }} di {{ dreams.pages }}
-        </span>
-        {% if dreams.has_next %}
-        <a href="{{ url_for('dreams_history', page=dreams.next_num) }}" class="btn btn-secondary btn-sm">Successiva →</a>
-        {% endif %}
-    </div>
-    {% endif %}
+        {% if dreams.items %}
+        <!-- Dreams Grid -->
+        <div class="dreams-grid">
+            {% for dream in dreams.items %}
+            <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+                <h3 class="dream-title">{{ dream.title }}</h3>
+                <p class="dream-preview">
+                    {{ dream.content[:150] }}{% if dream.content|length > 150 %}...{% endif %}
+                </p>
+                <div class="dream-meta">
+                    <div class="badges">
+                        {% if dream.mood %}
+                        <span class="mood-badge">
+                            {% if dream.mood == 'felice' %}😊{% endif %}
+                            {% if dream.mood == 'triste' %}😢{% endif %}
+                            {% if dream.mood == 'spaventato' %}😨{% endif %}
+                            {% if dream.mood == 'eccitato' %}🤩{% endif %}
+                            {% if dream.mood == 'confuso' %}😵‍💫{% endif %}
+                            {% if dream.mood == 'neutro' %}😐{% endif %}
+                            {{ dream.mood.title() }}
+                        </span>
+                        {% endif %}
+                        {% if dream.interpretation_style %}
+                        <span class="style-badge">{{ dream.interpretation_style.title() }}</span>
+                        {% endif %}
+                    </div>
+                    <small class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-    {% else %}
-    <!-- Empty State -->
-    <div class="card text-center">
-        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">💭</div>
-        <h3 class="mb-2">Nessun sogno trovato</h3>
-        <p class="text-muted mb-3">Inizia interpretando il tuo primo sogno</p>
-        <a href="{{ url_for('interpret') }}" class="btn btn-primary">
-            Interpreta Primo Sogno
-        </a>
+        <!-- Pagination -->
+        {% if dreams.pages > 1 %}
+        <div class="pagination-section">
+            {% if dreams.has_prev %}
+            <a href="{{ url_for('dreams_history', page=dreams.prev_num) }}" class="pagination-button">← Precedente</a>
+            {% endif %}
+            <span class="page-info">
+                Pagina {{ dreams.page }} di {{ dreams.pages }}
+            </span>
+            {% if dreams.has_next %}
+            <a href="{{ url_for('dreams_history', page=dreams.next_num) }}" class="pagination-button">Successiva →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">💭</div>
+            <h3>Nessun sogno trovato</h3>
+            <p>Inizia interpretando il tuo primo sogno</p>
+            <a href="{{ url_for('interpret') }}" class="primary-button">
+                ✨ Interpreta Primo Sogno
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Quick Action -->
+        <div class="action-section">
+            <a href="{{ url_for('interpret') }}" class="primary-button">
+                ✨ Interpreta Nuovo Sogno
+            </a>
+        </div>
     </div>
-    {% endif %}
 </div>
-{% endblock %}
+
+<style>
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    position: relative;
+    color: white;
+}
+
+.main-content {
+    padding: 20px 24px 40px;
+}
+
+/* Typography */
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #888;
+    margin: 0 0 30px;
+}
+
+/* Dreams Grid */
+.dreams-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.dream-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dream-item:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-2px);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+.dream-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.dream-preview {
+    font-size: 14px;
+    color: #aaa;
+    line-height: 1.4;
+    margin: 0 0 12px;
+}
+
+.dream-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.mood-badge {
+    background: rgba(0, 122, 255, 0.2);
+    color: #007AFF;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.style-badge {
+    background: rgba(88, 86, 214, 0.2);
+    color: #5856D6;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dream-date {
+    color: #666;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Pagination */
+.pagination-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 8px;
+}
+
+.pagination-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.pagination-button:hover {
+    background: rgba(255,255,255,0.15);
+    text-decoration: none;
+    color: white;
+}
+
+.page-info {
+    color: #888;
+    font-size: 14px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    margin-bottom: 30px;
+}
+
+.empty-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.empty-state h3 {
+    font-size: 24px;
+    color: white;
+    margin: 0 0 8px;
+}
+
+.empty-state p {
+    color: #888;
+    margin: 0 0 32px;
+    font-size: 16px;
+}
+
+/* Action Section */
+.action-section {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .main-content {
+        padding: 20px 16px 40px;
+    }
+    
+    .dream-item {
+        padding: 16px;
+    }
+    
+    .pagination-section {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+/* Desktop View */
+@media (min-width: 768px) {
+    .page-container {
+        max-width: 414px;
+        margin: 0 auto;
+        border-radius: 0;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+    }
+}
+</style>
+
+</body>
+</html>
