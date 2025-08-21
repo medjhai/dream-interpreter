@@ -1,0 +1,90 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h1>Ciao, {{ current_user.username }}!</h1>
+        <p class="text-muted">Benvenuto nel tuo diario dei sogni</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-4 mb-4">
+        <div class="card stats-card">
+            <div class="stats-number">{{ dream_count }}</div>
+            <div class="stats-label">Sogni</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ recent_dreams|length }}</div>
+            <div class="stats-label">Recenti</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ streak_days }}</div>
+            <div class="stats-label">Streak</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ favorite_mood or "😐" }}</div>
+            <div class="stats-label">Mood</div>
+        </div>
+    </div>
+
+    <!-- Quick Action -->
+    <div class="text-center mb-4">
+        <a href="{{ url_for('interpret') }}" class="btn btn-primary btn-lg">
+            ✨ Interpreta un Nuovo Sogno
+        </a>
+    </div>
+
+    <!-- Recent Dreams -->
+    {% if recent_dreams %}
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Sogni Recenti</h2>
+            <p class="card-subtitle">I tuoi ultimi sogni interpretati</p>
+        </div>
+        
+        <div class="grid">
+            {% for dream in recent_dreams %}
+            <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+                <h3 class="dream-title">{{ dream.title }}</h3>
+                <p class="dream-preview">
+                    {{ dream.content[:100] }}{% if dream.content|length > 100 %}...{% endif %}
+                </p>
+                <div class="dream-meta">
+                    <div>
+                        {% if dream.mood %}
+                        <span class="mood-badge">
+                            {% if dream.mood == 'felice' %}😊{% endif %}
+                            {% if dream.mood == 'triste' %}😢{% endif %}
+                            {% if dream.mood == 'ansioso' %}😰{% endif %}
+                            {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                            {% if dream.mood == 'confuso' %}😕{% endif %}
+                            {{ dream.mood.title() }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary">
+                Vedi Tutti i Sogni
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="card text-center">
+        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">💤</div>
+        <h3 class="mb-2">Nessun sogno ancora</h3>
+        <p class="text-muted mb-3">Inizia il tuo viaggio onirico interpretando il primo sogno</p>
+        <a href="{{ url_for('interpret') }}" class="btn btn-primary">
+            Interpreta il Primo Sogno
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-4">
+        <h1>📊 Le Tue Statistiche</h1>
+        <p class="text-muted">Analisi dei tuoi sogni e pattern onirici</p>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="grid grid-4 mb-4">
+        <div class="card stats-card">
+            <div class="stats-number">{{ total_dreams }}</div>
+            <div class="stats-label">Sogni Totali</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ dreams_this_month }}</div>
+            <div class="stats-label">Questo Mese</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ current_streak }}</div>
+            <div class="stats-label">Giorni di Fila</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ most_common_mood.emoji if most_common_mood else "😐" }}</div>
+            <div class="stats-label">Mood Prevalente</div>
+        </div>
+    </div>
+
+    {% if total_dreams > 0 %}
+    <!-- Mood Distribution -->
+    {% if mood_distribution %}
+    <div class="card mb-4">
+        <h3 class="card-title mb-3">Distribuzione Mood</h3>
+        <div class="grid grid-2">
+            {% for mood in mood_distribution %}
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: var(--surface-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                <span>{{ mood.emoji }} {{ mood.name }}</span>
+                <span class="text-primary" style="font-weight: 600;">{{ mood.count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Common Themes -->
+    {% if common_themes %}
+    <div class="card mb-4">
+        <h3 class="card-title mb-3">Temi Ricorrenti</h3>
+        <div class="grid grid-2">
+            {% for theme in common_themes %}
+            <div style="padding: 0.75rem; background: var(--surface-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600;">{{ theme.word }}</span>
+                    <span class="text-primary">{{ theme.count }} volte</span>
+                </div>
+                <div style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--primary); width: {{ (theme.count / common_themes[0].count * 100) if common_themes else 0 }}%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Style Preferences -->
+    {% if style_preferences %}
+    <div class="card mb-4">
+        <h3 class="card-title mb-3">Stili Preferiti</h3>
+        <div class="grid grid-3">
+            {% for style in style_preferences %}
+            <div class="text-center" style="padding: 1rem; background: var(--surface-light); border-radius: var(--radius);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                    {% if style.name == 'poetico' %}🎭{% endif %}
+                    {% if style.name == 'scientifico' %}🔬{% endif %}
+                    {% if style.name == 'spirituale' %}🕉️{% endif %}
+                    {% if style.name == 'consolatorio' %}💝{% endif %}
+                    {% if style.name == 'neutro' %}🔍{% endif %}
+                </div>
+                <h4>{{ style.name.title() }}</h4>
+                <p class="text-muted">{{ style.count }} sogni</p>
+                <div style="height: 3px; background: var(--border); border-radius: 2px; margin-top: 0.5rem; overflow: hidden;">
+                    <div style="height: 100%; background: var(--primary); width: {{ (style.count / total_dreams * 100) if total_dreams else 0 }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="text-center">
+        <a href="{{ url_for('export_data') }}" class="btn btn-secondary">
+            📥 Esporta Tutti i Dati
+        </a>
+        <a href="{{ url_for('dreams_history') }}" class="btn btn-primary">
+            📚 Vedi Tutti i Sogni
+        </a>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="card text-center">
+        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
+        <h3 class="mb-2">Nessuna statistica disponibile</h3>
+        <p class="text-muted mb-3">Interpreta alcuni sogni per vedere le tue statistiche</p>
+        <a href="{{ url_for('interpret') }}" class="btn btn-primary">
+            Interpreta Primo Sogno
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

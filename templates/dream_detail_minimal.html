@@ -1,0 +1,125 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <!-- Back Navigation -->
+    <div class="mb-3">
+        <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary btn-sm">
+            ← Torna ai Sogni
+        </a>
+    </div>
+
+    <!-- Dream Card -->
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">{{ dream.title }}</h1>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.5rem;">
+                {% if dream.mood %}
+                <span class="mood-badge">
+                    {% if dream.mood == 'felice' %}😊{% endif %}
+                    {% if dream.mood == 'triste' %}😢{% endif %}
+                    {% if dream.mood == 'ansioso' %}😰{% endif %}
+                    {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                    {% if dream.mood == 'confuso' %}😕{% endif %}
+                    {{ dream.mood.title() }}
+                </span>
+                {% endif %}
+                {% if dream.interpretation_style %}
+                <span class="mood-badge">{{ dream.interpretation_style.title() }}</span>
+                {% endif %}
+                <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y alle %H:%M') }}</small>
+            </div>
+        </div>
+
+        <!-- Dream Content -->
+        <div class="mb-4">
+            <h3 class="mb-2">🌙 Il Tuo Sogno</h3>
+            <div style="background: var(--surface-light); padding: var(--spacing-lg); border-radius: var(--radius); border-left: 4px solid var(--primary); line-height: 1.7;">
+                {{ dream.content|nl2br|safe }}
+            </div>
+        </div>
+
+        <!-- Interpretation -->
+        {% if dream.interpretation %}
+        <div class="mb-4">
+            <h3 class="mb-2">🔮 Interpretazione</h3>
+            <div style="background: rgba(var(--primary-rgb), 0.05); padding: var(--spacing-lg); border-radius: var(--radius); border-left: 4px solid var(--primary-light); line-height: 1.7;">
+                {{ dream.interpretation|nl2br|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="text-center" style="border-top: 1px solid var(--border); padding-top: var(--spacing-lg);">
+            <a href="{{ url_for('interpret') }}" class="btn btn-primary">
+                ✨ Interpreta Nuovo Sogno
+            </a>
+            <button onclick="deleteDream({{ dream.id }})" class="btn btn-secondary" style="color: var(--error);">
+                🗑️ Elimina Sogno
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div class="card" style="max-width: 400px; width: 90%; margin: 0;">
+        <h3 class="mb-3">Conferma Eliminazione</h3>
+        <p class="text-muted mb-3">Sei sicuro di voler eliminare questo sogno? L'azione non può essere annullata.</p>
+        <div class="text-center">
+            <button onclick="confirmDelete()" class="btn btn-primary" style="background: var(--error);">
+                Elimina
+            </button>
+            <button onclick="closeModal()" class="btn btn-secondary">
+                Annulla
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let dreamToDelete = null;
+
+function deleteDream(dreamId) {
+    dreamToDelete = dreamId;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    dreamToDelete = null;
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+async function confirmDelete() {
+    if (!dreamToDelete) return;
+    
+    try {
+        const response = await fetch(`/dream/${dreamToDelete}/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = '/dreams';
+        } else {
+            alert(result.error || 'Errore durante l\'eliminazione');
+        }
+    } catch (error) {
+        alert('Errore di connessione');
+    }
+    
+    closeModal();
+}
+
+// Close modal on outside click
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+</script>
+{% endblock %}

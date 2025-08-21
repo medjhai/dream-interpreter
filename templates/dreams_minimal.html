@@ -1,0 +1,67 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-4">
+        <h1>📚 I Tuoi Sogni</h1>
+        <p class="text-muted">Tutti i tuoi sogni interpretati</p>
+    </div>
+
+    {% if dreams.items %}
+    <div class="grid">
+        {% for dream in dreams.items %}
+        <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+            <h3 class="dream-title">{{ dream.title }}</h3>
+            <p class="dream-preview">
+                {{ dream.content[:150] }}{% if dream.content|length > 150 %}...{% endif %}
+            </p>
+            <div class="dream-meta">
+                <div>
+                    {% if dream.mood %}
+                    <span class="mood-badge">
+                        {% if dream.mood == 'felice' %}😊{% endif %}
+                        {% if dream.mood == 'triste' %}😢{% endif %}
+                        {% if dream.mood == 'ansioso' %}😰{% endif %}
+                        {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                        {% if dream.mood == 'confuso' %}😕{% endif %}
+                        {{ dream.mood.title() }}
+                    </span>
+                    {% endif %}
+                    {% if dream.interpretation_style %}
+                    <span class="mood-badge">{{ dream.interpretation_style.title() }}</span>
+                    {% endif %}
+                </div>
+                <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if dreams.pages > 1 %}
+    <div class="text-center mt-4">
+        {% if dreams.has_prev %}
+        <a href="{{ url_for('dreams_history', page=dreams.prev_num) }}" class="btn btn-secondary btn-sm">← Precedente</a>
+        {% endif %}
+        <span class="text-muted" style="margin: 0 1rem;">
+            Pagina {{ dreams.page }} di {{ dreams.pages }}
+        </span>
+        {% if dreams.has_next %}
+        <a href="{{ url_for('dreams_history', page=dreams.next_num) }}" class="btn btn-secondary btn-sm">Successiva →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="card text-center">
+        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">💭</div>
+        <h3 class="mb-2">Nessun sogno trovato</h3>
+        <p class="text-muted mb-3">Inizia interpretando il tuo primo sogno</p>
+        <a href="{{ url_for('interpret') }}" class="btn btn-primary">
+            Interpreta Primo Sogno
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

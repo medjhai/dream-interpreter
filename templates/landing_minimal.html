@@ -1,0 +1,125 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="text-center py-4">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-light);">🌙</h1>
+        <h2 style="margin-bottom: 2rem;">Interprete dei Sogni</h2>
+        <p class="text-muted mb-4" style="font-size: 1.1rem;">
+            Scopri il significato dei tuoi sogni con interpretazioni personalizzate
+        </p>
+        
+        <div class="grid grid-2 mb-4">
+            <div class="card text-center">
+                <h3 class="mb-2">Registrati</h3>
+                <p class="text-muted mb-3">Nuovo utente? Crea il tuo account</p>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Nome utente" id="regUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-input" placeholder="Email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-input" placeholder="Password" id="regPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrati</button>
+                </form>
+            </div>
+            
+            <div class="card text-center">
+                <h3 class="mb-2">Accedi</h3>
+                <p class="text-muted mb-3">Hai già un account? Entra</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Nome utente" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-input" placeholder="Password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Accedi</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3 class="mb-3">Come funziona</h3>
+            <div class="grid grid-3">
+                <div class="text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">✍️</div>
+                    <h4>Scrivi</h4>
+                    <p class="text-muted">Racconta il tuo sogno</p>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🎭</div>
+                    <h4>Scegli</h4>
+                    <p class="text-muted">Seleziona mood e stile</p>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🔮</div>
+                    <h4>Scopri</h4>
+                    <p class="text-muted">Ricevi l'interpretazione</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    Caricamento...
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function handleAuth(form, endpoint) {
+    const loading = document.getElementById('loading');
+    loading.classList.remove('hidden');
+    
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = result.redirect || '/dashboard';
+        } else {
+            alert(result.error || 'Errore durante l\'operazione');
+        }
+    } catch (error) {
+        alert('Errore di connessione');
+    } finally {
+        loading.classList.add('hidden');
+    }
+}
+
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = {
+        username: document.getElementById('regUsername').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPassword').value
+    };
+    
+    handleAuth(this, '/register').then(() => {}, () => {});
+});
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = {
+        username: document.getElementById('loginUsername').value,
+        password: document.getElementById('loginPassword').value
+    };
+    
+    handleAuth(this, '/login').then(() => {}, () => {});
+});
+</script>
+{% endblock %}

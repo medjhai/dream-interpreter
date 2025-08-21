@@ -61,7 +61,7 @@ def index():
     """Main page - shows login or dashboard based on authentication status."""
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
-    return render_template('landing.html')
+    return render_template('landing_minimal.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -135,27 +135,56 @@ def register():
 def dashboard():
     """User dashboard with dream history."""
     recent_dreams = Dream.query.filter_by(user_id=current_user.id).order_by(Dream.created_at.desc()).limit(5).all()
-    return render_template('dashboard.html', user=current_user, recent_dreams=recent_dreams)
+    dream_count = Dream.query.filter_by(user_id=current_user.id).count()
+    
+    # Calculate streak days
+    from datetime import timedelta
+    dream_dates = sorted(set([d.created_at.date() for d in Dream.query.filter_by(user_id=current_user.id).all()]), reverse=True)
+    streak_days = 0
+    if dream_dates:
+        current_date = datetime.now().date()
+        for i, dream_date in enumerate(dream_dates):
+            if dream_date == current_date - timedelta(days=i):
+                streak_days += 1
+            else:
+                break
+    
+    # Get favorite mood
+    moods = [d.mood for d in Dream.query.filter_by(user_id=current_user.id).all() if d.mood]
+    favorite_mood = None
+    if moods:
+        from collections import Counter
+        mood_counter = Counter(moods)
+        common_mood = mood_counter.most_common(1)[0][0]
+        mood_emojis = {'felice': '😊', 'triste': '😢', 'ansioso': '😰', 'rabbioso': '😠', 'confuso': '😕'}
+        favorite_mood = mood_emojis.get(common_mood, '😐')
+    
+    return render_template('dashboard_minimal.html', 
+                         user=current_user, 
+                         recent_dreams=recent_dreams,
+                         dream_count=dream_count,
+                         streak_days=streak_days,
+                         favorite_mood=favorite_mood)
 
 @app.route('/interpret', methods=['GET', 'POST'])
 @login_required
 def interpret():
     """Dream interpretation page and processing."""
     if request.method == 'GET':
-        return render_template('interpret.html')
+        return render_template('interpret_minimal.html')
     
     try:
         data = request.get_json()
-        if not data or 'dream' not in data:
+        if not data or 'content' not in data:
             return jsonify({'error': 'Testo del sogno mancante'}), 400
         
-        dream_text = data.get('dream', '').strip()
+        dream_text = data.get('content', '').strip()
         if not dream_text:
             return jsonify({'error': 'Il testo del sogno non può essere vuoto'}), 400
         
         # Get optional parameters
         mood = data.get('mood', '')
-        style = data.get('style', 'neutro')
+        style = data.get('interpretation_style', 'neutro')
         title = data.get('title', '').strip()
         
         # Generate interpretation
@@ -192,14 +221,14 @@ def dreams_history():
     dreams = Dream.query.filter_by(user_id=current_user.id).order_by(Dream.created_at.desc()).paginate(
         page=page, per_page=10, error_out=False
     )
-    return render_template('dreams.html', dreams=dreams)
+    return render_template('dreams_minimal.html', dreams=dreams)
 
 @app.route('/dream/<int:dream_id>')
 @login_required
 def view_dream(dream_id):
     """View a specific dream and its interpretation."""
     dream = Dream.query.filter_by(id=dream_id, user_id=current_user.id).first_or_404()
-    return render_template('dream_detail.html', dream=dream)
+    return render_template('dream_detail_minimal.html', dream=dream)
 
 @app.route('/dream/<int:dream_id>/delete', methods=['POST'])
 @login_required
@@ -316,7 +345,7 @@ def search_dreams():
         word_counts = Counter(filtered_words).most_common(10)
         popular_keywords = [{'word': word, 'count': count} for word, count in word_counts]
     
-    return render_template('search.html', 
+    return render_template('search_minimal.html', 
                          dreams=dreams, 
                          popular_keywords=popular_keywords)
 
@@ -333,7 +362,7 @@ def stats():
     
     if not user_dreams:
         # Empty state for new users
-        return render_template('stats.html', 
+        return render_template('stats_minimal.html', 
                              total_dreams=0,
                              dreams_this_month=0,
                              most_common_mood=None,
@@ -440,7 +469,7 @@ def stats():
         'colors': [m['color'] for m in mood_distribution]
     })
     
-    return render_template('stats.html',
+    return render_template('stats_minimal.html',
                          total_dreams=total_dreams,
                          dreams_this_month=dreams_this_month,
                          most_common_mood=most_common_mood,

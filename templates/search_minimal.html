@@ -1,0 +1,110 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-4">
+        <h1>🔍 Cerca nei Sogni</h1>
+        <p class="text-muted">Trova i tuoi sogni per contenuto, mood o data</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <form method="GET" action="{{ url_for('search_dreams') }}">
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Cerca parole</label>
+                    <input type="text" name="q" class="form-input" placeholder="Casa, volare, animali..." 
+                           value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mood</label>
+                    <select name="mood" class="form-select">
+                        <option value="">Tutti</option>
+                        <option value="felice" {% if request.args.get('mood') == 'felice' %}selected{% endif %}>😊 Felice</option>
+                        <option value="triste" {% if request.args.get('mood') == 'triste' %}selected{% endif %}>😢 Triste</option>
+                        <option value="ansioso" {% if request.args.get('mood') == 'ansioso' %}selected{% endif %}>😰 Ansioso</option>
+                        <option value="rabbioso" {% if request.args.get('mood') == 'rabbioso' %}selected{% endif %}>😠 Rabbioso</option>
+                        <option value="confuso" {% if request.args.get('mood') == 'confuso' %}selected{% endif %}>😕 Confuso</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Cerca</button>
+                <a href="{{ url_for('search_dreams') }}" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if dreams %}
+    <div class="mb-3 text-center">
+        <p class="text-muted">Trovati {{ dreams|length }} sogni</p>
+        {% if dreams|length > 0 %}
+        <a href="{{ url_for('search_dreams', export='csv', **request.args) }}" class="btn btn-secondary btn-sm">
+            📥 Esporta CSV
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="grid">
+        {% for dream in dreams %}
+        <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+            <h3 class="dream-title">{{ dream.title }}</h3>
+            <p class="dream-preview">
+                {{ dream.content[:120] }}{% if dream.content|length > 120 %}...{% endif %}
+            </p>
+            <div class="dream-meta">
+                <div>
+                    {% if dream.mood %}
+                    <span class="mood-badge">
+                        {% if dream.mood == 'felice' %}😊{% endif %}
+                        {% if dream.mood == 'triste' %}😢{% endif %}
+                        {% if dream.mood == 'ansioso' %}😰{% endif %}
+                        {% if dream.mood == 'rabbioso' %}😠{% endif %}
+                        {% if dream.mood == 'confuso' %}😕{% endif %}
+                        {{ dream.mood.title() }}
+                    </span>
+                    {% endif %}
+                </div>
+                <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif request.args.get('q') or request.args.get('mood') %}
+    <!-- No Results -->
+    <div class="card text-center">
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">🔍</div>
+        <h3 class="mb-2">Nessun risultato</h3>
+        <p class="text-muted">Prova con altri termini di ricerca</p>
+    </div>
+    {% endif %}
+
+    <!-- Popular Keywords -->
+    {% if popular_keywords %}
+    <div class="card mt-4">
+        <h3 class="card-title mb-3">Parole più usate nei tuoi sogni</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            {% for keyword in popular_keywords %}
+            <button onclick="searchKeyword('{{ keyword.word }}')" 
+                    class="btn btn-secondary btn-sm" 
+                    style="border-radius: 20px;">
+                {{ keyword.word }} ({{ keyword.count }})
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function searchKeyword(word) {
+    const url = new URL(window.location);
+    url.searchParams.set('q', word);
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}

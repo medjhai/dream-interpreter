@@ -1,0 +1,124 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="text-center mb-4">
+        <h1>✨ Interpreta il Tuo Sogno</h1>
+        <p class="text-muted">Racconta il tuo sogno e scopri il suo significato</p>
+    </div>
+
+    <form id="dreamForm" class="card">
+        <div class="form-group">
+            <label class="form-label">Titolo del sogno</label>
+            <input type="text" class="form-input" id="title" placeholder="Un titolo per il tuo sogno..." required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Racconta il tuo sogno</label>
+            <textarea class="form-textarea" id="content" placeholder="Descrivi il tuo sogno nel dettaglio..." style="min-height: 150px;" required></textarea>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label">Come ti sei sentito?</label>
+                <select class="form-select" id="mood">
+                    <option value="">Seleziona un mood...</option>
+                    <option value="felice">😊 Felice</option>
+                    <option value="triste">😢 Triste</option>
+                    <option value="ansioso">😰 Ansioso</option>
+                    <option value="rabbioso">😠 Rabbioso</option>
+                    <option value="confuso">😕 Confuso</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Stile di interpretazione</label>
+                <select class="form-select" id="style">
+                    <option value="neutro">🔍 Neutro</option>
+                    <option value="poetico">🎭 Poetico</option>
+                    <option value="scientifico">🔬 Scientifico</option>
+                    <option value="spirituale">🕉️ Spirituale</option>
+                    <option value="consolatorio">💝 Consolatorio</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <span id="btnText">🔮 Interpreta Sogno</span>
+                <div id="btnLoading" class="spinner hidden"></div>
+            </button>
+        </div>
+    </form>
+
+    <!-- Results -->
+    <div id="results" class="hidden mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🌟 Interpretazione</h2>
+            </div>
+            <div id="interpretation" class="mb-3"></div>
+            <div class="text-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    ← Torna alla Dashboard
+                </a>
+                <button onclick="location.reload()" class="btn btn-primary">
+                    Interpreta Altro Sogno
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('dreamForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const btnText = document.getElementById('btnText');
+    const btnLoading = document.getElementById('btnLoading');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    submitBtn.disabled = true;
+    
+    const formData = {
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+        mood: document.getElementById('mood').value,
+        interpretation_style: document.getElementById('style').value
+    };
+    
+    try {
+        const response = await fetch('/api/interpret', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Show interpretation
+            document.getElementById('interpretation').innerHTML = result.interpretation.replace(/\n/g, '<br>');
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Hide form
+            document.getElementById('dreamForm').style.display = 'none';
+        } else {
+            alert(result.error || 'Errore durante l\'interpretazione');
+        }
+    } catch (error) {
+        alert('Errore di connessione. Riprova.');
+    } finally {
+        // Reset button state
+        btnText.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+        submitBtn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

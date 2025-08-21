@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Interprete dei Sogni{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='minimal.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <a href="{{ url_for('dashboard') }}" class="nav-brand">🌙 Dream</a>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="{{ url_for('dashboard') }}" class="nav-link">Home</a></li>
+                    <li><a href="{{ url_for('interpret') }}" class="nav-link">Nuovo</a></li>
+                    <li><a href="{{ url_for('dreams_history') }}" class="nav-link">Sogni</a></li>
+                    <li><a href="{{ url_for('search_dreams') }}" class="nav-link">Cerca</a></li>
+                    <li><a href="{{ url_for('stats') }}" class="nav-link">Stats</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="nav-link">Esci</a></li>
+                </ul>
+                
+                <button class="nav-toggle" onclick="toggleNav()">☰</button>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="{% if not current_user.is_authenticated %}py-4{% else %}py-3{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+    function toggleNav() {
+        document.getElementById('navMenu').classList.toggle('open');
+    }
+    
+    // Close nav when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.navbar')) {
+            document.getElementById('navMenu').classList.remove('open');
+        }
+    });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
