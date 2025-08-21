@@ -182,7 +182,6 @@ def dashboard():
                          favorite_mood=favorite_mood)
 
 @app.route('/interpret', methods=['GET', 'POST'])
-@login_required
 def interpret():
     """Dream interpretation page and processing.""" 
     if request.method == 'GET':
@@ -217,10 +216,15 @@ def interpret():
         dream.mood = mood
         dream.interpretation_style = style
         dream.interpretation = interpretation
-        dream.user_id = current_user.id
+        # Only save to database if user is authenticated, otherwise just return interpretation
+        if current_user.is_authenticated:
+            dream.user_id = current_user.id
         
-        db.session.add(dream)
-        db.session.commit()
+            db.session.add(dream)
+            db.session.commit()
+        else:
+            # For demo purposes when not logged in, create a temporary dream object with fake ID
+            dream.id = 999  # Fake ID for demo
         
         # Return different response based on request type
         if request.content_type and 'application/json' in request.content_type:
