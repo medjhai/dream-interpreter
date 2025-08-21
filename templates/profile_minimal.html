@@ -116,7 +116,7 @@
 <script>
 // Calendar functionality
 let currentDate = new Date();
-const moodData = {{ mood_data | tojson | safe }};
+const moodData = {{ mood_data | tojson | safe }} || {};
 
 const moodEmojis = {
     'felice': '😊',

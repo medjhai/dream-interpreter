@@ -231,7 +231,7 @@
             
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'it-IT';
+            recognition.lang = 'en-US';
             recognition.maxAlternatives = 1;
             
             recognition.onstart = function() {
@@ -283,20 +283,42 @@
 
         function startVoiceRecording() {
             if (!recognition && !initSpeechRecognition()) {
-                alert('Voice recognition is not supported in this browser. Use Chrome or Edge.');
+                alert('Voice recognition is not supported in this browser. Please use Chrome, Edge, or Safari.');
                 return;
             }
             
+            // Check if already recording
             if (isRecording) {
                 stopVoiceRecording();
                 return;
             }
             
-            finalTranscript = '';
-            recognition.start();
+            // Check microphone permission
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(() => {
+                    // Permission granted, start recognition
+                    actuallyStartRecording();
+                })
+                .catch(() => {
+                    alert('Microphone access is required. Please allow microphone permission and try again.');
+                });
+        }
+
+        function actuallyStartRecording() {
+            if (isRecording) {
+                return;
+            }
             
-            // Timeout after 30 seconds
-            recordingTimeout = setTimeout(stopVoiceRecording, 30000);
+            finalTranscript = '';
+            try {
+                recognition.start();
+                
+                // Timeout after 30 seconds
+                recordingTimeout = setTimeout(stopVoiceRecording, 30000);
+            } catch(e) {
+                console.error('Recognition start error:', e);
+                alert('Unable to start voice recognition. Please try again.');
+            }
         }
 
         function stopVoiceRecording() {
