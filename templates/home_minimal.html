@@ -406,6 +406,20 @@
         function submitVoiceDream(transcript) {
             hideVoiceModal();
             
+            // Show loading state
+            const loadingDiv = document.createElement('div');
+            loadingDiv.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                           background: rgba(0,0,0,0.8); z-index: 9999; display: flex; 
+                           align-items: center; justify-content: center; color: white;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔮</div>
+                        <div>Interpreting your dream...</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(loadingDiv);
+            
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
@@ -419,6 +433,14 @@
             form.appendChild(input);
             document.body.appendChild(form);
             form.submit();
+        }
+
+        // Home navigation function
+        function toggleHomeNav() {
+            const nav = document.getElementById('homeNav');
+            if (nav) {
+                nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+            }
         }
 
         // Initialize on page load

@@ -262,7 +262,7 @@ def voice_interpret():
     
     # Redirect to view the dream with a success message
     flash('Dream recorded and interpreted successfully!', 'success')
-    return redirect(url_for('view_dream', dream_id=dream.id))
+    return redirect(url_for('dreams_history'))
 
 @app.route('/dreams')
 @login_required
