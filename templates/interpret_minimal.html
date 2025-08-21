@@ -104,17 +104,23 @@ document.getElementById('dreamForm').addEventListener('submit', async function(e
         const result = await response.json();
         
         if (result.success) {
+            // Show success toast
+            showToast('Sogno interpretato con successo!', 'success');
+            
             // Show interpretation
             document.getElementById('interpretation').innerHTML = result.interpretation.replace(/\n/g, '<br>');
             document.getElementById('results').classList.remove('hidden');
             
             // Hide form
             document.getElementById('dreamForm').style.display = 'none';
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         } else {
-            alert(result.error || 'Errore durante l\'interpretazione');
+            showToast(result.error || 'Errore durante l\'interpretazione', 'error');
         }
     } catch (error) {
-        alert('Errore di connessione. Riprova.');
+        showToast('Errore di connessione. Riprova.', 'error');
     } finally {
         // Reset button state
         btnText.classList.remove('hidden');

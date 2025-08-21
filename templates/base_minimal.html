@@ -2,28 +2,32 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>{% block title %}Interprete dei Sogni{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='minimal.css') }}">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Interpreta i tuoi sogni con analisi psicologica avanzata">
     {% block head %}{% endblock %}
 </head>
 <body>
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    
     {% if current_user.is_authenticated %}
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Menu principale">
         <div class="container">
             <div class="nav-container">
-                <a href="{{ url_for('dashboard') }}" class="nav-brand">🌙 Dream</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-brand" aria-label="Torna alla homepage">🌙 Dream</a>
                 
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="{{ url_for('dashboard') }}" class="nav-link">Home</a></li>
-                    <li><a href="{{ url_for('interpret') }}" class="nav-link">Nuovo</a></li>
-                    <li><a href="{{ url_for('dreams_history') }}" class="nav-link">Sogni</a></li>
-                    <li><a href="{{ url_for('search_dreams') }}" class="nav-link">Cerca</a></li>
-                    <li><a href="{{ url_for('stats') }}" class="nav-link">Stats</a></li>
-                    <li><a href="{{ url_for('logout') }}" class="nav-link">Esci</a></li>
+                <ul class="nav-menu" id="navMenu" role="menu">
+                    <li role="none"><a href="{{ url_for('interpret') }}" class="nav-link" role="menuitem" aria-label="Interpreta un nuovo sogno">✨ Nuovo Sogno</a></li>
+                    <li role="none"><a href="{{ url_for('profile') }}" class="nav-link" role="menuitem" aria-label="Visualizza e modifica profilo">👤 Profilo</a></li>
+                    <li role="none"><a href="#" class="nav-link" role="menuitem" aria-label="Accedi alle impostazioni" onclick="showSettings(event)">⚙️ Impostazioni</a></li>
                 </ul>
                 
-                <button class="nav-toggle" onclick="toggleNav()">☰</button>
+                <button class="nav-toggle" onclick="toggleNav()" aria-label="Apri menu di navigazione" aria-expanded="false" aria-controls="navMenu">
+                    <span class="hamburger-icon" aria-hidden="true">☰</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -34,20 +38,134 @@
     </main>
 
     <script>
-    function toggleNav() {
-        const navMenu = document.getElementById('navMenu');
-        if (navMenu) {
-            navMenu.classList.toggle('open');
+    // Toast Notification System
+    function showToast(message, type = 'info', duration = 4000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        
+        const icons = {
+            success: '✅',
+            error: '❌', 
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        toast.innerHTML = `
+            <span class="toast-icon" aria-hidden="true">${icons[type] || icons.info}</span>
+            <span class="toast-message">${message}</span>
+            <button class="toast-close" onclick="removeToast(this)" aria-label="Chiudi notifica">×</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Auto remove after duration
+        setTimeout(() => removeToast(toast.querySelector('.toast-close')), duration);
+        
+        // Announce to screen readers
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'assertive');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = message;
+        document.body.appendChild(announcement);
+        setTimeout(() => document.body.removeChild(announcement), 1000);
+    }
+    
+    function removeToast(closeBtn) {
+        if (closeBtn && closeBtn.parentElement) {
+            closeBtn.parentElement.remove();
         }
     }
     
-    // Close nav when clicking outside
+    // Enhanced Navigation
+    function toggleNav() {
+        const navMenu = document.getElementById('navMenu');
+        const navToggle = document.querySelector('.nav-toggle');
+        if (navMenu && navToggle) {
+            const isOpen = navMenu.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', isOpen.toString());
+            navToggle.setAttribute('aria-label', isOpen ? 'Chiudi menu di navigazione' : 'Apri menu di navigazione');
+        }
+    }
+    
+    // Close nav when clicking outside or pressing Escape
     document.addEventListener('click', function(e) {
         const navMenu = document.getElementById('navMenu');
+        const navToggle = document.querySelector('.nav-toggle');
         if (navMenu && !e.target.closest('.navbar')) {
             navMenu.classList.remove('open');
+            if (navToggle) {
+                navToggle.setAttribute('aria-expanded', 'false');
+                navToggle.setAttribute('aria-label', 'Apri menu di navigazione');
+            }
         }
     });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const navMenu = document.getElementById('navMenu');
+            const navToggle = document.querySelector('.nav-toggle');
+            if (navMenu && navMenu.classList.contains('open')) {
+                navMenu.classList.remove('open');
+                if (navToggle) {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    navToggle.focus();
+                }
+            }
+        }
+    });
+    
+    // Settings Modal
+    function showSettings(event) {
+        event.preventDefault();
+        showToast('Pannello impostazioni in sviluppo', 'info');
+        // In futuro: aprirà un modal con le impostazioni
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'n') {
+            e.preventDefault();
+            window.location.href = '{{ url_for("interpret") if current_user and current_user.is_authenticated else "#" }}';
+        }
+        
+        // Skip navigation with Alt+S
+        if (e.altKey && e.key === 's') {
+            e.preventDefault();
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.focus();
+                mainContent.scrollIntoView();
+            }
+        }
+    });
+    
+    // Add skip navigation link
+    document.addEventListener('DOMContentLoaded', function() {
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main-content';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'Salta al contenuto principale';
+        skipLink.setAttribute('aria-label', 'Salta la navigazione e vai al contenuto principale');
+        document.body.insertBefore(skipLink, document.body.firstChild);
+        
+        // Add id to main content
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            mainContent.id = 'main-content';
+            mainContent.setAttribute('tabindex', '-1');
+        }
+    });
+    
+    // Replace all alert() calls with toasts
+    window.alert = function(message) {
+        showToast(message, 'warning');
+    };
     </script>
     {% block scripts %}{% endblock %}
 </body>

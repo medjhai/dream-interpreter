@@ -56,6 +56,15 @@ def date_diff_days(date):
     diff = datetime.now() - date
     return diff.days
 
+@app.template_filter('days_since')
+def days_since(date):
+    """Calculate days since date"""
+    from datetime import datetime
+    if not date:
+        return 0
+    diff = datetime.now() - date
+    return diff.days
+
 @app.route('/')
 def index():
     """Main page - shows login or dashboard based on authentication status."""

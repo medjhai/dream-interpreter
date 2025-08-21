@@ -1,0 +1,109 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="text-center mb-4">
+        <h1>👤 Il Tuo Profilo</h1>
+        <p class="text-muted">Gestisci il tuo account e accedi alle funzionalità</p>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">Informazioni Account</h2>
+        </div>
+        <div class="grid grid-2">
+            <div>
+                <label class="form-label">Username</label>
+                <div class="form-input" style="background: var(--surface-light); cursor: not-allowed;">
+                    {{ current_user.username }}
+                </div>
+            </div>
+            <div>
+                <label class="form-label">Email</label>
+                <div class="form-input" style="background: var(--surface-light); cursor: not-allowed;">
+                    {{ current_user.email }}
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-muted">Account creato il {{ current_user.created_at.strftime('%d/%m/%Y') if current_user.created_at else 'N/D' }}</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-3 mb-4">
+        <div class="card stats-card">
+            <div class="stats-number">{{ dream_count }}</div>
+            <div class="stats-label">Sogni Totali</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ (dream_count / ((current_user.created_at | days_since) or 1))|round(1) if current_user.created_at else 0 }}</div>
+            <div class="stats-label">Media/Giorno</div>
+        </div>
+        <div class="card stats-card">
+            <div class="stats-number">{{ current_user.created_at | days_since if current_user.created_at else 0 }}</div>
+            <div class="stats-label">Giorni Attivo</div>
+        </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">🗂️ I Tuoi Contenuti</h2>
+            <p class="card-subtitle">Accedi rapidamente ai tuoi sogni e dati</p>
+        </div>
+        
+        <div class="grid grid-2">
+            <a href="{{ url_for('dreams_history') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Visualizza tutti i tuoi sogni">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📚</div>
+                    <h3 class="dream-title">Tutti i Sogni</h3>
+                    <p class="dream-preview">Sfoglia la tua collezione completa di sogni interpretati</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('search_dreams') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Cerca tra i tuoi sogni">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                    <h3 class="dream-title">Cerca Sogni</h3>
+                    <p class="dream-preview">Trova sogni specifici usando parole chiave o filtri</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('stats') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Visualizza statistiche dettagliate">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                    <h3 class="dream-title">Statistiche</h3>
+                    <p class="dream-preview">Analizza i pattern e le tendenze dei tuoi sogni</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('export_data') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Scarica i tuoi dati">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📥</div>
+                    <h3 class="dream-title">Esporta Dati</h3>
+                    <p class="dream-preview">Scarica tutti i tuoi sogni e interpretazioni</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">⚙️ Azioni Account</h2>
+        </div>
+        <div class="text-center">
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button onclick="showToast('Cambio password in sviluppo', 'info')" class="btn btn-secondary" aria-label="Cambia la tua password">
+                    🔑 Cambia Password
+                </button>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary" aria-label="Disconnetti dal tuo account">
+                    🚪 Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

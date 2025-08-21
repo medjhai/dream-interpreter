@@ -28,11 +28,16 @@
         </div>
     </div>
 
-    <!-- Quick Action -->
-    <div class="text-center mb-4">
-        <a href="{{ url_for('interpret') }}" class="btn btn-primary btn-lg" style="margin: 0 auto;">
+    <!-- Quick Actions -->
+    <div class="text-center mb-4 action-section">
+        <a href="{{ url_for('interpret') }}" class="btn btn-primary btn-lg" aria-label="Interpreta un nuovo sogno">
             ✨ Interpreta un Nuovo Sogno
         </a>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+            <a href="{{ url_for('stats') }}" class="btn btn-secondary" aria-label="Visualizza statistiche dei tuoi sogni">
+                📊 Statistiche
+            </a>
+        </div>
     </div>
 
     <!-- Recent Dreams -->
@@ -45,7 +50,10 @@
         
         <div class="grid">
             {% for dream in recent_dreams %}
-            <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+            <div class="dream-item" role="button" tabindex="0" 
+                 onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'"
+                 onkeydown="if(event.key==='Enter' || event.key===' '){window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'}"
+                 aria-label="Visualizza sogno: {{ dream.title }}">
                 <h3 class="dream-title">{{ dream.title }}</h3>
                 <p class="dream-preview">
                     {{ dream.content[:100] }}{% if dream.content|length > 100 %}...{% endif %}
@@ -70,8 +78,11 @@
         </div>
         
         <div class="text-center mt-3">
-            <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary">
-                Vedi Tutti i Sogni
+            <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary" aria-label="Visualizza tutti i sogni salvati">
+                📚 Tutti i Sogni
+            </a>
+            <a href="{{ url_for('search_dreams') }}" class="btn btn-secondary" aria-label="Cerca tra i tuoi sogni">
+                🔍 Cerca Sogni
             </a>
         </div>
     </div>
