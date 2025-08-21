@@ -93,7 +93,7 @@ document.getElementById('dreamForm').addEventListener('submit', async function(e
     };
     
     try {
-        const response = await fetch('/api/interpret', {
+        const response = await fetch('/interpret', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
