@@ -44,15 +44,84 @@
             </div>
         </div>
 
+        <!-- Personalization Options -->
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; margin: 2rem 0; border: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="color: rgba(255,255,255,0.9); margin: 0 0 1rem 0; font-size: 1rem; text-align: center;">⚙️ Remember my preferences</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <label style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">Mood</label>
+                    <select id="preferredMood" onchange="savePreference('mood', this.value)" 
+                            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+                                   border-radius: 8px; padding: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                        <option value="neutro">😐 Neutral</option>
+                        <option value="felice">😊 Happy</option>
+                        <option value="triste">😢 Sad</option>
+                        <option value="ansioso">😰 Anxious</option>
+                        <option value="rabbioso">😠 Angry</option>
+                        <option value="confuso">😕 Confused</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <label style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">Style</label>
+                    <select id="preferredStyle" onchange="savePreference('style', this.value)"
+                            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+                                   border-radius: 8px; padding: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                        <option value="psicologico">🔍 Psychological</option>
+                        <option value="spirituale">🕉️ Spiritual</option>
+                        <option value="neutro">📖 Neutral</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Actions -->
         <div style="text-align: center; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
             <a href="/" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                            color: white; text-decoration: none; padding: 1rem 2rem; 
                            border-radius: 12px; font-weight: 600; display: inline-block;
                            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
-                ✨ Interpret Another Dream
+                ✨ New Dream
             </a>
         </div>
+        
+        <script>
+        // Load saved preferences
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedMood = localStorage.getItem('preferredMood') || 'neutro';
+            const savedStyle = localStorage.getItem('preferredStyle') || 'psicologico';
+            
+            document.getElementById('preferredMood').value = savedMood;
+            document.getElementById('preferredStyle').value = savedStyle;
+        });
+        
+        // Save preference function
+        function savePreference(type, value) {
+            localStorage.setItem('preferred' + type.charAt(0).toUpperCase() + type.slice(1), value);
+            
+            // Show confirmation
+            const confirmation = document.createElement('div');
+            confirmation.textContent = '✓ Preference saved!';
+            confirmation.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 9999;
+                background: rgba(34, 197, 94, 0.9); color: white; padding: 0.75rem 1rem;
+                border-radius: 8px; font-size: 0.9rem; font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(confirmation);
+            setTimeout(() => confirmation.remove(), 2000);
+        }
+        
+        // Add slideIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        </script>
     </div>
 </div>
 

@@ -37,10 +37,22 @@
             
             <!-- Right side: Dream Input Options -->
             <div class="content-right">
+                <!-- Personal Greeting -->
+                <div class="personal-greeting" id="personalGreeting">
+                    <span class="greeting-icon" id="greetingIcon">🌅</span>
+                    <span class="greeting-text" id="greetingText">Good morning! Ready to explore your dreams?</span>
+                </div>
+                
+                <!-- Dream Counter -->
+                <div class="dream-counter" id="dreamCounter">
+                    <span class="counter-icon">✨</span>
+                    <span class="counter-text">Dreams interpreted: <strong id="dreamCount">0</strong></span>
+                </div>
+                
                 <!-- Text Input Section -->
                 <div class="dream-input-section">
                     <div class="section-header">
-                        <h3>✍️ Write about your dream here!</h3>
+                        <h3 id="inputPrompt">✍️ Write about your dream here!</h3>
                     </div>
                     <div class="text-input-container">
                         <textarea id="dreamTextInput" placeholder="I dream that I am..." 
@@ -48,6 +60,14 @@
                                        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
                                        border-radius: 12px; color: var(--text); resize: vertical; 
                                        font-size: 1rem; line-height: 1.5;"></textarea>
+                        
+                        <!-- Smart Suggestions -->
+                        <div class="smart-suggestions" id="smartSuggestions" style="display: none;">
+                            <div class="suggestion-header">💡 Need inspiration?</div>
+                            <div class="suggestions-list" id="suggestionsList">
+                                <!-- Suggestions will be populated by JavaScript -->
+                            </div>
+                        </div>
                         <button onclick="interpretTextDream()" class="interpret-btn">
                             <span class="btn-icon">➤</span>
                         </button>
@@ -320,6 +340,92 @@
         }
     }
     
+    /* Personal Greeting & Counter */
+    .personal-greeting {
+        background: rgba(255,255,255,0.06);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        animation: glow 3s ease-in-out infinite alternate;
+    }
+    
+    .greeting-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .greeting-text {
+        color: rgba(255,255,255,0.95);
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    
+    .dream-counter {
+        background: rgba(102, 126, 234, 0.15);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+    
+    .counter-icon {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+    
+    .counter-text {
+        color: rgba(255,255,255,0.9);
+        font-size: 0.9rem;
+    }
+    
+    @keyframes glow {
+        0% { box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2); }
+        100% { box-shadow: 0 4px 25px rgba(118, 75, 162, 0.3); }
+    }
+    
+    /* Smart Suggestions */
+    .smart-suggestions {
+        background: rgba(255,255,255,0.04);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .suggestion-header {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+    
+    .suggestions-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .suggestion-tag {
+        background: rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        color: rgba(255,255,255,0.9);
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .suggestion-tag:hover {
+        background: rgba(102, 126, 234, 0.3);
+        transform: translateY(-2px);
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .modern-title {
@@ -456,6 +562,99 @@
             }
         }
 
+        // Personalization system
+        const dreamPrompts = [
+            "✍️ Tell me about last night's adventure...",
+            "🌙 What mysterious world did you visit?",
+            "✨ Describe the dream that's still with you...",
+            "🔮 Share your subconscious journey...",
+            "💭 What story did your mind create?"
+        ];
+        
+        const dreamSuggestions = [
+            "Flying through clouds", "Meeting a stranger", "Being chased", "Finding treasure", 
+            "Talking animals", "Lost in a maze", "Falling from height", "Old memories",
+            "Underwater scenes", "Past/future versions", "Magical powers", "Childhood home"
+        ];
+        
+        // Initialize personalization
+        function initPersonalization() {
+            updateGreeting();
+            updateDreamCounter();
+            updatePrompt();
+            showSmartSuggestions();
+            
+            // Update greeting every minute
+            setInterval(updateGreeting, 60000);
+        }
+        
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting, icon;
+            
+            if (hour >= 5 && hour < 12) {
+                greeting = "Good morning! Ready to explore your dreams?";
+                icon = "🌅";
+            } else if (hour >= 12 && hour < 17) {
+                greeting = "Good afternoon! What did you dream about?";
+                icon = "☀️";
+            } else if (hour >= 17 && hour < 21) {
+                greeting = "Good evening! Time to decode your dreams...";
+                icon = "🌇";
+            } else {
+                greeting = "Sweet dreams await interpretation...";
+                icon = "🌙";
+            }
+            
+            document.getElementById('greetingIcon').textContent = icon;
+            document.getElementById('greetingText').textContent = greeting;
+        }
+        
+        function updateDreamCounter() {
+            let count = parseInt(localStorage.getItem('dreamCount') || '0');
+            document.getElementById('dreamCount').textContent = count;
+        }
+        
+        function updatePrompt() {
+            const randomPrompt = dreamPrompts[Math.floor(Math.random() * dreamPrompts.length)];
+            document.getElementById('inputPrompt').textContent = randomPrompt;
+        }
+        
+        function showSmartSuggestions() {
+            const suggestionsList = document.getElementById('suggestionsList');
+            const randomSuggestions = dreamSuggestions
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 6);
+            
+            suggestionsList.innerHTML = randomSuggestions
+                .map(suggestion => `<div class="suggestion-tag" onclick="useSuggestion('${suggestion}')">${suggestion}</div>`)
+                .join('');
+            
+            // Show suggestions if textarea is empty
+            const textarea = document.getElementById('dreamTextInput');
+            textarea.addEventListener('focus', () => {
+                if (!textarea.value.trim()) {
+                    document.getElementById('smartSuggestions').style.display = 'block';
+                }
+            });
+            
+            textarea.addEventListener('input', () => {
+                if (textarea.value.trim()) {
+                    document.getElementById('smartSuggestions').style.display = 'none';
+                }
+            });
+        }
+        
+        function useSuggestion(suggestion) {
+            const textarea = document.getElementById('dreamTextInput');
+            const currentText = textarea.value.trim();
+            const prefix = currentText ? currentText + '. ' : 'I dream that I am ';
+            textarea.value = prefix + suggestion.toLowerCase() + '...';
+            textarea.focus();
+            document.getElementById('smartSuggestions').style.display = 'none';
+        }
+        
         // Simple text dream interpretation
         function interpretTextDream() {
             const dreamText = document.getElementById('dreamTextInput').value.trim();
@@ -465,6 +664,15 @@
                 return;
             }
             
+            // Update dream counter
+            let count = parseInt(localStorage.getItem('dreamCount') || '0');
+            count++;
+            localStorage.setItem('dreamCount', count.toString());
+            
+            // Get user preferences or use defaults
+            const mood = localStorage.getItem('preferredMood') || 'neutro';
+            const style = localStorage.getItem('preferredStyle') || 'psicologico';
+            
             // Create form and submit directly
             const form = document.createElement('form');
             form.method = 'POST';
@@ -473,7 +681,7 @@
             const titleInput = document.createElement('input');
             titleInput.type = 'hidden';
             titleInput.name = 'title';
-            titleInput.value = 'My Dream';
+            titleInput.value = `Dream ${count} - ${new Date().toLocaleDateString()}`;
             
             const contentInput = document.createElement('input');
             contentInput.type = 'hidden';
@@ -483,12 +691,12 @@
             const moodInput = document.createElement('input');
             moodInput.type = 'hidden';
             moodInput.name = 'mood';
-            moodInput.value = 'neutro';
+            moodInput.value = mood;
             
             const styleInput = document.createElement('input');
             styleInput.type = 'hidden';
             styleInput.name = 'style';
-            styleInput.value = 'psicologico';
+            styleInput.value = style;
             
             form.appendChild(titleInput);
             form.appendChild(contentInput);
@@ -498,5 +706,8 @@
             document.body.appendChild(form);
             form.submit();
         }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initPersonalization);
     </script>
 {% endblock %}
