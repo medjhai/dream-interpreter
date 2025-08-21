@@ -3,70 +3,65 @@
 {% block content %}
 <div class="container-sm">
     <div class="text-center mb-4">
-        <h1>✨ Interpreta il Tuo Sogno</h1>
-        <p class="text-muted">Racconta il tuo sogno e scopri il suo significato</p>
+        <h1>✨ Interpret Your Dream</h1>
+        <p class="text-muted">Tell us your dream and discover its meaning</p>
     </div>
 
     <form id="dreamForm" class="card">
         <div class="form-group">
-            <label class="form-label">Titolo del sogno</label>
-            <input type="text" class="form-input" id="title" placeholder="Un titolo per il tuo sogno..." required>
+            <label class="form-label">Dream title</label>
+            <input type="text" class="form-input" id="title" placeholder="A title for your dream..." required>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Racconta il tuo sogno</label>
-            <textarea class="form-textarea" id="content" placeholder="Descrivi il tuo sogno nel dettaglio..." style="min-height: 150px;" required></textarea>
-        </div>
-
-        <div class="grid grid-2">
-            <div class="form-group">
-                <label class="form-label">Come ti sei sentito?</label>
-                <select class="form-select" id="mood">
-                    <option value="">Seleziona un mood...</option>
-                    <option value="felice">😊 Felice</option>
-                    <option value="triste">😢 Triste</option>
-                    <option value="ansioso">😰 Ansioso</option>
-                    <option value="rabbioso">😠 Rabbioso</option>
-                    <option value="confuso">😕 Confuso</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Stile di interpretazione</label>
-                <select class="form-select" id="style">
-                    <option value="neutro">🔍 Neutro</option>
-                    <option value="poetico">🎭 Poetico</option>
-                    <option value="scientifico">🔬 Scientifico</option>
-                    <option value="spirituale">🕉️ Spirituale</option>
-                    <option value="consolatorio">💝 Consolatorio</option>
-                </select>
-            </div>
+            <label class="form-label">Tell us your dream</label>
+            <textarea class="form-textarea" id="content" placeholder="Describe your dream in detail..." style="min-height: 150px;" required></textarea>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg" style="margin: 0 auto;">
-                <span id="btnText">🔮 Interpreta Sogno</span>
-                <div id="btnLoading" class="spinner hidden"></div>
+            <button type="button" id="continueBtn" class="btn btn-primary btn-lg" style="margin: 0 auto;">
+                Continue
             </button>
         </div>
     </form>
+</div>
 
-    <!-- Results -->
-    <div id="results" class="hidden mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🌟 Interpretazione</h2>
+<!-- Mood & Style Selection Modal -->
+<div id="dreamModal" class="voice-modal hidden">
+    <div class="voice-modal-content" style="max-width: 500px;">
+        <div class="voice-modal-header">
+            <h3>🎭 Customize Interpretation</h3>
+            <button class="voice-modal-close" onclick="closeDreamModal()">×</button>
+        </div>
+        <div class="voice-modal-body">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">How did you feel in the dream?</label>
+                <select id="dreamMood" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
+                    <option value="neutro">😐 Neutral</option>
+                    <option value="felice">😊 Happy</option>
+                    <option value="triste">😢 Sad</option>
+                    <option value="ansioso">😰 Anxious</option>
+                    <option value="rabbioso">😠 Angry</option>
+                    <option value="confuso">😕 Confused</option>
+                </select>
             </div>
-            <div id="interpretation" class="mb-3"></div>
-            <div class="text-center">
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; align-items: center;">
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin: 0;">
-                        ← Torna alla Dashboard
-                    </a>
-                    <button onclick="location.reload()" class="btn btn-primary" style="margin: 0;">
-                        Interpreta Altro Sogno
-                    </button>
-                </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Interpretation style:</label>
+                <select id="dreamStyle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
+                    <option value="psicologico">🔍 Psychological</option>
+                    <option value="spirituale">🕉️ Spiritual</option>
+                    <option value="neutro">📖 Neutral</option>
+                </select>
+            </div>
+            
+            <div style="text-align: center;">
+                <button onclick="submitTextDream()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer; margin-right: 1rem;">
+                    🔮 Interpret Dream
+                </button>
+                <button onclick="closeDreamModal()" style="background: var(--surface-light); color: var(--text); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer;">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -75,57 +70,84 @@
 
 {% block scripts %}
 <script>
-document.getElementById('dreamForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+// Step-by-step dream interpretation flow
+document.getElementById('continueBtn').addEventListener('click', function() {
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
     
-    const btnText = document.getElementById('btnText');
-    const btnLoading = document.getElementById('btnLoading');
-    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (!title || !content) {
+        alert('Please fill in both title and dream content.');
+        return;
+    }
+    
+    // Show mood and style selection modal
+    document.getElementById('dreamModal').classList.remove('hidden');
+});
+
+function closeDreamModal() {
+    document.getElementById('dreamModal').classList.add('hidden');
+}
+
+function submitTextDream() {
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const mood = document.getElementById('dreamMood').value;
+    const style = document.getElementById('dreamStyle').value;
+    
+    closeDreamModal();
     
     // Show loading state
-    btnText.classList.add('hidden');
-    btnLoading.classList.remove('hidden');
-    submitBtn.disabled = true;
+    const loadingDiv = document.createElement('div');
+    loadingDiv.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                   background: rgba(0,0,0,0.8); z-index: 9999; display: flex; 
+                   align-items: center; justify-content: center; color: white;">
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">🔮</div>
+                <div>Interpreting your dream...</div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
     
-    const formData = {
-        title: document.getElementById('title').value,
-        content: document.getElementById('content').value,
-        mood: document.getElementById('mood').value,
-        interpretation_style: document.getElementById('style').value
-    };
+    // Create form and submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("interpret") }}';
     
-    try {
-        const response = await fetch('/interpret', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Show success toast
-            showToast('Sogno interpretato con successo!', 'success');
-            
-            // Show interpretation
-            document.getElementById('interpretation').innerHTML = result.interpretation.replace(/\n/g, '<br>');
-            document.getElementById('results').classList.remove('hidden');
-            
-            // Hide form
-            document.getElementById('dreamForm').style.display = 'none';
-            
-            // Scroll to results
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-        } else {
-            showToast(result.error || 'Errore durante l\'interpretazione', 'error');
-        }
-    } catch (error) {
-        showToast('Errore di connessione. Riprova.', 'error');
-    } finally {
-        // Reset button state
-        btnText.classList.remove('hidden');
-        btnLoading.classList.add('hidden');
-        submitBtn.disabled = false;
+    const titleInput = document.createElement('input');
+    titleInput.type = 'hidden';
+    titleInput.name = 'title';
+    titleInput.value = title;
+    
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    
+    const moodInput = document.createElement('input');
+    moodInput.type = 'hidden';
+    moodInput.name = 'mood';
+    moodInput.value = mood;
+    
+    const styleInput = document.createElement('input');
+    styleInput.type = 'hidden';
+    styleInput.name = 'style';
+    styleInput.value = style;
+    
+    form.appendChild(titleInput);
+    form.appendChild(contentInput);
+    form.appendChild(moodInput);
+    form.appendChild(styleInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Close modal when clicking outside
+document.getElementById('dreamModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDreamModal();
     }
 });
 </script>

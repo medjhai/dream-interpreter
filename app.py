@@ -184,12 +184,17 @@ def dashboard():
 @app.route('/interpret', methods=['GET', 'POST'])
 @login_required
 def interpret():
-    """Dream interpretation page and processing."""
+    """Dream interpretation page and processing.""" 
     if request.method == 'GET':
         return render_template('interpret_minimal.html')
     
     try:
-        data = request.get_json()
+        # Handle both JSON and form data
+        if request.content_type and 'application/json' in request.content_type:
+            data = request.get_json() or {}
+        else:
+            data = request.form.to_dict()
+            
         if not data or 'content' not in data:
             return jsonify({'error': 'Testo del sogno mancante'}), 400
         
@@ -199,7 +204,7 @@ def interpret():
         
         # Get optional parameters
         mood = data.get('mood', '')
-        style = data.get('interpretation_style', 'neutro')
+        style = data.get('style', data.get('interpretation_style', 'psicologico'))  # Support both field names
         title = data.get('title', '').strip()
         
         # Generate interpretation
@@ -207,7 +212,7 @@ def interpret():
         
         # Save dream to database
         dream = Dream()
-        dream.title = title or f"Sogno del {datetime.now().strftime('%d/%m/%Y')}"
+        dream.title = title or f"Dream - {datetime.now().strftime('%d/%m/%Y')}"
         dream.content = dream_text
         dream.mood = mood
         dream.interpretation_style = style
@@ -217,16 +222,26 @@ def interpret():
         db.session.add(dream)
         db.session.commit()
         
-        return jsonify({
-            'success': True,
-            'interpretation': interpretation,
-            'dream_id': dream.id
-        })
+        # Return different response based on request type
+        if request.content_type and 'application/json' in request.content_type:
+            return jsonify({
+                'success': True,
+                'interpretation': interpretation,
+                'dream_id': dream.id
+            })
+        else:
+            # For form submissions, redirect to dream detail
+            flash('Dream interpreted successfully!', 'success')
+            return redirect(url_for('view_dream', dream_id=dream.id))
     
     except Exception as e:
         db.session.rollback()
         app.logger.error(f"Error interpreting dream: {str(e)}")
-        return jsonify({'error': 'Errore durante l\'interpretazione del sogno'}), 500
+        if request.content_type and 'application/json' in request.content_type:
+            return jsonify({'error': 'Errore durante l\'interpretazione del sogno'}), 500
+        else:
+            flash('Errore durante l\'interpretazione del sogno', 'error')
+            return redirect(url_for('interpret'))
 
 @app.route('/voice-interpret', methods=['POST'])
 @login_required

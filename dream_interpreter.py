@@ -230,6 +230,82 @@ def create_general_context_insights(context, mood, style):
     return ' '.join(insights) if insights else None
 
 
+import os
+import json
+from openai import OpenAI
+
+# Initialize OpenAI client
+openai_client = None
+if os.environ.get("OPENAI_API_KEY"):
+    try:
+        openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    except Exception as e:
+        print(f"Error initializing OpenAI: {e}")
+        openai_client = None
+
+def generate_ai_interpretation(dream_text, mood='', style='neutro'):
+    """
+    Generate advanced AI interpretation using OpenAI GPT-4o.
+    """
+    if not openai_client:
+        return None
+        
+    # Map Italian mood and style to English for better AI understanding
+    mood_mapping = {
+        'felice': 'happy', 'triste': 'sad', 'ansioso': 'anxious', 
+        'rabbioso': 'angry', 'confuso': 'confused', 'neutro': 'neutral'
+    }
+    style_mapping = {
+        'psicologico': 'psychological', 'spirituale': 'spiritual', 
+        'neutro': 'neutral', 'poetico': 'poetic', 'scientifico': 'scientific'
+    }
+    
+    mood_en = mood_mapping.get(mood, 'neutral')
+    style_en = style_mapping.get(style, 'psychological')
+    
+    # Craft a sophisticated prompt for dream interpretation
+    prompt = f"""
+    Act as a professional dream analyst with expertise in psychology, symbolism, and dream interpretation. 
+    
+    Analyze this dream with the following context:
+    - Dreamer's emotional state during dream: {mood_en}
+    - Requested interpretation style: {style_en}
+    
+    Dream text: "{dream_text}"
+    
+    Please provide a comprehensive interpretation that includes:
+    1. Main symbolic elements and their psychological meanings
+    2. Connection to the dreamer's emotional state
+    3. Potential insights about unconscious thoughts or current life situation
+    4. Practical guidance or reflection questions
+    
+    Respond in Italian with a warm, insightful tone. Structure your response with clear paragraphs.
+    Focus on being helpful, not predictive. Emphasize that dreams are personal and symbolic.
+    """
+    
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o",  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a compassionate and knowledgeable dream analyst. Provide thoughtful, nuanced interpretations that respect the dreamer's experience while offering meaningful insights. Always respond in Italian."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            max_tokens=800,
+            temperature=0.7
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        print(f"Error generating AI interpretation: {e}")
+        return None
+
 def interpret_dream(dream_text, mood='', style='neutro'):
     """
     Analyze dream text and return a detailed interpretation based on keywords, symbols,
@@ -399,6 +475,12 @@ def interpret_dream(dream_text, mood='', style='neutro'):
         mood_info = mood_insights[mood]
         mood_insight = f"<strong>Sul tuo stato emotivo:</strong><br><br>{mood_info['intro']}<br><br>{mood_info['connection']}<br><br>"
     
+    # First, try AI interpretation if available
+    ai_interpretation = generate_ai_interpretation(dream_text, mood, style)
+    if ai_interpretation:
+        return ai_interpretation
+    
+    # Fallback to rule-based interpretation
     # Check for multiple keywords in dream text
     found_interpretations = []
     for keyword, details in interpretations.items():
