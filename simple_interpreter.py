@@ -44,8 +44,8 @@ def fast_interpret_dream(dream_text, mood='neutro', style='psicologico'):
             temperature=0.7
         )
         
-        interpretation = response.choices[0].message.content.strip()
-        return interpretation
+        interpretation = response.choices[0].message.content
+        return interpretation.strip() if interpretation else "Interpretazione non disponibile."
         
     except Exception as e:
         return f"Spiacenti, si è verificato un errore durante l'interpretazione: {str(e)}"
