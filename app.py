@@ -390,6 +390,16 @@ def settings():
     
     return render_template('settings_minimal.html')
 
+@app.route('/faq')
+def faq():
+    """Frequently Asked Questions page."""
+    return render_template('faq_minimal.html')
+
+@app.route('/contacts')  
+def contacts():
+    """Contacts page."""
+    return render_template('contacts_minimal.html')
+
 @app.route('/search')
 @login_required
 def search_dreams():

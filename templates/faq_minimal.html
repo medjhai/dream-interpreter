@@ -1,0 +1,214 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="page-header">
+        <a href="/" class="back-btn">← Back to Home</a>
+        <h1>❓ Frequently Asked Questions</h1>
+    </div>
+
+    <div class="faq-content">
+        <div class="faq-section">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What is dream interpretation?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Dream interpretation is the process of analyzing the symbolic meaning of dreams. Our AI uses psychological principles and symbolism to provide insights into your subconscious thoughts, emotions, and experiences reflected in your dreams.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How accurate are the interpretations?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Our interpretations are based on established psychological theories and common dream symbolism. While they provide valuable insights, remember that dream meaning is highly personal. Use our interpretations as a starting point for your own reflection.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can I save my dream interpretations?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! When you create an account and log in, all your dreams and interpretations are automatically saved. You can review them anytime in your profile or dashboard.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What are the different interpretation styles?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p><strong>Psychological:</strong> Based on modern psychology and Jungian analysis<br>
+                    <strong>Spiritual:</strong> Focuses on spiritual and mystical meanings<br>
+                    <strong>Neutral:</strong> A balanced approach combining multiple perspectives</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Is my dream data private and secure?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely. Your dreams are personal and private. We use secure encryption to protect your data, and we never share your dream content with third parties. Only you have access to your dream journal.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can I use voice recording for my dreams?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! You can record your dreams using voice input. Simply click the microphone button and speak naturally. The system will convert your speech to text and then provide an interpretation.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What if I don't remember my whole dream?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>That's perfectly normal! Write down whatever fragments you remember - emotions, colors, people, or situations. Even partial dreams can provide meaningful insights into your subconscious mind.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.container-sm {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: rgba(102, 126, 234, 1);
+    text-decoration: none;
+}
+
+.page-header h1 {
+    color: rgba(255,255,255,0.95);
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.faq-content {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.faq-toggle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: rgba(102, 126, 234, 1);
+    transition: transform 0.3s ease;
+}
+
+.faq-answer {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+}
+
+.faq-answer.active {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    max-height: 500px;
+}
+
+.faq-item.active .faq-toggle {
+    transform: rotate(45deg);
+}
+
+@media (max-width: 768px) {
+    .container-sm {
+        padding: 1rem 0.5rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .faq-content {
+        padding: 1.5rem;
+    }
+    
+    .faq-question {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+</style>
+
+<script>
+function toggleFaq(element) {
+    const faqItem = element.parentElement;
+    const answer = faqItem.querySelector('.faq-answer');
+    
+    // Close all other FAQs
+    document.querySelectorAll('.faq-item').forEach(item => {
+        if (item !== faqItem) {
+            item.classList.remove('active');
+            item.querySelector('.faq-answer').classList.remove('active');
+        }
+    });
+    
+    // Toggle current FAQ
+    faqItem.classList.toggle('active');
+    answer.classList.toggle('active');
+}
+</script>
+{% endblock %}

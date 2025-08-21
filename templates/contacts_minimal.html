@@ -1,0 +1,370 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="page-header">
+        <a href="/" class="back-btn">← Back to Home</a>
+        <h1>📧 Contact Us</h1>
+    </div>
+
+    <div class="contacts-content">
+        <div class="intro-section">
+            <p>We'd love to hear from you! Whether you have questions about dream interpretation, technical issues, or just want to share your experience, feel free to reach out.</p>
+        </div>
+
+        <div class="contact-methods">
+            <div class="contact-card">
+                <div class="contact-icon">💌</div>
+                <div class="contact-info">
+                    <h3>Email Support</h3>
+                    <p>For general inquiries and support</p>
+                    <a href="mailto:support@dreaminterpreter.com" class="contact-link">support@dreaminterpreter.com</a>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">🔧</div>
+                <div class="contact-info">
+                    <h3>Technical Issues</h3>
+                    <p>Report bugs or technical problems</p>
+                    <a href="mailto:tech@dreaminterpreter.com" class="contact-link">tech@dreaminterpreter.com</a>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">💝</div>
+                <div class="contact-info">
+                    <h3>Feedback</h3>
+                    <p>Share your thoughts and suggestions</p>
+                    <a href="mailto:feedback@dreaminterpreter.com" class="contact-link">feedback@dreaminterpreter.com</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form-section">
+            <h2>Send us a message</h2>
+            <form class="contact-form" onsubmit="sendMessage(event)">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" name="subject" required>
+                        <option value="">Select a topic</option>
+                        <option value="support">General Support</option>
+                        <option value="technical">Technical Issue</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="6" required placeholder="Tell us how we can help you..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+
+        <div class="response-info">
+            <div class="info-card">
+                <div class="info-icon">⏰</div>
+                <div class="info-text">
+                    <strong>Response Time</strong>
+                    <p>We typically respond within 24-48 hours during business days.</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon">🌍</div>
+                <div class="info-text">
+                    <strong>Support Hours</strong>
+                    <p>Our team is available Monday to Friday, 9 AM - 6 PM GMT.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.container-sm {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: rgba(102, 126, 234, 1);
+    text-decoration: none;
+}
+
+.page-header h1 {
+    color: rgba(255,255,255,0.95);
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: rgba(255,255,255,0.8);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.contact-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.contact-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.08);
+}
+
+.contact-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.contact-info h3 {
+    color: rgba(255,255,255,0.95);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.contact-info p {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+}
+
+.contact-link {
+    color: rgba(102, 126, 234, 1);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+    color: rgba(118, 75, 162, 1);
+    text-decoration: underline;
+}
+
+.contact-form-section {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 3rem;
+}
+
+.contact-form-section h2 {
+    color: rgba(255,255,255,0.95);
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0 0 2rem 0;
+    text-align: center;
+}
+
+.contact-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(102, 126, 234, 0.6);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.response-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.info-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.info-text strong {
+    color: rgba(255,255,255,0.95);
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.info-text p {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .container-sm {
+        padding: 1rem 0.5rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .contact-methods {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-form-section {
+        padding: 1.5rem;
+    }
+    
+    .info-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+
+<script>
+function sendMessage(event) {
+    event.preventDefault();
+    
+    // Simulate form submission
+    const submitBtn = event.target.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+    
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = `
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            background: rgba(34, 197, 94, 0.9); color: white; padding: 1rem 1.5rem;
+            border-radius: 12px; font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        `;
+        successMsg.textContent = '✓ Message sent successfully! We\'ll get back to you soon.';
+        document.body.appendChild(successMsg);
+        
+        // Reset form
+        event.target.reset();
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        setTimeout(() => successMsg.remove(), 5000);
+    }, 1500);
+}
+
+// Add slideIn animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

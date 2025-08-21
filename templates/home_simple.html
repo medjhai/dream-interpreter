@@ -1,8 +1,15 @@
 {% extends "base_minimal.html" %}
 
 {% block content %}
+    <!-- User Greeting -->
+    <div class="user-greeting">
+        <a href="{{ url_for('profile') }}" class="greeting-link">
+            Ciao, {{ current_user.username if current_user.is_authenticated else 'Guest' }}
+        </a>
+    </div>
+
     <!-- Home Navigation Toggle -->
-    <button class="home-menu-toggle" onclick="toggleHomeNav()" aria-label="Apri menu">
+    <button class="home-menu-toggle" onclick="toggleHomeNav()" aria-label="Menu">
         ☰
     </button>
     
@@ -11,443 +18,230 @@
         <button class="home-nav-close" onclick="toggleHomeNav()" aria-label="Chiudi menu">
             ×
         </button>
-        <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ New Dream</a>
-        <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profile</a>
         <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Settings</a>
+        <a href="{{ url_for('faq') }}" class="home-nav-link">❓ FAQ</a>
+        <a href="{{ url_for('contacts') }}" class="home-nav-link">📧 Contacts</a>
     </nav>
 
     <!-- Main Content -->
-    <div class="dreamy-home">
-        <div class="content-layout">
-            <!-- Left side: Title and waves -->
-            <div class="content-left">
-                <h1 class="modern-title">
-                    What did<br>
-                    you <span class="dream-highlight">dream</span><br>
-                    about..
-                </h1>
+    <div class="simple-home">
+        <div class="center-content">
+            <!-- Main Title -->
+            <h1 class="main-title">What did you dream about..</h1>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button onclick="showTextInput()" class="action-btn write-btn">
+                    ✍️ Write
+                </button>
                 
-                <!-- Fluid Waves Animation -->
-                <div class="fluid-waves">
-                    <div class="wave wave-1"></div>
-                    <div class="wave wave-2"></div>
-                    <div class="wave wave-3"></div>
-                </div>
+                <button onclick="toggleVoiceRecording()" id="voiceBtn" class="action-btn voice-btn">
+                    <span class="voice-icon">🎤</span>
+                    <span class="voice-text">Record</span>
+                </button>
             </div>
             
-            <!-- Right side: Dream Input Options -->
-            <div class="content-right">
-                <!-- Personal Greeting -->
-                <div class="personal-greeting" id="personalGreeting">
-                    <span class="greeting-icon" id="greetingIcon">🌅</span>
-                    <span class="greeting-text" id="greetingText">Good morning! Ready to explore your dreams?</span>
-                </div>
-                
-                <!-- Dream Counter -->
-                <div class="dream-counter" id="dreamCounter">
-                    <span class="counter-icon">✨</span>
-                    <span class="counter-text">Dreams interpreted: <strong id="dreamCount">0</strong></span>
-                </div>
-                
-                <!-- Text Input Section -->
-                <div class="dream-input-section">
-                    <div class="section-header">
-                        <h3 id="inputPrompt">✍️ Write about your dream here!</h3>
-                    </div>
-                    <div class="text-input-container">
-                        <textarea id="dreamTextInput" placeholder="I dream that I am..." 
-                                style="width: 100%; min-height: 120px; padding: 1rem; 
-                                       background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
-                                       border-radius: 12px; color: var(--text); resize: vertical; 
-                                       font-size: 1rem; line-height: 1.5;"></textarea>
-                        
-                        <!-- Smart Suggestions -->
-                        <div class="smart-suggestions" id="smartSuggestions" style="display: none;">
-                            <div class="suggestion-header">💡 Need inspiration?</div>
-                            <div class="suggestions-list" id="suggestionsList">
-                                <!-- Suggestions will be populated by JavaScript -->
-                            </div>
-                        </div>
-                        <button onclick="interpretTextDream()" class="interpret-btn">
-                            <span class="btn-icon">➤</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Voice Input Section -->
-                <div class="dream-input-section">
-                    <div class="voice-input-container">
-                        <button onclick="toggleVoiceRecording()" id="voiceBtn" class="voice-record-btn">
-                            <span class="voice-icon">🎤</span>
-                            <span class="voice-text">Use voice</span>
-                        </button>
-                    </div>
-                </div>
+            <!-- Text Input (Initially Hidden) -->
+            <div class="text-input-area" id="textInputArea" style="display: none;">
+                <textarea id="dreamTextInput" placeholder="Tell me about your dream..." 
+                        style="width: 100%; min-height: 150px; padding: 1.5rem; 
+                               background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
+                               border-radius: 16px; color: var(--text); resize: vertical; 
+                               font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem;"></textarea>
+                <button onclick="interpretTextDream()" class="submit-btn">
+                    Interpret Dream ➤
+                </button>
             </div>
         </div>
     </div>
 
     <style>
-    /* Enhanced Home Styling */
-    .dreamy-home {
+    /* Simple Home Layout */
+    .simple-home {
         min-height: 100vh;
         background: linear-gradient(135deg, 
             rgba(13, 17, 29, 1) 0%, 
-            rgba(28, 34, 52, 1) 25%, 
-            rgba(41, 49, 79, 1) 50%, 
-            rgba(28, 34, 52, 1) 75%, 
+            rgba(28, 34, 52, 1) 50%, 
             rgba(13, 17, 29, 1) 100%);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    /* Floating particles background effect */
-    .dreamy-home::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(88, 196, 231, 0.05) 0%, transparent 50%);
-        animation: float 20s ease-in-out infinite;
-        z-index: 1;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        33% { transform: translateY(-10px) rotate(1deg); }
-        66% { transform: translateY(5px) rotate(-1deg); }
-    }
-    
-    .content-layout {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3rem;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 3rem 1rem;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .modern-title {
-        background: linear-gradient(135deg, 
-            #ffffff 0%, 
-            rgba(102, 126, 234, 1) 50%, 
-            rgba(118, 75, 162, 1) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 3.5rem;
-        font-weight: 700;
-        line-height: 1.1;
-        text-align: center;
-        margin: 0;
-        text-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-    }
-    
-    .dream-highlight {
-        position: relative;
-    }
-    
-    .dream-highlight::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-        border-radius: 2px;
-        animation: shimmer 2s ease-in-out infinite;
-    }
-    
-    @keyframes shimmer {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
-    }
-    
-    @media (min-width: 1024px) {
-        .content-layout {
-            flex-direction: row;
-            align-items: center;
-            gap: 6rem;
-            padding: 6rem 2rem;
-        }
-        
-        .content-left {
-            flex: 1;
-            max-width: 55%;
-        }
-        
-        .content-right {
-            flex: 0 0 auto;
-            min-width: 400px;
-        }
-        
-        .modern-title {
-            font-size: 6rem !important;
-            text-align: left !important;
-        }
-    }
-    
-    /* Fluid Waves Animation */
-    .fluid-waves {
-        position: relative;
-        height: 120px;
-        margin: 2rem 0;
-        overflow: hidden;
-    }
-    
-    .wave {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-        border-radius: 50%;
-        animation: wave-flow 8s ease-in-out infinite;
-    }
-    
-    .wave-1 { animation-delay: 0s; opacity: 0.7; }
-    .wave-2 { animation-delay: -2s; opacity: 0.5; }
-    .wave-3 { animation-delay: -4s; opacity: 0.3; }
-    
-    @keyframes wave-flow {
-        0%, 100% { transform: translateX(-50%) scaleY(0.8); }
-        50% { transform: translateX(-40%) scaleY(1.2); }
-    }
-    
-    /* Dream Input Sections */
-    .dream-input-section {
-        margin-bottom: 2.5rem;
-        width: 100%;
-        max-width: 450px;
-    }
-    
-    .section-header h3 {
-        color: rgba(255,255,255,0.95);
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    
-    .text-input-container {
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        gap: 1rem;
-        background: rgba(255,255,255,0.05);
-        border-radius: 16px;
-        padding: 1rem;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-    
-    .text-input-container textarea {
-        background: transparent !important;
-        border: none !important;
-        resize: none;
-        font-family: inherit;
-    }
-    
-    .text-input-container textarea:focus {
-        outline: none;
-        box-shadow: none;
-    }
-    
-    .interpret-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 50%;
-        width: 52px;
-        height: 52px;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.4s ease;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        flex-shrink: 0;
+        padding: 2rem;
     }
     
-    .interpret-btn:hover {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    }
-    
-    .btn-icon {
-        color: white;
-        font-size: 1.3rem;
-        font-weight: bold;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .voice-input-container {
+    .center-content {
         text-align: center;
-        padding: 2rem 0;
+        max-width: 500px;
+        width: 100%;
     }
     
-    .voice-record-btn {
+    /* User Greeting */
+    .user-greeting {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        z-index: 100;
+    }
+    
+    .greeting-link {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    
+    .greeting-link:hover {
+        color: rgba(102, 126, 234, 1);
+        text-decoration: none;
+    }
+    
+    /* Main Title */
+    .main-title {
+        color: rgba(255,255,255,0.95);
+        font-size: 3rem;
+        font-weight: 300;
+        margin: 0 0 3rem 0;
+        line-height: 1.2;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    
+    .action-btn {
         background: rgba(255,255,255,0.08);
         border: 2px solid rgba(255,255,255,0.2);
         border-radius: 16px;
-        padding: 1.2rem 2.5rem;
+        padding: 1.5rem 3rem;
         color: rgba(255,255,255,0.95);
         cursor: pointer;
-        transition: all 0.4s ease;
+        transition: all 0.3s ease;
         font-size: 1.1rem;
         font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
         backdrop-filter: blur(10px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        min-width: 120px;
     }
     
-    .voice-record-btn:hover {
+    .action-btn:hover {
         background: rgba(255,255,255,0.15);
         border-color: rgba(255,255,255,0.4);
         transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
     
-    .voice-record-btn.recording {
-        background: rgba(220, 38, 38, 0.2);
-        border-color: rgba(220, 38, 38, 0.5);
-        animation: pulse-record 1.5s infinite;
-        box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+    .write-btn:hover {
+        border-color: rgba(102, 126, 234, 0.6);
+        background: rgba(102, 126, 234, 0.1);
     }
     
-    @keyframes pulse-record {
-        0%, 100% { 
-            opacity: 1; 
-            transform: scale(1); 
-        }
-        50% { 
-            opacity: 0.8; 
-            transform: scale(1.05); 
-        }
-    }
-    
-    /* Personal Greeting & Counter */
-    .personal-greeting {
-        background: rgba(255,255,255,0.06);
-        border-radius: 16px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
-        animation: glow 3s ease-in-out infinite alternate;
-    }
-    
-    .greeting-icon {
-        font-size: 1.5rem;
-        margin-right: 0.5rem;
-    }
-    
-    .greeting-text {
-        color: rgba(255,255,255,0.95);
-        font-weight: 500;
-        font-size: 1rem;
-    }
-    
-    .dream-counter {
-        background: rgba(102, 126, 234, 0.15);
-        border-radius: 12px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        border: 1px solid rgba(102, 126, 234, 0.3);
-    }
-    
-    .counter-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
-    
-    .counter-text {
-        color: rgba(255,255,255,0.9);
-        font-size: 0.9rem;
-    }
-    
-    @keyframes glow {
-        0% { box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2); }
-        100% { box-shadow: 0 4px 25px rgba(118, 75, 162, 0.3); }
-    }
-    
-    /* Smart Suggestions */
-    .smart-suggestions {
-        background: rgba(255,255,255,0.04);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-top: 1rem;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .suggestion-header {
-        color: rgba(255,255,255,0.8);
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        text-align: center;
-    }
-    
-    .suggestions-list {
+    .voice-btn {
         display: flex;
-        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
         gap: 0.5rem;
     }
     
-    .suggestion-tag {
-        background: rgba(102, 126, 234, 0.2);
-        border: 1px solid rgba(102, 126, 234, 0.3);
-        color: rgba(255,255,255,0.9);
-        padding: 0.4rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
+    .voice-btn:hover {
+        border-color: rgba(220, 38, 38, 0.6);
+        background: rgba(220, 38, 38, 0.1);
+    }
+    
+    .voice-btn.recording {
+        background: rgba(220, 38, 38, 0.2);
+        border-color: rgba(220, 38, 38, 0.5);
+        animation: pulse-record 1.5s infinite;
+    }
+    
+    @keyframes pulse-record {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    /* Text Input Area */
+    .text-input-area {
+        animation: slideDown 0.3s ease;
+        margin-top: 2rem;
+    }
+    
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     
-    .suggestion-tag:hover {
-        background: rgba(102, 126, 234, 0.3);
+    .submit-btn:hover {
         transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
     }
     
-    /* Responsive adjustments */
+    /* Navigation */
+    .home-menu-toggle {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 8px;
+        color: rgba(255,255,255,0.9);
+        padding: 0.75rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 90;
+        margin-top: 3rem;
+    }
+    
+    .home-menu-toggle:hover {
+        background: rgba(255,255,255,0.15);
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
-        .modern-title {
-            font-size: 2.8rem !important;
+        .main-title {
+            font-size: 2.5rem;
         }
         
-        .content-layout {
-            padding: 2rem 1rem;
-            gap: 2rem;
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
         
-        .dream-input-section {
-            max-width: 100%;
+        .action-btn {
+            padding: 1.2rem 2rem;
+            min-width: 200px;
         }
         
-        .text-input-container {
-            padding: 0.8rem;
+        .user-greeting {
+            top: 1rem;
+            left: 1rem;
         }
         
-        .voice-record-btn {
-            padding: 1rem 1.8rem;
-            font-size: 1rem;
+        .home-menu-toggle {
+            top: 1rem;
+            left: 1rem;
+            margin-top: 2.5rem;
+        }
+        
+        .simple-home {
+            padding: 1rem;
         }
     }
     </style>
@@ -562,97 +356,11 @@
             }
         }
 
-        // Personalization system
-        const dreamPrompts = [
-            "✍️ Tell me about last night's adventure...",
-            "🌙 What mysterious world did you visit?",
-            "✨ Describe the dream that's still with you...",
-            "🔮 Share your subconscious journey...",
-            "💭 What story did your mind create?"
-        ];
-        
-        const dreamSuggestions = [
-            "Flying through clouds", "Meeting a stranger", "Being chased", "Finding treasure", 
-            "Talking animals", "Lost in a maze", "Falling from height", "Old memories",
-            "Underwater scenes", "Past/future versions", "Magical powers", "Childhood home"
-        ];
-        
-        // Initialize personalization
-        function initPersonalization() {
-            updateGreeting();
-            updateDreamCounter();
-            updatePrompt();
-            showSmartSuggestions();
-            
-            // Update greeting every minute
-            setInterval(updateGreeting, 60000);
-        }
-        
-        function updateGreeting() {
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting, icon;
-            
-            if (hour >= 5 && hour < 12) {
-                greeting = "Good morning! Ready to explore your dreams?";
-                icon = "🌅";
-            } else if (hour >= 12 && hour < 17) {
-                greeting = "Good afternoon! What did you dream about?";
-                icon = "☀️";
-            } else if (hour >= 17 && hour < 21) {
-                greeting = "Good evening! Time to decode your dreams...";
-                icon = "🌇";
-            } else {
-                greeting = "Sweet dreams await interpretation...";
-                icon = "🌙";
-            }
-            
-            document.getElementById('greetingIcon').textContent = icon;
-            document.getElementById('greetingText').textContent = greeting;
-        }
-        
-        function updateDreamCounter() {
-            let count = parseInt(localStorage.getItem('dreamCount') || '0');
-            document.getElementById('dreamCount').textContent = count;
-        }
-        
-        function updatePrompt() {
-            const randomPrompt = dreamPrompts[Math.floor(Math.random() * dreamPrompts.length)];
-            document.getElementById('inputPrompt').textContent = randomPrompt;
-        }
-        
-        function showSmartSuggestions() {
-            const suggestionsList = document.getElementById('suggestionsList');
-            const randomSuggestions = dreamSuggestions
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 6);
-            
-            suggestionsList.innerHTML = randomSuggestions
-                .map(suggestion => `<div class="suggestion-tag" onclick="useSuggestion('${suggestion}')">${suggestion}</div>`)
-                .join('');
-            
-            // Show suggestions if textarea is empty
-            const textarea = document.getElementById('dreamTextInput');
-            textarea.addEventListener('focus', () => {
-                if (!textarea.value.trim()) {
-                    document.getElementById('smartSuggestions').style.display = 'block';
-                }
-            });
-            
-            textarea.addEventListener('input', () => {
-                if (textarea.value.trim()) {
-                    document.getElementById('smartSuggestions').style.display = 'none';
-                }
-            });
-        }
-        
-        function useSuggestion(suggestion) {
-            const textarea = document.getElementById('dreamTextInput');
-            const currentText = textarea.value.trim();
-            const prefix = currentText ? currentText + '. ' : 'I dream that I am ';
-            textarea.value = prefix + suggestion.toLowerCase() + '...';
-            textarea.focus();
-            document.getElementById('smartSuggestions').style.display = 'none';
+        // Show text input area
+        function showTextInput() {
+            const textArea = document.getElementById('textInputArea');
+            textArea.style.display = 'block';
+            document.getElementById('dreamTextInput').focus();
         }
         
         // Simple text dream interpretation
@@ -663,11 +371,6 @@
                 alert('Please write your dream first!');
                 return;
             }
-            
-            // Update dream counter
-            let count = parseInt(localStorage.getItem('dreamCount') || '0');
-            count++;
-            localStorage.setItem('dreamCount', count.toString());
             
             // Get user preferences or use defaults
             const mood = localStorage.getItem('preferredMood') || 'neutro';
@@ -681,7 +384,7 @@
             const titleInput = document.createElement('input');
             titleInput.type = 'hidden';
             titleInput.name = 'title';
-            titleInput.value = `Dream ${count} - ${new Date().toLocaleDateString()}`;
+            titleInput.value = `Dream - ${new Date().toLocaleDateString()}`;
             
             const contentInput = document.createElement('input');
             contentInput.type = 'hidden';
@@ -706,8 +409,5 @@
             document.body.appendChild(form);
             form.submit();
         }
-        
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initPersonalization);
     </script>
 {% endblock %}
