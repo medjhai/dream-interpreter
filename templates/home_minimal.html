@@ -343,10 +343,12 @@
             updateRecordingButton(false);
             
             if (finalTranscript.trim()) {
-                // Send to interpretation
-                submitVoiceDream(finalTranscript.trim());
+                // Show mood and style selection instead of immediate submission
+                hideVoiceModal();
+                showMoodStyleModal(finalTranscript.trim());
             } else {
                 hideVoiceModal();
+                alert('Nessun testo registrato. Riprova.');
             }
         }
 
@@ -411,8 +413,69 @@
             }
         }
 
-        function submitVoiceDream(transcript) {
-            hideVoiceModal();
+        function showMoodStyleModal(transcript) {
+            const modal = document.createElement('div');
+            modal.id = 'moodStyleModal';
+            modal.className = 'voice-modal';
+            modal.innerHTML = `
+                <div class="voice-modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+                    <div class="voice-modal-header">
+                        <h3>🎭 Personalizza Interpretazione</h3>
+                        <button class="voice-modal-close" onclick="closeMoodStyleModal()">×</button>
+                    </div>
+                    <div class="voice-modal-body">
+                        <div style="background: var(--surface-light); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem;">
+                            <h4 style="margin-bottom: 0.5rem;">📝 Trascrizione:</h4>
+                            <p style="font-style: italic; line-height: 1.6;">${transcript}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Come ti sei sentito nel sogno?</label>
+                            <select id="voiceMood" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
+                                <option value="neutro">😐 Neutro</option>
+                                <option value="felice">😊 Felice</option>
+                                <option value="triste">😢 Triste</option>
+                                <option value="ansioso">😰 Ansioso</option>
+                                <option value="rabbioso">😠 Rabbioso</option>
+                                <option value="confuso">😕 Confuso</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Stile di interpretazione:</label>
+                            <select id="voiceStyle" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text);">
+                                <option value="psicologico">🔍 Psicologico</option>
+                                <option value="spirituale">🕉️ Spirituale</option>
+                                <option value="neutro">📖 Neutro</option>
+                            </select>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button onclick="submitVoiceDreamWithParams('${transcript.replace(/'/g, "\\\'")}')" style="background: var(--primary); color: white; border: none; padding: 0.75rem 2rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer; margin-right: 1rem;">
+                                🔮 Interpreta Sogno
+                            </button>
+                            <button onclick="closeMoodStyleModal()" style="background: var(--surface-light); color: var(--text); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 1rem; cursor: pointer;">
+                                Annulla
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeMoodStyleModal() {
+            const modal = document.getElementById('moodStyleModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function submitVoiceDreamWithParams(transcript) {
+            const mood = document.getElementById('voiceMood')?.value || 'neutro';
+            const style = document.getElementById('voiceStyle')?.value || 'psicologico';
+            
+            closeMoodStyleModal();
             
             // Show loading state
             const loadingDiv = document.createElement('div');
@@ -422,7 +485,7 @@
                            align-items: center; justify-content: center; color: white;">
                     <div style="text-align: center;">
                         <div style="font-size: 2rem; margin-bottom: 1rem;">🔮</div>
-                        <div>Interpreting your dream...</div>
+                        <div>Interpretando il tuo sogno...</div>
                     </div>
                 </div>
             `;
@@ -431,14 +494,34 @@
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ url_for("voice_interpret") }}';
+            form.action = '{{ url_for("interpret") }}';
             
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'voice_transcript';
-            input.value = transcript;
+            // Add form fields
+            const titleInput = document.createElement('input');
+            titleInput.type = 'hidden';
+            titleInput.name = 'title';
+            titleInput.value = `Sogno Vocale - ${new Date().toLocaleDateString('it-IT')}`;
             
-            form.appendChild(input);
+            const contentInput = document.createElement('input');
+            contentInput.type = 'hidden';
+            contentInput.name = 'content';
+            contentInput.value = transcript;
+            
+            const moodInput = document.createElement('input');
+            moodInput.type = 'hidden';
+            moodInput.name = 'mood';
+            moodInput.value = mood;
+            
+            const styleInput = document.createElement('input');
+            styleInput.type = 'hidden';
+            styleInput.name = 'style';
+            styleInput.value = style;
+            
+            form.appendChild(titleInput);
+            form.appendChild(contentInput);
+            form.appendChild(moodInput);
+            form.appendChild(styleInput);
+            
             document.body.appendChild(form);
             form.submit();
         }
