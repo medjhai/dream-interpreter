@@ -2,19 +2,9 @@
 
 {% block content %}
     <div class="mobile-app">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span class="time">9:41</span>
-            <div class="status-icons">
-                <span class="signal">●●●●</span>
-                <span class="wifi">📶</span>
-                <span class="battery">🔋</span>
-            </div>
-        </div>
-
         <!-- Header -->
         <div class="app-header">
-            <div class="user-profile">
+            <a href="{{ url_for('profile') }}" class="user-profile">
                 <div class="avatar">
                     <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ddd'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='40' fill='%23666'%3E{{ current_user.username[0].upper() if current_user.is_authenticated else 'G' }}%3C/text%3E%3C/svg%3E" alt="Avatar">
                 </div>
@@ -22,7 +12,7 @@
                     <div class="hello">Hello {{ current_user.username if current_user.is_authenticated else 'Guest' }}</div>
                     <div class="welcome">Welcome back.</div>
                 </div>
-            </div>
+            </a>
             <button class="menu-dots" onclick="toggleHomeNav()">
                 <span></span>
                 <span></span>
@@ -127,26 +117,6 @@
         overflow-x: hidden;
     }
 
-    /* Status Bar */
-    .status-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 20px;
-        font-size: 17px;
-        font-weight: 600;
-        color: #ffffff;
-    }
-
-    .time {
-        letter-spacing: -0.3px;
-    }
-
-    .status-icons {
-        display: flex;
-        gap: 2px;
-        font-size: 16px;
-    }
 
     /* App Header */
     .app-header {
@@ -160,6 +130,15 @@
         display: flex;
         align-items: center;
         gap: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+        text-decoration: none;
+        color: inherit;
+        transform: scale(1.02);
     }
 
     .avatar {
