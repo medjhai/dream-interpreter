@@ -42,6 +42,14 @@
                         ✏️ Modifica Email
                     </button>
                 </div>
+                
+                <div class="settings-item danger-zone">
+                    <label class="form-label text-danger">Elimina Account</label>
+                    <p class="text-muted">Questa azione eliminerà permanentemente il tuo account e tutti i tuoi dati</p>
+                    <button onclick="confirmDeleteAccount()" class="btn btn-danger">
+                        ⚠️ Elimina Account Permanentemente
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -57,6 +65,7 @@
             <div class="settings-grid">
                 <div class="settings-item">
                     <label class="form-label">Tema</label>
+                    <p class="text-muted">Cambia l'aspetto dell'app</p>
                     <select class="form-select" id="themeSelect" onchange="changeTheme(this.value)" aria-label="Seleziona tema">
                         <option value="auto">🌓 Automatico</option>
                         <option value="light">☀️ Chiaro</option>
@@ -66,6 +75,7 @@
 
                 <div class="settings-item">
                     <label class="form-label">Dimensione Font</label>
+                    <p class="text-muted">Regola la leggibilità del testo</p>
                     <select class="form-select" id="fontSizeSelect" onchange="changeFontSize(this.value)" aria-label="Seleziona dimensione font">
                         <option value="small">📖 Piccolo</option>
                         <option value="normal" selected>📄 Normale</option>
@@ -75,10 +85,21 @@
 
                 <div class="settings-item">
                     <label class="form-label">Animazioni</label>
+                    <p class="text-muted">Abilita o disabilita le animazioni nell'interfaccia</p>
                     <div class="toggle-container">
                         <input type="checkbox" id="animationsToggle" class="toggle-switch" checked onchange="toggleAnimations(this.checked)">
                         <label for="animationsToggle" class="toggle-label">Abilita animazioni</label>
                     </div>
+                </div>
+                
+                <div class="settings-item">
+                    <label class="form-label">Notifiche Toast</label>
+                    <p class="text-muted">Durata delle notifiche pop-up</p>
+                    <select class="form-select" id="toastDurationSelect" onchange="changeToastDuration(this.value)" aria-label="Durata notifiche">
+                        <option value="3000">⚡ Veloce (3s)</option>
+                        <option value="4000" selected>📱 Normale (4s)</option>
+                        <option value="6000">🐌 Lenta (6s)</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -195,15 +216,35 @@ function confirmDeleteAllDreams() {
     }
 }
 
+function confirmDeleteAccount() {
+    const confirmed = confirm('🚨 PERICOLO: Questa azione eliminerà PERMANENTEMENTE il tuo account e TUTTI i tuoi dati. NON È REVERSIBILE. Sei assolutamente sicuro?');
+    if (confirmed) {
+        const password = prompt('Per confermare, inserisci la tua password:');
+        if (password) {
+            const finalConfirm = confirm('ULTIMA CONFERMA: Stai per eliminare il tuo account per sempre. Tutti i sogni, interpretazioni e dati saranno persi. Procedi?');
+            if (finalConfirm) {
+                showToast('Eliminazione account in sviluppo - funzionalità ultra-protetta', 'error');
+            }
+        }
+    }
+}
+
+function changeToastDuration(duration) {
+    localStorage.setItem('toastDuration', duration);
+    showToast(`Durata notifiche impostata: ${duration/1000}s`, 'success', parseInt(duration));
+}
+
 // Load saved preferences on page load
 document.addEventListener('DOMContentLoaded', function() {
     const savedTheme = localStorage.getItem('theme') || 'auto';
     const savedFontSize = localStorage.getItem('fontSize') || 'normal';
     const savedAnimations = localStorage.getItem('animations') !== 'false';
+    const savedToastDuration = localStorage.getItem('toastDuration') || '4000';
     
     document.getElementById('themeSelect').value = savedTheme;
     document.getElementById('fontSizeSelect').value = savedFontSize;
     document.getElementById('animationsToggle').checked = savedAnimations;
+    document.getElementById('toastDurationSelect').value = savedToastDuration;
     
     applyTheme(savedTheme);
     changeFontSize(savedFontSize);

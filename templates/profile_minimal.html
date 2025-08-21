@@ -51,7 +51,7 @@
     <div class="card mb-4">
         <div class="card-header">
             <h2 class="card-title">📅 Calendario dei Mood</h2>
-            <p class="card-subtitle">Visualizza i tuoi stati d'animo durante i sogni</p>
+            <p class="card-subtitle">Traccia i tuoi stati emotivi giorno per giorno</p>
         </div>
         
         <div class="calendar-container">
@@ -116,7 +116,7 @@
 <script>
 // Calendar functionality
 let currentDate = new Date();
-const moodData = {{ mood_data | tojson }};
+const moodData = {{ mood_data | tojson | safe }};
 
 const moodEmojis = {
     'felice': '😊',
@@ -222,10 +222,33 @@ function showDreamsForDate(dateKey) {
     
     const dreamsList = dreams.map(dream => 
         `• ${dream.title} (${moodEmojis[dream.mood]} ${dream.mood})`
-    ).join('\n');
+    ).join('<br>');
     
     const formattedDate = new Date(dateKey).toLocaleDateString('it-IT');
-    showToast(`Sogni del ${formattedDate}:\n${dreamsList}`, 'info', 6000);
+    
+    // Create custom modal instead of toast for better readability
+    const modal = document.createElement('div');
+    modal.className = 'calendar-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Sogni del ${formattedDate}</h3>
+                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                ${dreamsList}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Chiudi</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
 
 // Initialize calendar when page loads

@@ -47,7 +47,7 @@
             {% for dream in recent_dreams %}
             <div class="dream-item" role="button" tabindex="0" 
                  onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'"
-                 onkeydown="if(event.key==='Enter' || event.key===' '){window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'}"
+                 onkeydown="if(event.key==='Enter' || event.key===' '){window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}';}"
                  aria-label="Visualizza sogno: {{ dream.title }}">
                 <h3 class="dream-title">{{ dream.title }}</h3>
                 <p class="dream-preview">
