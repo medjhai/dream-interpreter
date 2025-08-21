@@ -67,10 +67,10 @@ def days_since(date):
 
 @app.route('/')
 def index():
-    """Main page - shows login or dashboard based on authentication status."""
+    """Main page - shows login or home based on authentication status."""
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    return render_template('landing_minimal.html')
+    return redirect(url_for('home'))
 
 @app.route('/home')
 @login_required

@@ -1,6 +1,9 @@
 <!-- Unified Header Template -->
 <div class="mobile-app-container">
     <div class="app-header">
+        <a href="{{ url_for('home') }}" class="home-button">
+            🏠
+        </a>
         <a href="{{ url_for('profile') }}" class="user-profile">
             <div class="avatar">
                 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ddd'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='40' fill='%23666'%3E{{ current_user.username[0].upper() if current_user.is_authenticated else 'G' }}%3C/text%3E%3C/svg%3E" alt="Avatar">
@@ -48,6 +51,27 @@
     background: #000;
     width: 100%;
     box-sizing: border-box;
+}
+
+.home-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.home-button:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+    text-decoration: none;
+    color: white;
 }
 
 .user-profile {
