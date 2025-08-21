@@ -423,6 +423,14 @@ def stats():
         'confuso': '#a29bfe'
     }
     
+    mood_emojis = {
+        'felice': '😊',
+        'triste': '😢',
+        'ansioso': '😰', 
+        'rabbioso': '😠',
+        'confuso': '😕'
+    }
+    
     mood_distribution = []
     if moods:
         mood_counts = Counter(moods)
@@ -489,7 +497,7 @@ def api_dream_activity():
     from datetime import datetime, timedelta
     import json
     
-    period = request.args.get('period', '30', type=int)
+    period = int(request.args.get('period', 30))
     now = datetime.now()
     
     # Get dreams from the specified period
