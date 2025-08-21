@@ -76,7 +76,7 @@ def index():
 @login_required
 def home():
     """Dreamy home page with floating circles."""
-    return render_template('home_minimal.html')
+    return render_template('home_simple.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

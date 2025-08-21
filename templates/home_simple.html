@@ -1,0 +1,344 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+    <!-- Home Navigation Toggle -->
+    <button class="home-menu-toggle" onclick="toggleHomeNav()" aria-label="Apri menu">
+        ☰
+    </button>
+    
+    <!-- Full Screen Navigation -->
+    <nav class="home-nav" id="homeNav">
+        <button class="home-nav-close" onclick="toggleHomeNav()" aria-label="Chiudi menu">
+            ×
+        </button>
+        <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ New Dream</a>
+        <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profile</a>
+        <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Settings</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="dreamy-home">
+        <div class="content-layout">
+            <!-- Left side: Title and waves -->
+            <div class="content-left">
+                <h1 class="modern-title">
+                    What did<br>
+                    you <span class="dream-highlight">dream</span><br>
+                    about..
+                </h1>
+                
+                <!-- Fluid Waves Animation -->
+                <div class="fluid-waves">
+                    <div class="wave wave-1"></div>
+                    <div class="wave wave-2"></div>
+                    <div class="wave wave-3"></div>
+                </div>
+            </div>
+            
+            <!-- Right side: Dream Input Options -->
+            <div class="content-right">
+                <!-- Text Input Section -->
+                <div class="dream-input-section">
+                    <div class="section-header">
+                        <h3>✍️ Write about your dream here!</h3>
+                    </div>
+                    <div class="text-input-container">
+                        <textarea id="dreamTextInput" placeholder="I dream that I am..." 
+                                style="width: 100%; min-height: 120px; padding: 1rem; 
+                                       background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
+                                       border-radius: 12px; color: var(--text); resize: vertical; 
+                                       font-size: 1rem; line-height: 1.5;"></textarea>
+                        <button onclick="interpretTextDream()" class="interpret-btn">
+                            <span class="btn-icon">➤</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Voice Input Section -->
+                <div class="dream-input-section">
+                    <div class="voice-input-container">
+                        <button onclick="toggleVoiceRecording()" id="voiceBtn" class="voice-record-btn">
+                            <span class="voice-icon">🎤</span>
+                            <span class="voice-text">Use voice</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Content Layout */
+    .content-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    @media (min-width: 1024px) {
+        .content-layout {
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 4rem;
+            padding: 4rem 2rem;
+        }
+        
+        .content-left {
+            flex: 1;
+            max-width: 60%;
+        }
+        
+        .content-right {
+            flex: 0 0 auto;
+            min-width: 320px;
+        }
+        
+        .modern-title {
+            font-size: 5rem !important;
+            line-height: 1.1 !important;
+            text-align: left !important;
+        }
+    }
+    
+    /* Dream Input Sections */
+    .dream-input-section {
+        margin-bottom: 2rem;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .section-header h3 {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .text-input-container {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        gap: 0.75rem;
+    }
+    
+    .interpret-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .interpret-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+    }
+    
+    .btn-icon {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    
+    .voice-input-container {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .voice-record-btn {
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        color: rgba(255,255,255,0.9);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .voice-record-btn:hover {
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.3);
+    }
+    
+    .voice-record-btn.recording {
+        background: rgba(220, 38, 38, 0.2);
+        border-color: rgba(220, 38, 38, 0.4);
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    </style>
+
+    <script>
+        // Home navigation toggle
+        function toggleHomeNav() {
+            const nav = document.getElementById('homeNav');
+            nav.classList.toggle('open');
+        }
+
+        // Close nav when clicking on a link
+        document.querySelectorAll('.home-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('homeNav').classList.remove('open');
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                window.location.href = '{{ url_for("interpret") }}';
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('homeNav').classList.remove('open');
+            }
+        });
+        
+        // Simple Voice Recording System
+        let recognition = null;
+        let isRecording = false;
+        let finalTranscript = '';
+
+        function toggleVoiceRecording() {
+            if (isRecording) {
+                stopVoiceRecording();
+            } else {
+                startVoiceRecording();
+            }
+        }
+
+        function startVoiceRecording() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Il tuo browser non supporta la registrazione vocale. Usa Chrome o Edge.');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'it-IT';
+            
+            recognition.onstart = function() {
+                isRecording = true;
+                updateVoiceButton(true);
+            };
+            
+            recognition.onresult = function(event) {
+                finalTranscript = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    }
+                }
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                stopVoiceRecording();
+                alert('Errore nella registrazione vocale: ' + event.error);
+            };
+            
+            recognition.onend = function() {
+                stopVoiceRecording();
+            };
+            
+            finalTranscript = '';
+            recognition.start();
+        }
+
+        function stopVoiceRecording() {
+            isRecording = false;
+            if (recognition) {
+                recognition.stop();
+            }
+            
+            updateVoiceButton(false);
+            
+            if (finalTranscript.trim()) {
+                document.getElementById('dreamTextInput').value = finalTranscript.trim();
+            } else {
+                alert('Nessun testo registrato. Riprova.');
+            }
+        }
+
+        function updateVoiceButton(recording) {
+            const btn = document.getElementById('voiceBtn');
+            const icon = btn.querySelector('.voice-icon');
+            const text = btn.querySelector('.voice-text');
+            
+            if (recording) {
+                btn.classList.add('recording');
+                icon.textContent = '🔴';
+                text.textContent = 'Recording...';
+            } else {
+                btn.classList.remove('recording');
+                icon.textContent = '🎤';
+                text.textContent = 'Use voice';
+            }
+        }
+
+        // Simple text dream interpretation
+        function interpretTextDream() {
+            const dreamText = document.getElementById('dreamTextInput').value.trim();
+            
+            if (!dreamText) {
+                alert('Please write your dream first!');
+                return;
+            }
+            
+            // Create form and submit directly
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ url_for("interpret") }}';
+            
+            const titleInput = document.createElement('input');
+            titleInput.type = 'hidden';
+            titleInput.name = 'title';
+            titleInput.value = 'My Dream';
+            
+            const contentInput = document.createElement('input');
+            contentInput.type = 'hidden';
+            contentInput.name = 'content';
+            contentInput.value = dreamText;
+            
+            const moodInput = document.createElement('input');
+            moodInput.type = 'hidden';
+            moodInput.name = 'mood';
+            moodInput.value = 'neutro';
+            
+            const styleInput = document.createElement('input');
+            styleInput.type = 'hidden';
+            styleInput.name = 'style';
+            styleInput.value = 'psicologico';
+            
+            form.appendChild(titleInput);
+            form.appendChild(contentInput);
+            form.appendChild(moodInput);
+            form.appendChild(styleInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+{% endblock %}

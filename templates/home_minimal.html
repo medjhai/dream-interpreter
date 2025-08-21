@@ -159,27 +159,86 @@
         }
     }
     
-    /* Action Buttons Container */
-    .action-buttons-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    /* Dream Input Sections */
+    .dream-input-section {
+        margin-bottom: 2rem;
         width: 100%;
-        max-width: 320px;
+        max-width: 400px;
     }
     
-    @media (min-width: 640px) {
-        .action-buttons-container {
-            flex-direction: row;
-            gap: 1rem;
-        }
+    .section-header h3 {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        text-align: center;
     }
     
-    @media (min-width: 1024px) {
-        .action-buttons-container {
-            flex-direction: column;
-            gap: 1.5rem;
-        }
+    .text-input-container {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        gap: 0.75rem;
+    }
+    
+    .interpret-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .interpret-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+    }
+    
+    .btn-icon {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    
+    .voice-input-container {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .voice-record-btn {
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        color: rgba(255,255,255,0.9);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .voice-record-btn:hover {
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.3);
+    }
+    
+    .voice-record-btn.recording {
+        background: rgba(220, 38, 38, 0.2);
+        border-color: rgba(220, 38, 38, 0.4);
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
     }
     
     /* Unified Action Button Style */
@@ -332,20 +391,33 @@
                     </div>
                 </div>
                 
-                <!-- Right side: Action Buttons -->
+                <!-- Right side: Dream Input Options -->
                 <div class="content-right">
-                    <div class="action-buttons-container">
-                        <button onclick="startVoiceRecording()" class="action-btn action-btn-voice" aria-label="Record your dream using voice input">
-                            <div class="btn-icon" aria-hidden="true">🎤</div>
-                            <div class="btn-text"><strong>Record Dream</strong></div>
-                            <div class="btn-subtitle">Speak naturally</div>
-                        </button>
-                        
-                        <button onclick="window.location.href='{{ url_for('interpret') }}'" class="action-btn action-btn-text" aria-label="Write your dream using text input">
-                            <div class="btn-icon" aria-hidden="true">✍️</div>
-                            <div class="btn-text"><strong>Write Dream</strong></div>
-                            <div class="btn-subtitle">Type your story</div>
-                        </button>
+                    <!-- Text Input Section -->
+                    <div class="dream-input-section">
+                        <div class="section-header">
+                            <h3>✍️ Write about your dream here!</h3>
+                        </div>
+                        <div class="text-input-container">
+                            <textarea id="dreamTextInput" placeholder="I dream that I am..." 
+                                    style="width: 100%; min-height: 120px; padding: 1rem; 
+                                           background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); 
+                                           border-radius: 12px; color: var(--text); resize: vertical; 
+                                           font-size: 1rem; line-height: 1.5;"></textarea>
+                            <button onclick="interpretTextDream()" class="interpret-btn">
+                                <span class="btn-icon">➤</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Voice Input Section -->
+                    <div class="dream-input-section">
+                        <div class="voice-input-container">
+                            <button onclick="toggleVoiceRecording()" id="voiceBtn" class="voice-record-btn">
+                                <span class="voice-icon">🎤</span>
+                                <span class="voice-text">Use voice</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -386,15 +458,23 @@
             }
         });
         
-        // Voice Recording System
+        // Simplified Voice Recording System
         let recognition = null;
         let isRecording = false;
-        let recordingTimeout = null;
         let finalTranscript = '';
 
-        function initSpeechRecognition() {
+        function toggleVoiceRecording() {
+            if (isRecording) {
+                stopVoiceRecording();
+            } else {
+                startVoiceRecording();
+            }
+        }
+
+        function startVoiceRecording() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                return false;
+                alert('Il tuo browser non supporta la registrazione vocale. Usa Chrome o Edge.');
+                return;
             }
             
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -403,12 +483,10 @@
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'it-IT';
-            recognition.maxAlternatives = 3;
             
             recognition.onstart = function() {
                 isRecording = true;
-                updateRecordingButton(true);
-                showVoiceModal();
+                updateVoiceButton(true);
             };
             
             recognition.onresult = function(event) {
