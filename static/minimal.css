@@ -407,6 +407,11 @@ body {
     }
 }
 
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
 /* Focus states for accessibility */
 .btn:focus,
 .form-input:focus,
