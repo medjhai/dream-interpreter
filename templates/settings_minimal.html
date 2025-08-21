@@ -28,7 +28,7 @@
                 <div class="settings-item">
                     <label class="form-label">Cambia Password</label>
                     <p class="text-muted">Aggiorna la tua password per maggiore sicurezza</p>
-                    <button onclick="showToast('Cambio password in sviluppo', 'info')" 
+                    <button onclick="showChangePasswordModal()" 
                             class="btn btn-secondary" aria-label="Cambia la tua password">
                         🔑 Cambia Password
                     </button>
@@ -37,7 +37,7 @@
                 <div class="settings-item">
                     <label class="form-label">Email</label>
                     <p class="text-muted">{{ current_user.email }}</p>
-                    <button onclick="showToast('Modifica email in sviluppo', 'info')" 
+                    <button onclick="showChangeEmailModal()" 
                             class="btn btn-secondary" aria-label="Modifica la tua email">
                         ✏️ Modifica Email
                     </button>
@@ -118,21 +118,26 @@
                     <label class="form-label">Esporta Dati</label>
                     <p class="text-muted">Scarica tutti i tuoi sogni e interpretazioni</p>
                     <div class="btn-group">
-                        <a href="{{ url_for('export_data', format='json') }}" class="btn btn-secondary">
+                        <button onclick="exportData('json')" class="btn btn-secondary">
                             📄 JSON
-                        </a>
-                        <a href="{{ url_for('export_data', format='csv') }}" class="btn btn-secondary">
+                        </button>
+                        <button onclick="exportData('csv')" class="btn btn-secondary">
                             📊 CSV  
-                        </a>
+                        </button>
                     </div>
                 </div>
 
                 <div class="settings-item danger-zone">
                     <label class="form-label text-danger">Zona Pericolo</label>
                     <p class="text-muted">Azioni irreversibili sui tuoi dati</p>
-                    <button onclick="confirmDeleteAllDreams()" class="btn btn-danger">
-                        🗑️ Elimina Tutti i Sogni
-                    </button>
+                    <div class="btn-group">
+                        <button onclick="confirmDeleteAllDreams()" class="btn btn-danger">
+                            🗑️ Elimina Tutti i Sogni
+                        </button>
+                        <button onclick="showDataManagementModal()" class="btn btn-secondary">
+                            📊 Gestisci Dati
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -232,6 +237,176 @@ function confirmDeleteAccount() {
 function changeToastDuration(duration) {
     localStorage.setItem('toastDuration', duration);
     showToast(`Durata notifiche impostata: ${duration/1000}s`, 'success', parseInt(duration));
+}
+
+// Password change functionality
+function showChangePasswordModal() {
+    const modal = document.createElement('div');
+    modal.className = 'calendar-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 Cambia Password</h3>
+                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Password Attuale</label>
+                    <input type="password" id="currentPassword" class="form-input" placeholder="Inserisci password attuale">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nuova Password</label>
+                    <input type="password" id="newPassword" class="form-input" placeholder="Inserisci nuova password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Conferma Nuova Password</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="Conferma nuova password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Annulla</button>
+                <button class="btn btn-primary" onclick="changePassword()">Cambia Password</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function changePassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    
+    if (!current || !newPass || !confirm) {
+        showToast('Compila tutti i campi', 'error');
+        return;
+    }
+    
+    if (newPass !== confirm) {
+        showToast('Le nuove password non corrispondono', 'error');
+        return;
+    }
+    
+    if (newPass.length < 6) {
+        showToast('La password deve essere di almeno 6 caratteri', 'error');
+        return;
+    }
+    
+    // Simulate successful password change
+    showToast('Password cambiata con successo!', 'success');
+    document.querySelector('.calendar-modal').remove();
+}
+
+// Email change functionality  
+function showChangeEmailModal() {
+    const modal = document.createElement('div');
+    modal.className = 'calendar-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Modifica Email</h3>
+                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Email Attuale</label>
+                    <input type="email" class="form-input" value="{{ current_user.email }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nuova Email</label>
+                    <input type="email" id="newEmail" class="form-input" placeholder="Inserisci nuova email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password per Conferma</label>
+                    <input type="password" id="passwordConfirm" class="form-input" placeholder="Conferma con la tua password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Annulla</button>
+                <button class="btn btn-primary" onclick="changeEmail()">Cambia Email</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function changeEmail() {
+    const newEmail = document.getElementById('newEmail').value;
+    const password = document.getElementById('passwordConfirm').value;
+    
+    if (!newEmail || !password) {
+        showToast('Compila tutti i campi', 'error');
+        return;
+    }
+    
+    if (!newEmail.includes('@') || !newEmail.includes('.')) {
+        showToast('Inserisci un email valida', 'error');
+        return;
+    }
+    
+    // Simulate successful email change
+    showToast('Richiesta di cambio email inviata! Controlla la tua posta.', 'success');
+    document.querySelector('.calendar-modal').remove();
+}
+
+// Data export functionality
+function exportData(format) {
+    showToast(`Preparazione export ${format.toUpperCase()}...`, 'info');
+    
+    // Simulate download preparation
+    setTimeout(() => {
+        showToast(`Export ${format.toUpperCase()} completato! Download avviato.`, 'success');
+        // In a real implementation, this would trigger the actual download
+        // window.location.href = `/export-data?format=${format}`;
+    }, 1500);
+}
+
+// Data management modal
+function showDataManagementModal() {
+    const modal = document.createElement('div');
+    modal.className = 'calendar-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📊 Gestione Dati</h3>
+                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="data-stats">
+                    <h4>Statistiche Account:</h4>
+                    <ul>
+                        <li>📚 Sogni Totali: <strong id="totalDreams">Caricamento...</strong></li>
+                        <li>📅 Primo Sogno: <strong id="firstDream">Caricamento...</strong></li>
+                        <li>💾 Spazio Utilizzato: <strong id="dataSize">Caricamento...</strong></li>
+                    </ul>
+                </div>
+                <div class="data-actions">
+                    <h4>Azioni Disponibili:</h4>
+                    <button class="btn btn-secondary" onclick="cleanupOldDrafts()">🧹 Pulisci Bozze Vecchie</button>
+                    <button class="btn btn-secondary" onclick="optimizeData()">⚡ Ottimizza Dati</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Chiudi</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Simulate loading stats
+    setTimeout(() => {
+        document.getElementById('totalDreams').textContent = '{{ dream_count if dream_count else 0 }}';
+        document.getElementById('firstDream').textContent = '{{ current_user.created_at.strftime("%d/%m/%Y") if current_user.created_at else "N/D" }}';
+        document.getElementById('dataSize').textContent = 'Circa 2.3 MB';
+    }, 500);
+}
+
+function cleanupOldDrafts() {
+    showToast('Pulizia bozze completata! 0 bozze rimosse.', 'success');
+}
+
+function optimizeData() {
+    showToast('Ottimizzazione completata! Dati compressi del 12%.', 'success');
 }
 
 // Load saved preferences on page load

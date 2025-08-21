@@ -193,13 +193,24 @@ function createDayElement(date, isOtherMonth) {
         const moodIndicators = document.createElement('div');
         moodIndicators.className = 'mood-indicators';
         
-        moodData[dateKey].forEach(dream => {
+        // Show all moods for the day, limit to 4 to avoid overcrowding
+        const moodsToShow = moodData[dateKey].slice(0, 4);
+        moodsToShow.forEach(dream => {
             const moodSpan = document.createElement('span');
             moodSpan.className = 'mood-indicator';
             moodSpan.textContent = moodEmojis[dream.mood] || '😐';
             moodSpan.title = `${dream.title} - ${dream.mood}`;
             moodIndicators.appendChild(moodSpan);
         });
+        
+        // Show +N if there are more than 4 dreams
+        if (moodData[dateKey].length > 4) {
+            const moreSpan = document.createElement('span');
+            moreSpan.className = 'mood-indicator more-indicator';
+            moreSpan.textContent = `+${moodData[dateKey].length - 4}`;
+            moreSpan.title = `Altri ${moodData[dateKey].length - 4} sogni`;
+            moodIndicators.appendChild(moreSpan);
+        }
         
         dayElement.appendChild(moodIndicators);
         

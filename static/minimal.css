@@ -989,6 +989,19 @@ html {
     opacity: 0.8;
 }
 
+.more-indicator {
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
 .mood-legend {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing);
@@ -1082,6 +1095,22 @@ html {
     padding: var(--spacing);
     border-top: 1px solid var(--border);
     text-align: right;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.modal-footer .btn {
+    margin: 0;
+}
+
+/* Form groups in modals */
+.form-group {
+    margin-bottom: var(--spacing);
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
 }
 
 /* Mobile Calendar Adjustments */
