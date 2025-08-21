@@ -157,9 +157,15 @@
             <p class="home-subtitle">
                 Scopri i significati nascosti nei tuoi sogni attraverso un'analisi psicologica approfondita e personalizzata
             </p>
-            <a href="{{ url_for('interpret') }}" class="dream-button" aria-label="Inizia a interpretare un sogno">
-                ✨ Interpreta Dream
-            </a>
+            
+            <div class="dream-buttons-container">
+                <a href="{{ url_for('interpret') }}" class="dream-button dream-button-text" aria-label="Scrivi il tuo sogno">
+                    ✏️ Scrivi Sogno
+                </a>
+                <button onclick="startVoiceRecording()" class="dream-button dream-button-voice" aria-label="Registra il tuo sogno vocalmente">
+                    🎤 Racconta Sogno
+                </button>
+            </div>
         </div>
     </div>
 
@@ -197,9 +203,189 @@
             }
         });
         
-        // Welcome message - DISABLED
+        // Voice Recording System
+        let recognition = null;
+        let isRecording = false;
+        let recordingTimeout = null;
+        let finalTranscript = '';
+
+        function initSpeechRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                return false;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'it-IT';
+            recognition.maxAlternatives = 1;
+            
+            recognition.onstart = function() {
+                isRecording = true;
+                updateRecordingButton(true);
+                showVoiceModal();
+            };
+            
+            recognition.onresult = function(event) {
+                let interimTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                updateVoiceModalText(finalTranscript + interimTranscript);
+                
+                // Reset timeout on speech detection
+                if (recordingTimeout) {
+                    clearTimeout(recordingTimeout);
+                }
+                recordingTimeout = setTimeout(stopVoiceRecording, 3000);
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'no-speech') {
+                    // Continue listening for speech
+                    return;
+                }
+                stopVoiceRecording();
+            };
+            
+            recognition.onend = function() {
+                if (isRecording) {
+                    // Restart recognition if we're still supposed to be recording
+                    recognition.start();
+                }
+            };
+            
+            return true;
+        }
+
+        function startVoiceRecording() {
+            if (!recognition && !initSpeechRecognition()) {
+                alert('Il riconoscimento vocale non è supportato in questo browser. Usa Chrome o Edge.');
+                return;
+            }
+            
+            if (isRecording) {
+                stopVoiceRecording();
+                return;
+            }
+            
+            finalTranscript = '';
+            recognition.start();
+            
+            // Timeout after 30 seconds
+            recordingTimeout = setTimeout(stopVoiceRecording, 30000);
+        }
+
+        function stopVoiceRecording() {
+            if (!isRecording) return;
+            
+            isRecording = false;
+            if (recognition) {
+                recognition.stop();
+            }
+            if (recordingTimeout) {
+                clearTimeout(recordingTimeout);
+            }
+            
+            updateRecordingButton(false);
+            
+            if (finalTranscript.trim()) {
+                // Send to interpretation
+                submitVoiceDream(finalTranscript.trim());
+            } else {
+                hideVoiceModal();
+            }
+        }
+
+        function updateRecordingButton(recording) {
+            const button = document.querySelector('.dream-button-voice');
+            if (recording) {
+                button.classList.add('recording');
+                button.innerHTML = '🔴 Registrando...';
+            } else {
+                button.classList.remove('recording');
+                button.innerHTML = '🎤 Racconta Sogno';
+            }
+        }
+
+        function showVoiceModal() {
+            const modal = document.createElement('div');
+            modal.id = 'voiceModal';
+            modal.className = 'voice-modal';
+            modal.innerHTML = `
+                <div class="voice-modal-content">
+                    <div class="voice-modal-header">
+                        <h3>🎤 Racconta il tuo sogno</h3>
+                        <button class="voice-modal-close" onclick="stopVoiceRecording()">×</button>
+                    </div>
+                    <div class="voice-modal-body">
+                        <div class="voice-indicator">
+                            <div class="voice-wave"></div>
+                            <div class="voice-wave"></div>
+                            <div class="voice-wave"></div>
+                            <div class="voice-wave"></div>
+                        </div>
+                        <p class="voice-status">Ascoltando... Parla tranquillamente</p>
+                        <div class="voice-transcript" id="voiceTranscript">
+                            <em>Inizia a parlare del tuo sogno...</em>
+                        </div>
+                    </div>
+                    <div class="voice-modal-footer">
+                        <button class="btn btn-danger" onclick="stopVoiceRecording()">
+                            🔴 Termina Registrazione
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function updateVoiceModalText(text) {
+            const transcript = document.getElementById('voiceTranscript');
+            if (transcript) {
+                transcript.innerHTML = text || '<em>Continua a parlare...</em>';
+            }
+        }
+
+        function hideVoiceModal() {
+            const modal = document.getElementById('voiceModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function submitVoiceDream(transcript) {
+            hideVoiceModal();
+            
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ url_for("voice_interpret") }}';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'voice_transcript';
+            input.value = transcript;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // No welcome notification as requested
+            initSpeechRecognition();
         });
     </script>
 </body>

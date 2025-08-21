@@ -228,6 +228,42 @@ def interpret():
         app.logger.error(f"Error interpreting dream: {str(e)}")
         return jsonify({'error': 'Errore durante l\'interpretazione del sogno'}), 500
 
+@app.route('/voice-interpret', methods=['POST'])
+@login_required
+def voice_interpret():
+    """Handle voice-recorded dream interpretation."""
+    voice_transcript = request.form.get('voice_transcript', '').strip()
+    
+    if not voice_transcript:
+        flash('Registrazione vocale vuota. Riprova.', 'error')
+        return redirect(url_for('home'))
+    
+    # Create dream title from voice transcript
+    dream_title = f"Sogno Vocale - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    
+    # Default mood and style for voice dreams (user can edit later)
+    mood = 'neutro'
+    style = 'psicologico'
+    
+    # Generate interpretation
+    interpretation = interpret_dream(voice_transcript, mood=mood, style=style)
+    
+    # Save dream to database
+    dream = Dream()
+    dream.title = dream_title
+    dream.content = voice_transcript
+    dream.mood = mood
+    dream.interpretation_style = style
+    dream.interpretation = interpretation
+    dream.user_id = current_user.id
+    
+    db.session.add(dream)
+    db.session.commit()
+    
+    # Redirect to view the dream with a success message
+    flash('Sogno registrato vocalmente e interpretato con successo!', 'success')
+    return redirect(url_for('view_dream', dream_id=dream.id))
+
 @app.route('/dreams')
 @login_required
 def dreams_history():
