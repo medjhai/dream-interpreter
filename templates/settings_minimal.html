@@ -1,0 +1,213 @@
+{% extends "base_minimal.html" %}
+
+{% block content %}
+<div class="container-sm">
+    <div class="text-center mb-4">
+        <h1>⚙️ Impostazioni</h1>
+        <p class="text-muted">Personalizza la tua esperienza e gestisci il tuo account</p>
+    </div>
+
+    <!-- Account Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">👤 Account</h2>
+            <p class="card-subtitle">Gestisci le informazioni del tuo account</p>
+        </div>
+        
+        <div class="settings-section">
+            <div class="logout-section text-center mb-4">
+                <a href="{{ url_for('logout') }}" class="btn btn-primary btn-lg logout-button" 
+                   onclick="return confirm('Sei sicuro di voler uscire?')"
+                   aria-label="Disconnetti dal tuo account">
+                    🚪 Logout
+                </a>
+                <p class="text-muted mt-2">Disconnettiti dal tuo account in modo sicuro</p>
+            </div>
+            
+            <div class="settings-grid">
+                <div class="settings-item">
+                    <label class="form-label">Cambia Password</label>
+                    <p class="text-muted">Aggiorna la tua password per maggiore sicurezza</p>
+                    <button onclick="showToast('Cambio password in sviluppo', 'info')" 
+                            class="btn btn-secondary" aria-label="Cambia la tua password">
+                        🔑 Cambia Password
+                    </button>
+                </div>
+
+                <div class="settings-item">
+                    <label class="form-label">Email</label>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                    <button onclick="showToast('Modifica email in sviluppo', 'info')" 
+                            class="btn btn-secondary" aria-label="Modifica la tua email">
+                        ✏️ Modifica Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">🎨 Interfaccia</h2>
+            <p class="card-subtitle">Personalizza l'aspetto dell'app</p>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-grid">
+                <div class="settings-item">
+                    <label class="form-label">Tema</label>
+                    <select class="form-select" id="themeSelect" onchange="changeTheme(this.value)" aria-label="Seleziona tema">
+                        <option value="auto">🌓 Automatico</option>
+                        <option value="light">☀️ Chiaro</option>
+                        <option value="dark">🌙 Scuro</option>
+                    </select>
+                </div>
+
+                <div class="settings-item">
+                    <label class="form-label">Dimensione Font</label>
+                    <select class="form-select" id="fontSizeSelect" onchange="changeFontSize(this.value)" aria-label="Seleziona dimensione font">
+                        <option value="small">📖 Piccolo</option>
+                        <option value="normal" selected>📄 Normale</option>
+                        <option value="large">📰 Grande</option>
+                    </select>
+                </div>
+
+                <div class="settings-item">
+                    <label class="form-label">Animazioni</label>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="animationsToggle" class="toggle-switch" checked onchange="toggleAnimations(this.checked)">
+                        <label for="animationsToggle" class="toggle-label">Abilita animazioni</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy & Data Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">📊 Privacy & Dati</h2>
+            <p class="card-subtitle">Gestisci i tuoi dati personali</p>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-grid">
+                <div class="settings-item">
+                    <label class="form-label">Esporta Dati</label>
+                    <p class="text-muted">Scarica tutti i tuoi sogni e interpretazioni</p>
+                    <div class="btn-group">
+                        <a href="{{ url_for('export_data', format='json') }}" class="btn btn-secondary">
+                            📄 JSON
+                        </a>
+                        <a href="{{ url_for('export_data', format='csv') }}" class="btn btn-secondary">
+                            📊 CSV  
+                        </a>
+                    </div>
+                </div>
+
+                <div class="settings-item danger-zone">
+                    <label class="form-label text-danger">Zona Pericolo</label>
+                    <p class="text-muted">Azioni irreversibili sui tuoi dati</p>
+                    <button onclick="confirmDeleteAllDreams()" class="btn btn-danger">
+                        🗑️ Elimina Tutti i Sogni
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">ℹ️ Informazioni</h2>
+            <p class="card-subtitle">Supporto e dettagli app</p>
+        </div>
+        
+        <div class="settings-section">
+            <div class="settings-grid">
+                <div class="settings-item">
+                    <label class="form-label">Scorciatoie Tastiera</label>
+                    <ul class="shortcuts-list">
+                        <li><kbd>Ctrl</kbd> + <kbd>N</kbd> - Nuovo Sogno</li>
+                        <li><kbd>Alt</kbd> + <kbd>S</kbd> - Salta al Contenuto</li>
+                    </ul>
+                </div>
+
+                <div class="settings-item">
+                    <label class="form-label">Versione</label>
+                    <p class="text-muted">Dream Interpreter v2.0</p>
+                    <p class="text-muted">Account creato: {{ current_user.created_at.strftime('%d/%m/%Y') if current_user.created_at else 'N/D' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Theme management
+function changeTheme(theme) {
+    localStorage.setItem('theme', theme);
+    applyTheme(theme);
+    showToast(`Tema cambiato: ${theme}`, 'success');
+}
+
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.documentElement.style.setProperty('--background', '#1a1a1a');
+        document.documentElement.style.setProperty('--text', '#ffffff');
+        document.documentElement.style.setProperty('--surface', '#2a2a2a');
+    } else if (theme === 'light') {
+        document.documentElement.style.setProperty('--background', '#ffffff');
+        document.documentElement.style.setProperty('--text', '#1a1a1a');
+        document.documentElement.style.setProperty('--surface', '#f8f9fa');
+    }
+    // Auto theme uses default CSS values
+}
+
+// Font size management
+function changeFontSize(size) {
+    const multipliers = { small: 0.9, normal: 1.0, large: 1.2 };
+    document.documentElement.style.fontSize = `${16 * multipliers[size]}px`;
+    localStorage.setItem('fontSize', size);
+    showToast(`Dimensione font: ${size}`, 'success');
+}
+
+// Animations toggle
+function toggleAnimations(enabled) {
+    if (!enabled) {
+        document.documentElement.style.setProperty('--animation-speed', '0ms');
+    } else {
+        document.documentElement.style.removeProperty('--animation-speed');
+    }
+    localStorage.setItem('animations', enabled);
+    showToast(enabled ? 'Animazioni attivate' : 'Animazioni disattivate', 'success');
+}
+
+// Danger zone actions
+function confirmDeleteAllDreams() {
+    const confirmed = confirm('⚠️ ATTENZIONE: Questa azione cancellerà TUTTI i tuoi sogni in modo permanente. Sei assolutamente sicuro?');
+    if (confirmed) {
+        const doubleConfirm = confirm('Ultima conferma: stai per perdere tutti i tuoi sogni. Continua?');
+        if (doubleConfirm) {
+            showToast('Eliminazione in sviluppo - funzionalità protetta', 'warning');
+        }
+    }
+}
+
+// Load saved preferences on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme') || 'auto';
+    const savedFontSize = localStorage.getItem('fontSize') || 'normal';
+    const savedAnimations = localStorage.getItem('animations') !== 'false';
+    
+    document.getElementById('themeSelect').value = savedTheme;
+    document.getElementById('fontSizeSelect').value = savedFontSize;
+    document.getElementById('animationsToggle').checked = savedAnimations;
+    
+    applyTheme(savedTheme);
+    changeFontSize(savedFontSize);
+    toggleAnimations(savedAnimations);
+});
+</script>
+{% endblock %}

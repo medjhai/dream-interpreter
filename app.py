@@ -264,9 +264,50 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    """User profile page."""
+    """User profile page with mood calendar data."""
     dream_count = Dream.query.filter_by(user_id=current_user.id).count()
-    return render_template('profile.html', user=current_user, dream_count=dream_count)
+    
+    # Get dreams with dates and moods for calendar
+    dreams_with_moods = Dream.query.filter_by(user_id=current_user.id)\
+                                  .filter(Dream.mood.isnot(None))\
+                                  .order_by(Dream.created_at.desc())\
+                                  .all()
+    
+    # Create mood data dictionary for JavaScript
+    mood_data = {}
+    for dream in dreams_with_moods:
+        date_key = dream.created_at.strftime('%Y-%m-%d')
+        if date_key not in mood_data:
+            mood_data[date_key] = []
+        mood_data[date_key].append({
+            'mood': dream.mood,
+            'title': dream.title,
+            'id': dream.id
+        })
+    
+    return render_template('profile_minimal.html', 
+                         user=current_user, 
+                         dream_count=dream_count,
+                         mood_data=mood_data)
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required 
+def settings():
+    """User settings page."""
+    if request.method == 'POST':
+        # Handle settings updates via AJAX
+        try:
+            data = request.get_json()
+            setting_type = data.get('type')
+            value = data.get('value')
+            
+            # In future: save user preferences to database
+            # For now, just return success
+            return jsonify({'success': True, 'message': f'Impostazione {setting_type} aggiornata'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    return render_template('settings_minimal.html')
 
 @app.route('/search')
 @login_required
