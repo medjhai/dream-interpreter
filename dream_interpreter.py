@@ -1,3 +1,235 @@
+def analyze_dream_context(dream_text, mood=''):
+    """
+    Analyze the dream text to extract contextual information for personalization.
+    
+    Returns:
+        dict: Context analysis including emotional intensity, setting, characters, actions, etc.
+    """
+    context = {
+        'emotional_intensity': 'medium',
+        'setting_type': 'unknown',
+        'time_period': 'present',
+        'characters': [],
+        'actions': [],
+        'colors': [],
+        'sensory_details': [],
+        'movement_type': '',
+        'relationship_dynamics': [],
+        'personal_elements': []
+    }
+    
+    # Analyze emotional intensity based on language
+    high_intensity_words = ['terrore', 'panico', 'ecstasy', 'euforia', 'disperazione', 'gioia immensa', 'angoscia', 'terrore', 'paura estrema']
+    low_intensity_words = ['calmo', 'sereno', 'tranquillo', 'pacifico', 'rilassato', 'dolce', 'tenue']
+    
+    dream_lower = dream_text.lower()
+    
+    if any(word in dream_lower for word in high_intensity_words):
+        context['emotional_intensity'] = 'high'
+    elif any(word in dream_lower for word in low_intensity_words):
+        context['emotional_intensity'] = 'low'
+    
+    # Analyze setting
+    nature_settings = ['montagna', 'mare', 'bosco', 'foresta', 'giardino', 'lago', 'fiume', 'campo', 'prato', 'cielo']
+    urban_settings = ['città', 'casa', 'ufficio', 'scuola', 'strada', 'palazzo', 'edificio', 'negozio', 'bar', 'ristorante']
+    fantastical_settings = ['castello', 'mondo magico', 'dimensione', 'spazio', 'pianeta', 'regno', 'paradiso', 'inferno']
+    
+    if any(word in dream_lower for word in nature_settings):
+        context['setting_type'] = 'nature'
+    elif any(word in dream_lower for word in urban_settings):
+        context['setting_type'] = 'urban'
+    elif any(word in dream_lower for word in fantastical_settings):
+        context['setting_type'] = 'fantastical'
+    
+    # Analyze movement and actions
+    movement_words = ['correre', 'volare', 'saltare', 'cadere', 'nuotare', 'camminare', 'andare', 'muovere']
+    social_words = ['parlare', 'abbracciare', 'baciare', 'litigare', 'discutere', 'incontrare', 'seguire']
+    
+    for word in movement_words:
+        if word in dream_lower:
+            context['movement_type'] = word
+            break
+    
+    # Detect colors
+    colors = ['rosso', 'blu', 'verde', 'giallo', 'nero', 'bianco', 'viola', 'rosa', 'arancione', 'oro', 'argento']
+    for color in colors:
+        if color in dream_lower:
+            context['colors'].append(color)
+    
+    # Detect personal elements (family, friends, pets)
+    personal_elements = ['famiglia', 'madre', 'padre', 'fratello', 'sorella', 'figlio', 'figlia', 'amico', 'amica', 'fidanzato', 'fidanzata', 'marito', 'moglie', 'cane', 'gatto']
+    for element in personal_elements:
+        if element in dream_lower:
+            context['personal_elements'].append(element)
+    
+    return context
+
+
+def create_personalized_intro(keyword, context, mood, style):
+    """
+    Create a personalized introduction based on the dream context and specific symbol.
+    """
+    personalizations = {
+        'volare': {
+            'nature': "Il volo che hai sperimentato si svolge in un ambiente naturale, amplificando il senso di libertà e connessione con gli elementi primordiali.",
+            'urban': "Il volo sopra un ambiente urbano suggerisce il desiderio di elevarsi al di sopra delle complessità e delle limitazioni della vita quotidiana.",
+            'fantastical': "Il volo in un ambiente fantastico indica una forte spinta immaginativa e il desiderio di trascendere i confini della realtà ordinaria.",
+            'high_emotion': "L'intensità emotiva del tuo volo suggerisce che questo simbolo porta con sé una carica energetica particolare, indicando un bisogno urgente di liberazione.",
+            'colors': "I colori presenti nel tuo sogno di volo aggiungono sfumature emotive specifiche: {colors_meaning}"
+        },
+        'acqua': {
+            'nature': "L'acqua nel tuo sogno appare in un contesto naturale, collegando il tuo mondo emotivo ai ritmi primordiali della natura.",
+            'urban': "L'acqua in un ambiente urbano può rappresentare emozioni che emergono nonostante il controllo della vita civilizzata.",
+            'movement': "Il modo in cui ti muovi nell'acqua - {movement} - rivela il tuo rapporto attuale con le emozioni profonde.",
+            'colors': "Le tonalità dell'acqua nel tuo sogno - {colors} - offrono indizi sul tuo stato emotivo attuale."
+        },
+        'casa': {
+            'personal_elements': "La presenza di {personal_elements} nella casa del sogno indica che questo simbolo del sé è intimamente collegato alle tue relazioni familiari attuali.",
+            'emotional_intensity': "L'intensità emotiva sperimentata nella casa suggerisce che stai attraversando cambiamenti significativi nella tua identità personale.",
+            'movement': "Il tuo movimento attraverso la casa - {movement} - riflette come stai esplorando diversi aspetti della tua personalità."
+        }
+    }
+    
+    intro_parts = []
+    
+    if keyword in personalizations:
+        symbol_personalizations = personalizations[keyword]
+        
+        # Add setting-specific personalization
+        if context['setting_type'] in symbol_personalizations:
+            intro_parts.append(symbol_personalizations[context['setting_type']])
+        
+        # Add emotional intensity personalization
+        if context['emotional_intensity'] == 'high' and 'high_emotion' in symbol_personalizations:
+            intro_parts.append(symbol_personalizations['high_emotion'])
+        
+        # Add movement personalization
+        if context['movement_type'] and 'movement' in symbol_personalizations:
+            intro_parts.append(symbol_personalizations['movement'].format(movement=context['movement_type']))
+        
+        # Add personal elements personalization
+        if context['personal_elements'] and 'personal_elements' in symbol_personalizations:
+            elements_str = ', '.join(context['personal_elements'])
+            intro_parts.append(symbol_personalizations['personal_elements'].format(personal_elements=elements_str))
+        
+        # Add colors personalization
+        if context['colors'] and 'colors' in symbol_personalizations:
+            colors_meaning = get_color_meanings(context['colors'])
+            intro_parts.append(symbol_personalizations['colors'].format(colors_meaning=colors_meaning))
+    
+    return ' '.join(intro_parts) if intro_parts else None
+
+
+def get_color_meanings(colors):
+    """
+    Return emotional meanings for detected colors.
+    """
+    color_meanings = {
+        'rosso': 'passione e vitalità',
+        'blu': 'tranquillità e profondità emotiva',
+        'verde': 'crescita e rinnovamento', 
+        'giallo': 'gioia e illuminazione',
+        'nero': 'mistero e trasformazione',
+        'bianco': 'purezza e nuovo inizio',
+        'viola': 'spiritualità e intuizione',
+        'rosa': 'amore e tenerezza',
+        'arancione': 'energia creativa',
+        'oro': 'saggezza e valore spirituale',
+        'argento': 'intuizione e riflessione'
+    }
+    
+    meanings = [color_meanings.get(color, color) for color in colors[:3]]  # Limit to first 3 colors
+    
+    if len(meanings) == 1:
+        return f"il {colors[0]} simboleggia {meanings[0]}"
+    elif len(meanings) == 2:
+        return f"il {colors[0]} e il {colors[1]} simboleggiano rispettivamente {meanings[0]} e {meanings[1]}"
+    else:
+        return f"i colori {', '.join(colors[:2])} e {colors[2]} rappresentano {', '.join(meanings[:2])} e {meanings[2]}"
+
+
+def create_enhanced_interpretation(keyword, details, context, mood, style):
+    """
+    Create an enhanced interpretation that integrates context analysis.
+    """
+    base_interpretation = details['basic']
+    
+    # Add context-specific insights
+    enhancements = []
+    
+    # Setting enhancement
+    if context['setting_type'] == 'nature':
+        enhancements.append("Il contesto naturale del tuo sogno amplifica la connessione con aspetti istintivi e primordiali della psiche.")
+    elif context['setting_type'] == 'urban':
+        enhancements.append("L'ambiente urbano del sogno riflette il tuo rapporto con le strutture sociali e le aspettative civilizzate.")
+    elif context['setting_type'] == 'fantastical':
+        enhancements.append("L'ambientazione fantastica indica una forte attivazione dell'immaginazione e dell'inconscio creativo.")
+    
+    # Emotional intensity enhancement
+    if context['emotional_intensity'] == 'high':
+        enhancements.append("L'intensità emotiva del sogno suggerisce che questo simbolo è particolarmente rilevante per la tua situazione attuale.")
+    elif context['emotional_intensity'] == 'low':
+        enhancements.append("La tranquillità emotiva del sogno indica un processo di integrazione serena di questi contenuti psichici.")
+    
+    # Personal elements enhancement
+    if context['personal_elements']:
+        elements_str = ', '.join(context['personal_elements'][:2])
+        enhancements.append(f"La presenza di {elements_str} nel sogno collega questo simbolo direttamente alle tue relazioni interpersonali attuali.")
+    
+    # Combine base interpretation with enhancements
+    if enhancements:
+        enhanced = f"{base_interpretation} " + " ".join(enhancements)
+        return enhanced
+    
+    return base_interpretation
+
+
+def create_general_context_insights(context, mood, style):
+    """
+    Create general insights based on dream context when no specific symbols are found.
+    """
+    insights = []
+    
+    # Setting-based insights
+    if context['setting_type'] == 'nature':
+        insights.append("Il tuo sogno si svolge in un ambiente naturale, suggerendo una connessione con aspetti istintivi e una ricerca di autenticità.")
+    elif context['setting_type'] == 'urban':
+        insights.append("L'ambientazione urbana del sogno riflette il tuo rapporto con le strutture sociali e le responsabilità della vita quotidiana.")
+    elif context['setting_type'] == 'fantastical':
+        insights.append("L'ambiente fantastico indica una forte attivazione dell'immaginazione e un desiderio di trascendere i limiti ordinari.")
+    
+    # Movement and action insights
+    if context['movement_type']:
+        movement_meanings = {
+            'volare': 'indica un desiderio di libertà e elevazione spirituale',
+            'correre': 'suggerisce urgenza o fuga da qualcosa',
+            'camminare': 'riflette un approccio riflessivo e graduale',
+            'nuotare': 'rappresenta navigazione attraverso emozioni profonde',
+            'saltare': 'simboleggia superamento di ostacoli o transizioni',
+            'cadere': 'indica perdita di controllo o paure inconsce'
+        }
+        if context['movement_type'] in movement_meanings:
+            insights.append(f"Il movimento predominante nel sogno - {context['movement_type']} - {movement_meanings[context['movement_type']]}.")
+    
+    # Emotional intensity insights
+    if context['emotional_intensity'] == 'high':
+        insights.append("L'alta intensità emotiva del sogno indica che stai elaborando esperienze o sentimenti particolarmente significativi.")
+    elif context['emotional_intensity'] == 'low':
+        insights.append("La tranquillità emotiva del sogno suggerisce un periodo di elaborazione serena e integrazione interiore.")
+    
+    # Colors insights
+    if context['colors']:
+        color_insight = f"I colori presenti - {', '.join(context['colors'][:3])} - aggiungono dimensioni emotive specifiche: {get_color_meanings(context['colors'])}."
+        insights.append(color_insight)
+    
+    # Personal elements insights
+    if context['personal_elements']:
+        elements_str = ', '.join(context['personal_elements'][:3])
+        insights.append(f"La presenza di elementi personali come {elements_str} collega il sogno direttamente alle tue relazioni e dinamiche familiari attuali.")
+    
+    return ' '.join(insights) if insights else None
+
+
 def interpret_dream(dream_text, mood='', style='neutro'):
     """
     Analyze dream text and return a detailed interpretation based on keywords, symbols,
@@ -12,7 +244,11 @@ def interpret_dream(dream_text, mood='', style='neutro'):
         str: The detailed interpretation of the dream with psychological insights,
              adjusted based on mood and interpretation style
     """
+    original_dream_text = dream_text
     dream_text = dream_text.lower()
+    
+    # Analyze dream context for personalization
+    context_analysis = analyze_dream_context(original_dream_text, mood)
     
     # Enhanced list of keywords and their detailed interpretations
     interpretations = {
@@ -170,21 +406,30 @@ def interpret_dream(dream_text, mood='', style='neutro'):
             # Apply style formatting to interpretation
             title = style_approach["title_format"].format(details['title'])
             
+            # Create personalized interpretation based on context
+            personalized_intro = create_personalized_intro(keyword, context_analysis, mood, style)
+            
             # Create a formatted interpretation with title and detailed sections
             # Adjust tone based on selected style
             formatted_interpretation = f"{title}<br><br>"
             
-            # Basic description with adjusted tone based on style
+            # Add personalized context introduction
+            if personalized_intro:
+                formatted_interpretation += f"{personalized_intro}<br><br>"
+            
+            # Enhanced basic description with context integration
+            enhanced_basic = create_enhanced_interpretation(keyword, details, context_analysis, mood, style)
+            
             if style == "poetico":
-                formatted_interpretation += f"Come acque che danzano nel letto di un fiume, {details['basic'].lower()}<br><br>"
+                formatted_interpretation += f"Come acque che danzano nel letto di un fiume, {enhanced_basic.lower()}<br><br>"
             elif style == "scientifico":
-                formatted_interpretation += f"L'analisi empirica di questo elemento onirico indica che {details['basic'].lower()} Questo fenomeno è stato documentato in molteplici studi longitudinali sulla psicologia del sonno.<br><br>"
+                formatted_interpretation += f"L'analisi empirica di questo elemento onirico indica che {enhanced_basic.lower()} Questo fenomeno è stato documentato in molteplici studi longitudinali sulla psicologia del sonno.<br><br>"
             elif style == "spirituale":
-                formatted_interpretation += f"Nel linguaggio sacro dei sogni, {details['basic'].lower()} Questo simbolo risuona con l'energia universale che connette tutte le anime.<br><br>"
+                formatted_interpretation += f"Nel linguaggio sacro dei sogni, {enhanced_basic.lower()} Questo simbolo risuona con l'energia universale che connette tutte le anime.<br><br>"
             elif style == "consolatorio":
-                formatted_interpretation += f"{details['basic']} È un'esperienza comune e completamente naturale che molte persone condividono nei loro sogni.<br><br>"
+                formatted_interpretation += f"{enhanced_basic} È un'esperienza comune e completamente naturale che molte persone condividono nei loro sogni.<br><br>"
             else:
-                formatted_interpretation += f"{details['basic']}<br><br>"
+                formatted_interpretation += f"{enhanced_basic}<br><br>"
             
             # Psychological meaning with adjusted tone based on style
             if style == "poetico":
@@ -242,6 +487,11 @@ def interpret_dream(dream_text, mood='', style='neutro'):
     # Add mood insight if provided
     if mood_insight:
         default_interpretation += mood_insight
+    
+    # Add personalized context analysis for general interpretation
+    context_insights = create_general_context_insights(context_analysis, mood, style)
+    if context_insights:
+        default_interpretation += f"<strong>Analisi del Contesto del Tuo Sogno:</strong><br><br>{context_insights}<br><br><hr>"
     
     # Base interpretation adjusted by style
     if style == "poetico":
