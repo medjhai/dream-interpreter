@@ -112,14 +112,6 @@
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="nav-item">📚</div>
-            <div class="nav-item">😊</div>
-            <div class="nav-item">📋</div>
-            <div class="nav-item">🌙</div>
-            <div class="nav-item">👤</div>
-        </div>
     </div>
 
     <style>
@@ -259,7 +251,7 @@
 
     /* Main Section */
     .main-section {
-        padding: 0 24px 100px;
+        padding: 0 24px 40px;
     }
 
     /* Dream Title */
@@ -479,32 +471,6 @@
         box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
     }
 
-    /* Bottom Navigation */
-    .bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 320px;
-        background: rgba(40, 40, 40, 0.8);
-        backdrop-filter: blur(20px);
-        border-radius: 20px 20px 0 0;
-        display: flex;
-        justify-content: space-around;
-        padding: 12px 0 20px;
-        margin-bottom: env(safe-area-inset-bottom);
-    }
-
-    .bottom-nav .nav-item {
-        font-size: 24px;
-        padding: 8px;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-    }
-
-    .bottom-nav .nav-item:hover {
-        transform: scale(1.1);
-    }
 
     /* Responsive */
     @media (max-width: 375px) {
@@ -516,10 +482,6 @@
             font-size: 40px;
         }
         
-        .bottom-nav {
-            width: 100%;
-            border-radius: 0;
-        }
     }
 
     @media (min-width: 376px) {
