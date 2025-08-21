@@ -243,6 +243,130 @@ if os.environ.get("OPENAI_API_KEY"):
         print(f"Error initializing OpenAI: {e}")
         openai_client = None
 
+def analyze_dream_content_deeply(dream_text, context_analysis, mood='', style='neutro'):
+    """
+    Analizza profondamente il contenuto specifico del sogno quando non sono trovati simboli standard,
+    creando un'interpretazione dettagliata e personalizzata basata sul testo effettivo.
+    """
+    # Elementi specifici che possiamo estrarre dal testo
+    specific_elements = []
+    emotional_indicators = []
+    action_words = []
+    descriptive_details = []
+    
+    # Analisi delle parole significative nel sogno
+    dream_words = dream_text.lower().split()
+    
+    # Parole d'azione che indicano dinamiche importanti
+    action_patterns = {
+        'movimento': ['camminare', 'correre', 'saltare', 'andare', 'muovere', 'spostarsi', 'dirigersi'],
+        'interazione': ['parlare', 'dire', 'sentire', 'vedere', 'toccare', 'abbracciare', 'incontrare'],
+        'trasformazione': ['diventare', 'trasformare', 'cambiare', 'crescere', 'ridurre', 'sparire'],
+        'conflitto': ['litigare', 'combattere', 'fuggire', 'nascondersi', 'evitare', 'resistere']
+    }
+    
+    # Elementi emotivi specifici
+    emotion_patterns = {
+        'paura': ['paura', 'terrore', 'ansia', 'preoccupazione', 'nervosismo', 'timore'],
+        'gioia': ['gioia', 'felicità', 'contentezza', 'soddisfazione', 'serenità', 'pace'],
+        'tristezza': ['tristezza', 'malinconia', 'dolore', 'perdita', 'nostalgia'],
+        'rabbia': ['rabbia', 'collera', 'irritazione', 'frustrazione', 'indignazione'],
+        'sorpresa': ['sorpresa', 'stupore', 'meraviglia', 'shock', 'incredulità']
+    }
+    
+    # Cerca pattern specifici
+    detected_actions = []
+    detected_emotions = []
+    
+    for category, patterns in action_patterns.items():
+        for pattern in patterns:
+            if pattern in dream_text:
+                detected_actions.append((category, pattern))
+    
+    for emotion, patterns in emotion_patterns.items():
+        for pattern in patterns:
+            if pattern in dream_text:
+                detected_emotions.append((emotion, pattern))
+    
+    # Crea interpretazione specifica basata sui contenuti trovati
+    interpretation_parts = []
+    interpretation_parts.append("<strong>Analisi Specifica del Tuo Sogno</strong><br><br>")
+    
+    # Analisi delle azioni rilevate
+    if detected_actions:
+        interpretation_parts.append("<strong>🎭 Dinamiche e Azioni Significative</strong><br>")
+        interpretation_parts.append("Il tuo sogno contiene azioni specifiche che rivelano importanti dinamiche inconsce:<br><br>")
+        
+        for category, action in detected_actions[:3]:  # Limit to top 3
+            if category == 'movimento':
+                interpretation_parts.append(f"• **{action.capitalize()}**: Il movimento nel sogno rappresenta la tua direzione nella vita e il modo in cui stai navigando le sfide attuali. Questo tipo di movimento suggerisce un bisogno di progredire o un desiderio di cambiamento.<br>")
+            elif category == 'interazione':
+                interpretation_parts.append(f"• **{action.capitalize()}**: Le interazioni nei sogni riflettono il tuo bisogno di connessione e comunicazione. Questo elemento indica l'importanza delle relazioni nella tua vita attuale.<br>")
+            elif category == 'trasformazione':
+                interpretation_parts.append(f"• **{action.capitalize()}**: I processi di trasformazione nei sogni simboleggiano cambiamenti personali in corso o desiderati. Stai attraversando o desideri una metamorfosi interiore.<br>")
+            elif category == 'conflitto':
+                interpretation_parts.append(f"• **{action.capitalize()}**: Gli elementi di conflitto rivelano tensioni interne o esterne che stai affrontando. È un invito a confrontarti con situazioni che hai evitato.<br>")
+        interpretation_parts.append("<br>")
+    
+    # Analisi emotiva specifica
+    if detected_emotions:
+        interpretation_parts.append("<strong>💫 Paesaggio Emotivo del Sogno</strong><br>")
+        interpretation_parts.append("Le emozioni specifiche presenti nel tuo sogno offrono chiavi di lettura profonde:<br><br>")
+        
+        for emotion, word in detected_emotions[:2]:  # Limit to top 2
+            if emotion == 'paura':
+                interpretation_parts.append(f"• **{word.capitalize()}**: La presenza di paura o ansia nel sogno indica aree della tua vita che richiedono attenzione e coraggio. Potrebbe riflettere preoccupazioni reali o paure inconsce che stanno emergendo per essere elaborate.<br>")
+            elif emotion == 'gioia':
+                interpretation_parts.append(f"• **{word.capitalize()}**: Le emozioni positive nel sogno suggeriscono aree di soddisfazione e crescita. Questo elemento porta un messaggio di speranza e conferma che stai procedendo nella giusta direzione.<br>")
+            elif emotion == 'tristezza':
+                interpretation_parts.append(f"• **{word.capitalize()}**: La tristezza onirica spesso rappresenta un processo di elaborazione di perdite o cambiamenti. È un invito alla compassione verso te stesso durante periodi di transizione.<br>")
+            elif emotion == 'rabbia':
+                interpretation_parts.append(f"• **{word.capitalize()}**: La rabbia nei sogni può indicare frustrazione repressa o il bisogno di stabilire confini più chiari. È energia che cerca espressione costruttiva.<br>")
+            elif emotion == 'sorpresa':
+                interpretation_parts.append(f"• **{word.capitalize()}**: Gli elementi di sorpresa rivelano la tua apertura al cambiamento e nuove possibilità. Indica flessibilità mentale e capacità di adattamento.<br>")
+        interpretation_parts.append("<br>")
+    
+    # Analisi del contesto personale
+    if context_analysis:
+        interpretation_parts.append("<strong>🌟 Contesto Personale e Significato</strong><br>")
+        
+        if context_analysis['setting_type'] != 'unknown':
+            setting_meanings = {
+                'nature': 'L\'ambientazione naturale del tuo sogno suggerisce un bisogno di connessione con i ritmi autentici della vita e un desiderio di semplicità.',
+                'urban': 'L\'ambiente urbano riflette la tua navigazione attraverso la complessità della vita moderna e le sfide sociali.',
+                'fantastical': 'L\'ambientazione fantastica indica una forte immaginazione creativa e il desiderio di trascendere i limiti ordinari.'
+            }
+            interpretation_parts.append(f"**Ambiente del sogno**: {setting_meanings.get(context_analysis['setting_type'], '')}<br>")
+        
+        if context_analysis['emotional_intensity']:
+            intensity_meanings = {
+                'high': 'L\'alta intensità emotiva indica che stai elaborando esperienze particolarmente significative o situazioni che richiedono la tua attenzione immediata.',
+                'low': 'La tranquillità emotiva del sogno suggerisce un periodo di integrazione serena e elaborazione pacifica di esperienze recenti.',
+                'medium': 'L\'intensità emotiva equilibrata riflette un processo di elaborazione stabile delle tue esperienze quotidiane.'
+            }
+            interpretation_parts.append(f"**Intensità emotiva**: {intensity_meanings.get(context_analysis['emotional_intensity'], '')}<br><br>")
+    
+    # Messaggio finale personalizzato
+    interpretation_parts.append("<strong>🔮 Messaggio Personale del Sogno</strong><br>")
+    interpretation_parts.append("Il tuo sogno è un messaggio unico dalla tua psiche profonda. ")
+    
+    if mood == 'felice':
+        interpretation_parts.append("La felicità che hai provato amplifica gli aspetti positivi di crescita e realizzazione presenti nel sogno. ")
+    elif mood == 'triste':
+        interpretation_parts.append("La tristezza provata suggerisce che il sogno stia elaborando perdite o transizioni importanti nella tua vita. ")
+    elif mood == 'spaventato':
+        interpretation_parts.append("La paura sperimentata indica che il sogno sta portando alla luce preoccupazioni che meritano attenzione e cura. ")
+    elif mood == 'eccitato':
+        interpretation_parts.append("L'eccitazione provata riflette energia creativa e desiderio di nuove esperienze che stanno emergendo. ")
+    elif mood == 'confuso':
+        interpretation_parts.append("La confusione sperimentata è naturale durante periodi di cambiamento e crescita interiore. ")
+    
+    interpretation_parts.append("<br><br>**Riflessione Pratica**: Considera cosa nella tua vita attuale risuona con gli elementi specifici di questo sogno. ")
+    interpretation_parts.append("Le emozioni e azioni del sogno potrebbero riflettere aspetti della tua esperienza che meritano attenzione consapevole.")
+    
+    return ''.join(interpretation_parts)
+
+
 def generate_ai_interpretation(dream_text, mood='', style='neutro'):
     """
     Generate advanced AI interpretation using OpenAI GPT-4o.
@@ -489,18 +613,44 @@ def interpret_dream(dream_text, mood='', style='neutro'):
         return ai_interpretation
     
     # Fallback to rule-based interpretation
-    # Check for multiple keywords in dream text
+    # Analisi avanzata del contenuto onirico - cercare più simboli e patterns
     found_interpretations = []
-    for keyword, details in interpretations.items():
-        if keyword in dream_text:
-            # Apply style formatting to interpretation
+    detected_symbols = []
+    
+    # Espanded keyword detection with more flexible matching
+    extended_keywords = {
+        "volare": ["volare", "volato", "volavo", "volo", "ali", "librarsi", "planare", "volteggiare"],
+        "cadere": ["cadere", "caduto", "cadevo", "precipitare", "crollo", "caduta", "precipizio"],
+        "acqua": ["acqua", "mare", "oceano", "lago", "fiume", "pioggia", "temporale", "nuotare", "bagnato", "annegare"],
+        "casa": ["casa", "abitazione", "dimora", "appartamento", "stanza", "cucina", "bagno", "camera", "soggiorno"],
+        "animali": ["cane", "gatto", "serpente", "uccello", "lupo", "leone", "elefante", "cavallo", "topo", "ragno"],
+        "persone": ["persona", "uomo", "donna", "bambino", "madre", "padre", "amico", "sconosciuto", "famiglia"],
+        "morte": ["morire", "morte", "morto", "cadavere", "funerale", "cimitero", "tomba"],
+        "fuoco": ["fuoco", "fiamme", "bruciare", "incendio", "calore", "cenere"],
+        "viaggio": ["viaggio", "treno", "aereo", "macchina", "autobus", "strada", "partire", "destinazione"],
+        "lavoro": ["lavoro", "ufficio", "collega", "capo", "scrivania", "riunione", "computer"],
+        "scuola": ["scuola", "insegnante", "classe", "studente", "esame", "voti", "lezione"],
+        "natura": ["albero", "fiore", "montagna", "bosco", "giardino", "prato", "cielo", "stelle", "luna"]
+    }
+    
+    # Detect symbols with flexible matching
+    for main_keyword, variations in extended_keywords.items():
+        for variation in variations:
+            if variation in dream_text:
+                if main_keyword not in detected_symbols:
+                    detected_symbols.append(main_keyword)
+                break
+    
+    # Process each detected symbol
+    for symbol in detected_symbols:
+        if symbol in interpretations:
+            details = interpretations[symbol]
             title = style_approach["title_format"].format(details['title'])
             
             # Create personalized interpretation based on context
-            personalized_intro = create_personalized_intro(keyword, context_analysis, mood, style)
+            personalized_intro = create_personalized_intro(symbol, context_analysis, mood, style)
             
             # Create a formatted interpretation with title and detailed sections
-            # Adjust tone based on selected style
             formatted_interpretation = f"{title}<br><br>"
             
             # Add personalized context introduction
@@ -508,7 +658,7 @@ def interpret_dream(dream_text, mood='', style='neutro'):
                 formatted_interpretation += f"{personalized_intro}<br><br>"
             
             # Enhanced basic description with context integration
-            enhanced_basic = create_enhanced_interpretation(keyword, details, context_analysis, mood, style)
+            enhanced_basic = create_enhanced_interpretation(symbol, details, context_analysis, mood, style)
             
             if style == "poetico":
                 formatted_interpretation += f"Come acque che danzano nel letto di un fiume, {enhanced_basic.lower()}<br><br>"
@@ -567,8 +717,15 @@ def interpret_dream(dream_text, mood='', style='neutro'):
             
         return result
     
+    # Se non sono stati trovati simboli specifici, crea un'interpretazione dettagliata basata sul contenuto
+    if not found_interpretations:
+        # Analizza il contenuto specifico del sogno per creare un'interpretazione personalizzata
+        content_analysis = analyze_dream_content_deeply(original_dream_text, context_analysis, mood, style)
+        if content_analysis:
+            return content_analysis
+    
     # Enhanced default interpretation if no specific keywords were found
-    default_interpretation = "<strong>Analisi Generale del Sogno</strong><br><br>"
+    default_interpretation = "<strong>Interpretazione Dettagliata del Tuo Sogno</strong><br><br>"
     
     # Add style-specific intro
     if style_approach["intro"]:
