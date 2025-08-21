@@ -137,7 +137,6 @@
         <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ Nuovo Sogno</a>
         <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profilo</a>
         <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Impostazioni</a>
-        <a href="{{ url_for('dashboard') }}" class="home-nav-link">📊 Dashboard</a>
     </nav>
 
     <!-- Dreamy Home Content -->
@@ -181,39 +180,10 @@
             });
         });
 
-        // Toast notification system
+        // Toast notification system - DISABLED
         function showToast(message, type = 'info', duration = 3000) {
-            const savedDuration = localStorage.getItem('toastDuration');
-            if (savedDuration) {
-                duration = parseInt(savedDuration);
-            }
-            
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            
-            const icon = {
-                'success': '✅',
-                'error': '❌', 
-                'warning': '⚠️',
-                'info': 'ℹ️'
-            }[type] || 'ℹ️';
-            
-            toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${message}</span>`;
-            
-            const container = document.getElementById('toastContainer');
-            container.appendChild(toast);
-            
-            // Auto remove after duration
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
-            }, duration);
-            
-            // Remove on click
-            toast.addEventListener('click', () => {
-                toast.remove();
-            });
+            // Notifications disabled as requested
+            return;
         }
 
         // Keyboard shortcuts
@@ -227,11 +197,9 @@
             }
         });
         
-        // Welcome message
+        // Welcome message - DISABLED
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                showToast('Benvenuto nella tua oasi onirica! ✨', 'info', 4000);
-            }, 1000);
+            // No welcome notification as requested
         });
     </script>
 </body>

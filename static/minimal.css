@@ -448,26 +448,90 @@ body {
     }
 }
 
-@keyframes dreamyFloat {
+@keyframes dreamyBounce1 {
     0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
     }
-    33% { 
-        transform: translateY(-20px) rotate(120deg); 
+    25% { 
+        transform: translateX(30px) translateY(-40px) scale(1.1) rotate(90deg); 
     }
-    66% { 
-        transform: translateY(-10px) rotate(240deg); 
+    50% { 
+        transform: translateX(-20px) translateY(-20px) scale(0.9) rotate(180deg); 
+    }
+    75% { 
+        transform: translateX(15px) translateY(25px) scale(1.05) rotate(270deg); 
     }
 }
 
-@keyframes dreamyPulse {
+@keyframes dreamyBounce2 {
     0%, 100% { 
-        opacity: 0.3; 
-        transform: scale(1); 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    }
+    20% { 
+        transform: translateX(-40px) translateY(30px) scale(0.8) rotate(72deg); 
+    }
+    40% { 
+        transform: translateX(25px) translateY(-35px) scale(1.2) rotate(144deg); 
+    }
+    60% { 
+        transform: translateX(-15px) translateY(-10px) scale(0.95) rotate(216deg); 
+    }
+    80% { 
+        transform: translateX(35px) translateY(20px) scale(1.1) rotate(288deg); 
+    }
+}
+
+@keyframes dreamyBounce3 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    }
+    33% { 
+        transform: translateX(-25px) translateY(-30px) scale(1.15) rotate(120deg); 
+    }
+    66% { 
+        transform: translateX(20px) translateY(15px) scale(0.85) rotate(240deg); 
+    }
+}
+
+@keyframes dreamyBounce4 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    }
+    30% { 
+        transform: translateX(45px) translateY(-25px) scale(0.9) rotate(108deg); 
+    }
+    60% { 
+        transform: translateX(-30px) translateY(35px) scale(1.3) rotate(216deg); 
+    }
+    90% { 
+        transform: translateX(10px) translateY(-15px) scale(1.05) rotate(324deg); 
+    }
+}
+
+@keyframes dreamyBounce5 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    }
+    25% { 
+        transform: translateX(-35px) translateY(40px) scale(1.2) rotate(90deg); 
     }
     50% { 
-        opacity: 0.8; 
-        transform: scale(1.1); 
+        transform: translateX(40px) translateY(-30px) scale(0.8) rotate(180deg); 
+    }
+    75% { 
+        transform: translateX(-20px) translateY(-40px) scale(1.1) rotate(270deg); 
+    }
+}
+
+@keyframes dreamyBounce6 {
+    0%, 100% { 
+        transform: translateX(0px) translateY(0px) scale(1) rotate(0deg); 
+    }
+    40% { 
+        transform: translateX(30px) translateY(35px) scale(0.9) rotate(144deg); 
+    }
+    80% { 
+        transform: translateX(-25px) translateY(-25px) scale(1.25) rotate(288deg); 
     }
 }
 
@@ -534,57 +598,57 @@ body {
 }
 
 .dream-circle:nth-child(1) {
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.6) 0%, rgba(99, 102, 241, 0.1) 100%);
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0.2) 100%);
     top: 10%;
     left: 15%;
-    animation: dreamyFloat 6s infinite ease-in-out;
+    animation: dreamyBounce1 8s infinite ease-in-out;
 }
 
 .dream-circle:nth-child(2) {
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(139, 92, 246, 0.1) 100%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0.2) 100%);
     top: 60%;
     right: 20%;
-    animation: dreamyFloat 8s infinite ease-in-out -2s;
+    animation: dreamyBounce2 10s infinite ease-in-out -2s;
 }
 
 .dream-circle:nth-child(3) {
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, rgba(244, 114, 182, 0.5) 0%, rgba(244, 114, 182, 0.1) 100%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(244, 114, 182, 0.7) 0%, rgba(244, 114, 182, 0.2) 100%);
     top: 20%;
     right: 30%;
-    animation: dreamyPulse 4s infinite ease-in-out;
+    animation: dreamyBounce3 6s infinite ease-in-out;
 }
 
 .dream-circle:nth-child(4) {
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.1) 100%);
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.5) 0%, rgba(34, 197, 94, 0.2) 100%);
     bottom: 20%;
     left: 25%;
-    animation: dreamyFloat 7s infinite ease-in-out -3s;
+    animation: dreamyBounce4 9s infinite ease-in-out -3s;
 }
 
 .dream-circle:nth-child(5) {
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.05) 100%);
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(245, 158, 11, 0.1) 100%);
     top: 40%;
     left: 10%;
-    animation: dreamyPulse 5s infinite ease-in-out -1s;
+    animation: dreamyBounce5 7s infinite ease-in-out -1s;
 }
 
 .dream-circle:nth-child(6) {
-    width: 90px;
-    height: 90px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(168, 85, 247, 0.1) 100%);
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.6) 0%, rgba(168, 85, 247, 0.2) 100%);
     bottom: 30%;
     right: 15%;
-    animation: dreamyFloat 6.5s infinite ease-in-out -4s;
+    animation: dreamyBounce6 8.5s infinite ease-in-out -4s;
 }
 
 .home-content {
@@ -665,8 +729,26 @@ body {
         max-width: 300px;
     }
     
-    .dream-circle:nth-child(n+4) {
+    .dream-circle:nth-child(n+5) {
         display: none; /* Hide some circles on mobile */
+    }
+    
+    /* Reduce circle sizes on mobile */
+    .dream-circle:nth-child(1) {
+        width: 100px;
+        height: 100px;
+    }
+    .dream-circle:nth-child(2) {
+        width: 120px;
+        height: 120px;
+    }
+    .dream-circle:nth-child(3) {
+        width: 80px;
+        height: 80px;
+    }
+    .dream-circle:nth-child(4) {
+        width: 110px;
+        height: 110px;
     }
 }
 
