@@ -70,7 +70,7 @@
             <button onclick="confirmDelete()" class="btn btn-primary" style="background: var(--error);">
                 Delete
             </button>
-            <button onclick="closeModal()" class="btn btn-secondary">
+            <button onclick="closeDeleteModal()" class="btn btn-secondary">
                 Cancel
             </button>
         </div>
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function closeModal() {
+function closeDeleteModal() {
     dreamToDelete = null;
     document.getElementById('deleteModal').classList.add('hidden');
 }
@@ -123,13 +123,13 @@ async function confirmDelete() {
         alert('Connection error');
     }
     
-    closeModal();
+    closeDeleteModal();
 }
 
 // Close modal on outside click
 document.getElementById('deleteModal').addEventListener('click', function(e) {
     if (e.target === this) {
-        closeModal();
+        closeDeleteModal();
     }
 });
 </script>
