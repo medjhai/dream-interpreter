@@ -216,7 +216,7 @@ body {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 16px;
-    padding: 16px 60px 16px 16px;
+    padding: 16px 64px 16px 16px;
     color: white;
     font-size: 16px;
     font-family: inherit;
@@ -239,26 +239,33 @@ body {
 
 .interpret-button {
     position: absolute;
-    right: 12px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
     border: none;
     border-radius: 12px;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     color: white;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 122, 255, 0.3);
+    z-index: 10;
 }
 
 .interpret-button:hover {
     transform: translateY(-50%) scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 122, 255, 0.5);
+    background: linear-gradient(135deg, #0056CC 0%, #4942B8 100%);
+}
+
+.interpret-button:active {
+    transform: translateY(-50%) scale(0.98);
 }
 
 /* Voice Section */
