@@ -8,6 +8,19 @@ Dream Interpreter is a Flask-based web application that allows users to record t
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (August 2025)
+
+### Design System Overhaul
+- **Date**: August 21, 2025
+- **Changes**: Complete redesign from complex gradient-based design to clean minimal approach
+- **Technical Details**: 
+  - Replaced complex CSS with simplified CSS using CSS variables for easy maintenance
+  - Created new minimal template system (_minimal.html versions) with fewer elements
+  - Implemented mobile-first responsive design with hamburger navigation
+  - Optimized for better adaptability across different screen resolutions
+- **Files Updated**: All templates, static/minimal.css, app.py routes
+- **Status**: Completed and tested - all functionality working correctly
+
 ## System Architecture
 
 ### Backend Architecture
@@ -18,10 +31,12 @@ Preferred communication style: Simple, everyday language.
 - **API Design**: RESTful endpoints for dream submission, interpretation, and CRUD operations
 
 ### Frontend Architecture
-- **Template Engine**: Jinja2 for server-side rendering with Bootstrap for responsive UI
+- **Template Engine**: Jinja2 for server-side rendering with minimal design system
 - **Client-Side Logic**: Vanilla JavaScript for form handling and AJAX requests
-- **UI Framework**: Bootstrap with custom CSS for dark theme and dream-specific styling
-- **User Experience**: Multi-step forms with mood selection, interpretation style preferences, and dynamic result display
+- **UI Framework**: Custom minimal CSS with CSS variables for easy maintenance and theming
+- **Design System**: Clean minimal approach with fewer elements for better responsiveness across all screen resolutions
+- **Mobile Optimization**: Responsive navigation with hamburger menu for mobile devices
+- **User Experience**: Simplified forms with mood selection, interpretation style preferences, and streamlined result display
 
 ### Data Storage
 - **Database**: SQLAlchemy with support for multiple database backends (configured via DATABASE_URL environment variable)
