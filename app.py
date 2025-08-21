@@ -10,6 +10,11 @@ from dream_interpreter import interpret_dream
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
+# Disable verbose OpenAI and HTTP debug logging
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
