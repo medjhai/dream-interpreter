@@ -250,13 +250,8 @@ def interpret():
                 'neutro': '📖 Neutral'
             }
             
-            return render_template('dream_result.html',
-                dream_title=dream.title,
-                dream_content=dream.content,
-                dream_interpretation=dream.interpretation,
-                mood_display=mood_display_map.get(mood, '😐 Neutral'),
-                style_display=style_display_map.get(style, '🔍 Psychological')
-            )
+            # Redirect to dreams history after successful interpretation
+            return redirect(url_for('dreams_history'))
     
     except Exception as e:
         db.session.rollback()
@@ -271,9 +266,11 @@ def interpret():
 @login_required
 def voice_interpret():
     """Handle voice-recorded dream interpretation."""
+    # Handle both audio file and transcript
+    audio_file = request.files.get('audio')
     voice_transcript = request.form.get('voice_transcript', '').strip()
     
-    if not voice_transcript:
+    if not voice_transcript and not audio_file:
         flash('Empty voice recording. Please try again.', 'error')
         return redirect(url_for('home'))
     

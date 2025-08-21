@@ -596,7 +596,7 @@ async function processVoiceRecording(audioBlob) {
         formData.append('audio', audioBlob, 'dream_recording.wav');
         formData.append('mood', selectedMood);
         
-        const response = await fetch('/voice_interpret', {
+        const response = await fetch('/voice-interpret', {
             method: 'POST',
             body: formData
         });
