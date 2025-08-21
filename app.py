@@ -234,9 +234,29 @@ def interpret():
                 'dream_id': dream.id
             })
         else:
-            # For form submissions, redirect to dream detail
-            flash('Dream interpreted successfully!', 'success')
-            return redirect(url_for('view_dream', dream_id=dream.id))
+            # For form submissions, show result page
+            mood_display_map = {
+                'neutro': '😐 Neutral',
+                'felice': '😊 Happy', 
+                'triste': '😢 Sad',
+                'ansioso': '😰 Anxious',
+                'rabbioso': '😠 Angry',
+                'confuso': '😕 Confused'
+            }
+            
+            style_display_map = {
+                'psicologico': '🔍 Psychological',
+                'spirituale': '🕉️ Spiritual', 
+                'neutro': '📖 Neutral'
+            }
+            
+            return render_template('dream_result.html',
+                dream_title=dream.title,
+                dream_content=dream.content,
+                dream_interpretation=dream.interpretation,
+                mood_display=mood_display_map.get(mood, '😐 Neutral'),
+                style_display=style_display_map.get(style, '🔍 Psychological')
+            )
     
     except Exception as e:
         db.session.rollback()
