@@ -1,0 +1,195 @@
+<!-- Unified Header Template -->
+<div class="mobile-app-container">
+    <div class="app-header">
+        <a href="{{ url_for('profile') }}" class="user-profile">
+            <div class="avatar">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ddd'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='40' fill='%23666'%3E{{ current_user.username[0].upper() if current_user.is_authenticated else 'G' }}%3C/text%3E%3C/svg%3E" alt="Avatar">
+            </div>
+            <div class="greeting-text">
+                <div class="hello">Hello {{ current_user.username if current_user.is_authenticated else 'Guest' }}</div>
+                <div class="welcome">{{ welcome_text or 'Welcome back.' }}</div>
+            </div>
+        </a>
+        <button class="menu-dots" onclick="toggleNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="slide-nav" id="mainNav">
+        <button class="nav-close" onclick="toggleNav()">×</button>
+        <a href="{{ url_for('home') }}" class="nav-item">🏠 Home</a>
+        <a href="{{ url_for('interpret') }}" class="nav-item">✨ New Dream</a>
+        <a href="{{ url_for('dreams_history') }}" class="nav-item">📚 My Dreams</a>
+        <a href="{{ url_for('settings') }}" class="nav-item">⚙️ Settings</a>
+        <a href="{{ url_for('faq') }}" class="nav-item">❓ FAQ</a>
+        <a href="{{ url_for('contacts') }}" class="nav-item">📧 Contacts</a>
+        <a href="{{ url_for('profile') }}" class="nav-item">👤 Profile</a>
+        <a href="{{ url_for('logout') }}" class="nav-item">🚪 Logout</a>
+    </nav>
+</div>
+
+<style>
+/* Mobile App Styling */
+.mobile-app-container {
+    background: #000;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 30px;
+    background: #000;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    text-decoration: none;
+    color: inherit;
+    transform: scale(1.02);
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.greeting-text .hello {
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.greeting-text .welcome {
+    font-size: 17px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.menu-dots {
+    background: none;
+    border: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.menu-dots span {
+    width: 4px;
+    height: 4px;
+    background: #888;
+    border-radius: 50%;
+}
+
+.slide-nav {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100vh;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 60px 20px;
+}
+
+.slide-nav.active {
+    right: 0;
+}
+
+.nav-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.nav-item {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 16px 0;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+    color: #007AFF;
+    text-decoration: none;
+}
+
+/* Global Mobile Layout */
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    max-width: 375px;
+    margin: 0 auto;
+    position: relative;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (min-width: 376px) {
+    .page-container {
+        border-radius: 20px;
+        margin-top: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+}
+</style>
+
+<script>
+// Navigation toggle
+function toggleNav() {
+    const nav = document.getElementById('mainNav');
+    nav.classList.toggle('active');
+}
+
+// Close navigation when clicking outside
+document.addEventListener('click', function(event) {
+    const nav = document.getElementById('mainNav');
+    const menuBtn = document.querySelector('.menu-dots');
+    
+    if (!nav.contains(event.target) && !menuBtn.contains(event.target)) {
+        nav.classList.remove('active');
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.getElementById('mainNav').classList.remove('active');
+    }
+});
+</script>

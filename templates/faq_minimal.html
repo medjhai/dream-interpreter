@@ -1,214 +1,342 @@
-{% extends "base_minimal.html" %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>FAQ - Dream Interpreter</title>
+    <meta name="theme-color" content="#000000">
+</head>
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-{% block content %}
-<div class="container-sm">
-    <div class="page-header">
-        <a href="/" class="back-btn">← Back to Home</a>
-        <h1>❓ Frequently Asked Questions</h1>
-    </div>
+<div class="page-container">
+    {% set welcome_text = "FAQ" %}
+    {% include 'unified_header.html' %}
 
-    <div class="faq-content">
-        <div class="faq-section">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="page-title">❓ Domande Frequenti</h1>
+            <p class="page-subtitle">Risposte alle domande più comuni sui sogni</p>
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="faq-container">
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>What is dream interpretation?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>🔮 Come funziona l'interpretazione dei sogni?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>Dream interpretation is the process of analyzing the symbolic meaning of dreams. Our AI uses psychological principles and symbolism to provide insights into your subconscious thoughts, emotions, and experiences reflected in your dreams.</p>
+                    <p>Il nostro sistema utilizza l'intelligenza artificiale per analizzare i simboli, le emozioni e il contesto del tuo sogno. Ogni interpretazione tiene conto del tuo umore e dello stile di analisi scelto (psicologico, spirituale o neutro).</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>How accurate are the interpretations?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>🌙 Perché dovrei registrare i miei sogni?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>Our interpretations are based on established psychological theories and common dream symbolism. While they provide valuable insights, remember that dream meaning is highly personal. Use our interpretations as a starting point for your own reflection.</p>
+                    <p>Tenere un diario dei sogni ti aiuta a identificare pattern ricorrenti, comprendere meglio il tuo subconscio e tracciare l'evoluzione dei tuoi stati emotivi nel tempo. Molte persone trovano che questo processo migliori la loro autoconsapevolezza.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>Can I save my dream interpretations?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>😊 Cosa significano le emoji dei mood?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>Yes! When you create an account and log in, all your dreams and interpretations are automatically saved. You can review them anytime in your profile or dashboard.</p>
+                    <p><strong>😊 Felice:</strong> Sogni positivi, gioiosi<br>
+                    <strong>😢 Triste:</strong> Sogni malinconici, nostalgici<br>
+                    <strong>😨 Spaventato:</strong> Incubi, sogni ansiosi<br>
+                    <strong>🤩 Eccitato:</strong> Sogni avventurosi, energici<br>
+                    <strong>😵‍💫 Confuso:</strong> Sogni strani, surreali<br>
+                    <strong>😐 Neutro:</strong> Sogni ordinari, senza forti emozioni</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>What are the different interpretation styles?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>🎤 Come funziona la registrazione vocale?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p><strong>Psychological:</strong> Based on modern psychology and Jungian analysis<br>
-                    <strong>Spiritual:</strong> Focuses on spiritual and mystical meanings<br>
-                    <strong>Neutral:</strong> A balanced approach combining multiple perspectives</p>
+                    <p>Puoi registrare il tuo sogno direttamente con la voce. Il sistema trasformerà automaticamente la registrazione in testo e procederà con l'interpretazione. È perfetto quando sei appena sveglio e vuoi catturare i dettagli prima che svaniscano.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>Is my dream data private and secure?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>📅 Cos'è il calendario dei mood?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>Absolutely. Your dreams are personal and private. We use secure encryption to protect your data, and we never share your dream content with third parties. Only you have access to your dream journal.</p>
+                    <p>Il calendario dei mood nel tuo profilo mostra visualmente i tuoi stati emotivi giorno per giorno basati sui sogni registrati. Ti permette di identificare pattern stagionali o ciclici nei tuoi sogni e stati d'animo.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>Can I use voice recording for my dreams?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>🔒 I miei sogni sono privati?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>Yes! You can record your dreams using voice input. Simply click the microphone button and speak naturally. The system will convert your speech to text and then provide an interpretation.</p>
+                    <p>Assolutamente sì! I tuoi sogni sono completamente privati e visibili solo a te. Utilizziamo crittografia avanzata per proteggere i tuoi dati e non condividiamo mai le tue informazioni personali con terze parti.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    <span>What if I don't remember my whole dream?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>📊 Cosa sono le statistiche dei sogni?</span>
+                    <span class="faq-icon">+</span>
+                </button>
                 <div class="faq-answer">
-                    <p>That's perfectly normal! Write down whatever fragments you remember - emotions, colors, people, or situations. Even partial dreams can provide meaningful insights into your subconscious mind.</p>
+                    <p>Le statistiche ti mostrano dati interessanti sui tuoi sogni: quanti ne hai registrati, la media per giorno, il tuo mood più frequente, e altre metriche che ti aiutano a comprendere meglio i tuoi pattern di sogno.</p>
                 </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>🚀 Posso eliminare un sogno?</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Sì, puoi eliminare qualsiasi sogno dalla pagina dei dettagli. Clicca sul pulsante "🗑️ Delete Dream" e conferma l'eliminazione. Attenzione: questa azione non può essere annullata.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="support-section">
+            <div class="support-card">
+                <h3>Hai altre domande?</h3>
+                <p>Non hai trovato quello che cercavi? Contattaci!</p>
+                <a href="{{ url_for('contacts') }}" class="primary-button">
+                    📧 Contattaci
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.container-sm {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-}
-
-.page-header {
-    margin-bottom: 3rem;
-    text-align: center;
-}
-
-.back-btn {
-    display: inline-block;
-    margin-bottom: 2rem;
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.back-btn:hover {
-    color: rgba(102, 126, 234, 1);
-    text-decoration: none;
-}
-
-.page-header h1 {
-    color: rgba(255,255,255,0.95);
-    font-size: 2.5rem;
-    font-weight: 600;
+/* Base Styles */
+body {
     margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.faq-content {
-    background: rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 2rem;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    max-width: 375px;
+    margin: 0 auto;
+    position: relative;
+    color: white;
+}
+
+.main-content {
+    padding: 20px 24px 40px;
+}
+
+/* Typography */
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #888;
+    margin: 0 0 30px;
+}
+
+/* FAQ Items */
+.faq-container {
+    margin-bottom: 30px;
 }
 
 .faq-item {
-    margin-bottom: 1rem;
-    background: rgba(255,255,255,0.03);
-    border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 12px;
     overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: rgba(0, 122, 255, 0.3);
 }
 
 .faq-question {
-    padding: 1.5rem;
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: none;
+    padding: 20px;
+    text-align: left;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: rgba(255,255,255,0.9);
-    font-weight: 500;
-    font-size: 1.1rem;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .faq-question:hover {
     background: rgba(255,255,255,0.05);
 }
 
-.faq-toggle {
-    font-size: 1.5rem;
+.faq-icon {
+    font-size: 20px;
     font-weight: bold;
-    color: rgba(102, 126, 234, 1);
+    color: #007AFF;
     transition: transform 0.3s ease;
 }
 
-.faq-answer {
-    padding: 0 1.5rem;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    color: rgba(255,255,255,0.8);
-    line-height: 1.6;
-}
-
-.faq-answer.active {
-    padding: 0 1.5rem 1.5rem 1.5rem;
-    max-height: 500px;
-}
-
-.faq-item.active .faq-toggle {
+.faq-item.active .faq-icon {
     transform: rotate(45deg);
 }
 
-@media (max-width: 768px) {
-    .container-sm {
-        padding: 1rem 0.5rem;
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    transition: max-height 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+}
+
+.faq-answer p {
+    padding: 20px;
+    margin: 0;
+    color: #e0e0e0;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.faq-answer strong {
+    color: white;
+}
+
+/* Support Section */
+.support-section {
+    margin-top: 40px;
+}
+
+.support-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+}
+
+.support-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.support-card p {
+    color: #888;
+    margin: 0 0 20px;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .page-container {
+        max-width: 100%;
     }
     
-    .page-header h1 {
-        font-size: 2rem;
-    }
-    
-    .faq-content {
-        padding: 1.5rem;
+    .main-content {
+        padding: 20px 16px 40px;
     }
     
     .faq-question {
-        padding: 1rem;
-        font-size: 1rem;
+        padding: 16px;
+        font-size: 15px;
+    }
+    
+    .faq-answer p {
+        padding: 16px;
+        font-size: 13px;
+    }
+}
+
+@media (min-width: 376px) {
+    .page-container {
+        border-radius: 20px;
+        margin-top: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     }
 }
 </style>
 
 <script>
-function toggleFaq(element) {
-    const faqItem = element.parentElement;
-    const answer = faqItem.querySelector('.faq-answer');
+function toggleFaq(button) {
+    const faqItem = button.parentElement;
+    const isActive = faqItem.classList.contains('active');
     
-    // Close all other FAQs
+    // Close all other FAQ items
     document.querySelectorAll('.faq-item').forEach(item => {
-        if (item !== faqItem) {
-            item.classList.remove('active');
-            item.querySelector('.faq-answer').classList.remove('active');
-        }
+        item.classList.remove('active');
     });
     
-    // Toggle current FAQ
-    faqItem.classList.toggle('active');
-    answer.classList.toggle('active');
+    // Toggle current item if it wasn't active
+    if (!isActive) {
+        faqItem.classList.add('active');
+    }
 }
+
+// Close FAQ when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.faq-item')) {
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+});
 </script>
-{% endblock %}
+
+</body>
+</html>

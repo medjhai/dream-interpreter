@@ -1,270 +1,534 @@
-{% extends "base_minimal.html" %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Profilo - Dream Interpreter</title>
+    <meta name="theme-color" content="#000000">
+</head>
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-{% block content %}
-<div class="container-sm">
-    <div class="text-center mb-4">
-        <h1>👤 Il Tuo Profilo</h1>
-        <p class="text-muted">Gestisci il tuo account e accedi alle funzionalità</p>
-    </div>
+<div class="page-container">
+    {% set welcome_text = "Your Profile" %}
+    {% include 'unified_header.html' %}
 
-    <!-- Profile Info -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2 class="card-title">Informazioni Account</h2>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="page-title">👤 Il Tuo Profilo</h1>
+            <p class="page-subtitle">Gestisci il tuo account e accedi alle funzionalità</p>
         </div>
-        <div class="grid grid-2">
-            <div>
-                <label class="form-label">Username</label>
-                <div class="form-input" style="background: var(--surface-light); cursor: not-allowed;">
-                    {{ current_user.username }}
+
+        <!-- Profile Info -->
+        <div class="section-card">
+            <h2 class="section-title">Informazioni Account</h2>
+            
+            <div class="profile-grid">
+                <div class="profile-field">
+                    <label class="field-label">Username</label>
+                    <div class="field-value">{{ current_user.username }}</div>
+                </div>
+                <div class="profile-field">
+                    <label class="field-label">Email</label>
+                    <div class="field-value">{{ current_user.email }}</div>
                 </div>
             </div>
-            <div>
-                <label class="form-label">Email</label>
-                <div class="form-input" style="background: var(--surface-light); cursor: not-allowed;">
-                    {{ current_user.email }}
+            
+            <div class="text-center mt-3">
+                <p class="account-info">Account creato il {{ current_user.created_at.strftime('%d/%m/%Y') if current_user.created_at else 'N/D' }}</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ dream_count }}</div>
+                <div class="stat-label">Sogni Totali</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ (dream_count / ((current_user.created_at | days_since) or 1))|round(1) if current_user.created_at else 0 }}</div>
+                <div class="stat-label">Media/Giorno</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ current_user.created_at | days_since if current_user.created_at else 0 }}</div>
+                <div class="stat-label">Giorni Attivo</div>
+            </div>
+        </div>
+
+        <!-- Mood Calendar -->
+        <div class="section-card">
+            <h2 class="section-title">📅 Calendario dei Mood</h2>
+            <p class="section-subtitle">Traccia i tuoi stati emotivi giorno per giorno</p>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                    <h3 class="calendar-month" id="calendarMonth"></h3>
+                    <button class="calendar-nav" onclick="changeMonth(1)">›</button>
                 </div>
+                
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">D</div>
+                    <div class="calendar-weekday">L</div>
+                    <div class="calendar-weekday">M</div>
+                    <div class="calendar-weekday">M</div>
+                    <div class="calendar-weekday">G</div>
+                    <div class="calendar-weekday">V</div>
+                    <div class="calendar-weekday">S</div>
+                </div>
+                
+                <div class="calendar-days" id="calendarDays"></div>
             </div>
-        </div>
-        <div class="text-center mt-3">
-            <p class="text-muted">Account creato il {{ current_user.created_at.strftime('%d/%m/%Y') if current_user.created_at else 'N/D' }}</p>
-        </div>
-    </div>
 
-    <!-- Quick Stats -->
-    <div class="grid grid-3 mb-4">
-        <div class="card stats-card">
-            <div class="stats-number">{{ dream_count }}</div>
-            <div class="stats-label">Sogni Totali</div>
-        </div>
-        <div class="card stats-card">
-            <div class="stats-number">{{ (dream_count / ((current_user.created_at | days_since) or 1))|round(1) if current_user.created_at else 0 }}</div>
-            <div class="stats-label">Media/Giorno</div>
-        </div>
-        <div class="card stats-card">
-            <div class="stats-number">{{ current_user.created_at | days_since if current_user.created_at else 0 }}</div>
-            <div class="stats-label">Giorni Attivo</div>
-        </div>
-    </div>
-
-    <!-- Mood Calendar -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2 class="card-title">📅 Calendario dei Mood</h2>
-            <p class="card-subtitle">Traccia i tuoi stati emotivi giorno per giorno</p>
-        </div>
-        
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <button class="calendar-nav" onclick="changeMonth(-1)" aria-label="Mese precedente">‹</button>
-                <h3 class="calendar-month" id="calendarMonth"></h3>
-                <button class="calendar-nav" onclick="changeMonth(1)" aria-label="Mese successivo">›</button>
-            </div>
-            
-            <div class="calendar-weekdays">
-                <div class="calendar-weekday">Dom</div>
-                <div class="calendar-weekday">Lun</div>
-                <div class="calendar-weekday">Mar</div>
-                <div class="calendar-weekday">Mer</div>
-                <div class="calendar-weekday">Gio</div>
-                <div class="calendar-weekday">Ven</div>
-                <div class="calendar-weekday">Sab</div>
-            </div>
-            
-            <div class="calendar-days" id="calendarDays"></div>
-            
             <div class="mood-legend">
-                <h4>Legenda Mood:</h4>
-                <div class="legend-items">
-                    <div class="legend-item"><span class="mood-indicator mood-felice">😊</span> Felice</div>
-                    <div class="legend-item"><span class="mood-indicator mood-triste">😢</span> Triste</div>
-                    <div class="legend-item"><span class="mood-indicator mood-ansioso">😰</span> Ansioso</div>
-                    <div class="legend-item"><span class="mood-indicator mood-rabbioso">😠</span> Rabbioso</div>
-                    <div class="legend-item"><span class="mood-indicator mood-confuso">😕</span> Confuso</div>
+                <h4>Legenda Mood</h4>
+                <div class="legend-grid">
+                    <div class="legend-item">😊 Felice</div>
+                    <div class="legend-item">😢 Triste</div>
+                    <div class="legend-item">😨 Spaventato</div>
+                    <div class="legend-item">🤩 Eccitato</div>
+                    <div class="legend-item">😵‍💫 Confuso</div>
+                    <div class="legend-item">😐 Neutro</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Navigation Links -->
-    <div class="card">
-        <div class="card-header">
-            <h2 class="card-title">🗂️ I Tuoi Contenuti</h2>
-            <p class="card-subtitle">Accedi ai tuoi sogni salvati</p>
-        </div>
-        
-        <div class="grid grid-2">
-            <a href="{{ url_for('dreams_history') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Visualizza tutti i tuoi sogni">
-                <div style="text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📚</div>
-                    <h3 class="dream-title">Tutti i Sogni</h3>
-                    <p class="dream-preview">Sfoglia la tua collezione completa di sogni interpretati</p>
-                </div>
+        <!-- Actions -->
+        <div class="action-section">
+            <a href="{{ url_for('interpret') }}" class="primary-button">
+                ✨ Interpreta Nuovo Sogno
             </a>
-
-            <a href="{{ url_for('export_data') }}" class="dream-item" style="text-decoration: none; color: inherit;" aria-label="Scarica i tuoi dati">
-                <div style="text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📥</div>
-                    <h3 class="dream-title">Esporta Dati</h3>
-                    <p class="dream-preview">Scarica tutti i tuoi sogni e interpretazioni</p>
-                </div>
+            <a href="{{ url_for('dreams_history') }}" class="secondary-button">
+                📚 Vedi Tutti i Sogni
             </a>
         </div>
     </div>
 </div>
 
-<script>
-// Calendar functionality
-let currentDate = new Date();
-const moodData = {{ mood_data | tojson | safe }} || {};
+<style>
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
-const moodEmojis = {
-    'felice': '😊',
-    'triste': '😢', 
-    'ansioso': '😰',
-    'rabbioso': '😠',
-    'confuso': '😕'
-};
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    max-width: 375px;
+    margin: 0 auto;
+    position: relative;
+    color: white;
+}
 
-const monthNames = [
-    'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-    'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
-];
+.main-content {
+    padding: 20px 24px 40px;
+}
 
-function generateCalendar(year, month) {
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-    
-    // Update month header
-    document.getElementById('calendarMonth').textContent = 
-        `${monthNames[month]} ${year}`;
-    
-    const calendarDays = document.getElementById('calendarDays');
-    calendarDays.innerHTML = '';
-    
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
-        const prevMonthDay = new Date(year, month, -startingDayOfWeek + i + 1);
-        const dayElement = createDayElement(prevMonthDay, true);
-        calendarDays.appendChild(dayElement);
+/* Typography */
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #888;
+    margin: 0 0 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: white;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0 0 20px;
+}
+
+/* Section Card */
+.section-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+/* Profile Grid */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-field {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.field-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.field-value {
+    font-size: 16px;
+    color: white;
+    font-weight: 500;
+}
+
+.account-info {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Calendar */
+.calendar-container {
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.calendar-nav {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.calendar-nav:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.calendar-month {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    padding: 8px 4px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.calendar-day.today {
+    background: rgba(0, 122, 255, 0.3);
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-day.has-mood {
+    background: rgba(0, 122, 255, 0.2);
+    border: 1px solid rgba(0, 122, 255, 0.4);
+}
+
+.calendar-day.other-month {
+    color: #444;
+}
+
+/* Mood Legend */
+.mood-legend {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
+}
+
+.mood-legend h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: white;
+}
+
+.legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.legend-item {
+    font-size: 14px;
+    color: #aaa;
+    padding: 4px;
+}
+
+/* Action Section */
+.action-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+.secondary-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.secondary-button:hover {
+    background: rgba(255,255,255,0.15);
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .page-container {
+        max-width: 100%;
     }
     
-    // Add days of current month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dayElement = createDayElement(date, false);
-        calendarDays.appendChild(dayElement);
+    .main-content {
+        padding: 20px 16px 40px;
     }
     
-    // Add days of next month to complete the grid
-    const remainingCells = 42 - (startingDayOfWeek + daysInMonth);
-    for (let day = 1; day <= remainingCells && remainingCells < 7; day++) {
-        const nextMonthDay = new Date(year, month + 1, day);
-        const dayElement = createDayElement(nextMonthDay, true);
-        calendarDays.appendChild(dayElement);
+    .stats-grid {
+        gap: 8px;
+    }
+    
+    .profile-grid {
+        gap: 12px;
     }
 }
 
-function createDayElement(date, isOtherMonth) {
-    const dayElement = document.createElement('div');
-    dayElement.className = 'calendar-day';
-    
-    if (isOtherMonth) {
-        dayElement.classList.add('other-month');
+@media (min-width: 376px) {
+    .page-container {
+        border-radius: 20px;
+        margin-top: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     }
     
-    // Check if it's today
-    const today = new Date();
-    if (date.toDateString() === today.toDateString()) {
-        dayElement.classList.add('today');
+    .profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+<script>
+// Mood data from Flask
+const moodData = {{ mood_data | tojson }};
+
+let currentDate = new Date();
+
+// Mood to emoji mapping
+const moodEmojis = {
+    'felice': '😊',
+    'triste': '😢', 
+    'spaventato': '😨',
+    'eccitato': '🤩',
+    'confuso': '😵‍💫',
+    'neutro': '😐'
+};
+
+function renderCalendar() {
+    const monthNames = [
+        'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+        'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
+    ];
+    
+    const monthElement = document.getElementById('calendarMonth');
+    const daysElement = document.getElementById('calendarDays');
+    
+    monthElement.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    
+    // Clear previous days
+    daysElement.innerHTML = '';
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const startingDayOfWeek = firstDay.getDay();
+    const numberOfDays = lastDay.getDate();
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day', 'other-month');
+        daysElement.appendChild(dayElement);
     }
     
-    const dateKey = date.toISOString().split('T')[0];
-    const dayNumber = document.createElement('div');
-    dayNumber.className = 'day-number';
-    dayNumber.textContent = date.getDate();
-    dayElement.appendChild(dayNumber);
-    
-    // Add mood indicators if there are dreams for this date
-    if (moodData[dateKey] && moodData[dateKey].length > 0) {
-        dayElement.classList.add('has-dreams');
-        const moodIndicators = document.createElement('div');
-        moodIndicators.className = 'mood-indicators';
+    // Add days of the month
+    for (let day = 1; day <= numberOfDays; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day');
+        dayElement.textContent = day;
         
-        // Show all moods for the day, limit to 4 to avoid overcrowding
-        const moodsToShow = moodData[dateKey].slice(0, 4);
-        moodsToShow.forEach(dream => {
-            const moodSpan = document.createElement('span');
-            moodSpan.className = 'mood-indicator';
-            moodSpan.textContent = moodEmojis[dream.mood] || '😐';
-            moodSpan.title = `${dream.title} - ${dream.mood}`;
-            moodIndicators.appendChild(moodSpan);
-        });
+        const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Show +N if there are more than 4 dreams
-        if (moodData[dateKey].length > 4) {
-            const moreSpan = document.createElement('span');
-            moreSpan.className = 'mood-indicator more-indicator';
-            moreSpan.textContent = `+${moodData[dateKey].length - 4}`;
-            moreSpan.title = `Altri ${moodData[dateKey].length - 4} sogni`;
-            moodIndicators.appendChild(moreSpan);
+        // Check if today
+        const today = new Date();
+        if (currentDate.getFullYear() === today.getFullYear() && 
+            currentDate.getMonth() === today.getMonth() && 
+            day === today.getDate()) {
+            dayElement.classList.add('today');
         }
         
-        dayElement.appendChild(moodIndicators);
+        // Check if day has mood data
+        if (moodData[dateKey] && moodData[dateKey].length > 0) {
+            dayElement.classList.add('has-mood');
+            
+            // Add mood emoji as overlay
+            const moodOverlay = document.createElement('div');
+            moodOverlay.style.position = 'absolute';
+            moodOverlay.style.bottom = '2px';
+            moodOverlay.style.right = '2px';
+            moodOverlay.style.fontSize = '10px';
+            moodOverlay.textContent = moodEmojis[moodData[dateKey][0].mood] || '😐';
+            dayElement.style.position = 'relative';
+            dayElement.appendChild(moodOverlay);
+            
+            // Add click handler to show dreams
+            dayElement.onclick = () => showDayDreams(dateKey, moodData[dateKey]);
+        }
         
-        // Add click handler to show dreams for this date
-        dayElement.addEventListener('click', () => showDreamsForDate(dateKey));
-        dayElement.style.cursor = 'pointer';
+        daysElement.appendChild(dayElement);
     }
-    
-    return dayElement;
 }
 
 function changeMonth(direction) {
     currentDate.setMonth(currentDate.getMonth() + direction);
-    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    renderCalendar();
 }
 
-function showDreamsForDate(dateKey) {
-    const dreams = moodData[dateKey];
-    if (!dreams || dreams.length === 0) return;
-    
+function showDayDreams(dateKey, dreams) {
     const dreamsList = dreams.map(dream => 
-        `• ${dream.title} (${moodEmojis[dream.mood]} ${dream.mood})`
-    ).join('<br>');
+        `<div style="margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+            <strong>${dream.title}</strong><br>
+            <small style="color: #888;">${moodEmojis[dream.mood]} ${dream.mood}</small>
+        </div>`
+    ).join('');
     
-    const formattedDate = new Date(dateKey).toLocaleDateString('it-IT');
-    
-    // Create custom modal instead of toast for better readability
-    const modal = document.createElement('div');
-    modal.className = 'calendar-modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📅 Sogni del ${formattedDate}</h3>
-                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</button>
-            </div>
-            <div class="modal-body">
-                ${dreamsList}
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Chiudi</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    
-    // Close on background click
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.remove();
-    });
+    // Simple alert for now - could be enhanced with a modal
+    alert(`Sogni del ${dateKey}:\n\n${dreams.map(d => `${moodEmojis[d.mood]} ${d.title}`).join('\n')}`);
 }
 
 // Initialize calendar when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    renderCalendar();
 });
 </script>
-{% endblock %}
+
+</body>
+</html>

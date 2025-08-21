@@ -1,93 +1,348 @@
-{% extends "base_minimal.html" %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Dashboard - Dream Interpreter</title>
+    <meta name="theme-color" content="#000000">
+</head>
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-{% block content %}
-<div class="container">
-    <!-- Header -->
-    <div class="text-center mb-4">
-        <h1>Ciao, {{ current_user.username }}!</h1>
-        <p class="text-muted">Benvenuto nel tuo diario dei sogni</p>
-    </div>
+<div class="page-container">
+    {% include 'unified_header.html' %}
 
-    <!-- Quick Stats -->
-    <div class="grid grid-4 mb-4">
-        <div class="card stats-card">
-            <div class="stats-number">{{ dream_count }}</div>
-            <div class="stats-label">Sogni</div>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 class="page-title">Ciao, {{ current_user.username }}!</h1>
+            <p class="page-subtitle">Benvenuto nel tuo diario dei sogni</p>
         </div>
-        <div class="card stats-card">
-            <div class="stats-number">{{ recent_dreams|length }}</div>
-            <div class="stats-label">Recenti</div>
-        </div>
-        <div class="card stats-card">
-            <div class="stats-number">{{ streak_days }}</div>
-            <div class="stats-label">Streak</div>
-        </div>
-        <div class="card stats-card">
-            <div class="stats-number">{{ favorite_mood or "😐" }}</div>
-            <div class="stats-label">Mood</div>
-        </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="text-center mb-4 action-section">
-        <a href="{{ url_for('interpret') }}" class="btn btn-primary btn-lg" aria-label="Interpreta un nuovo sogno">
-            ✨ Interpreta un Nuovo Sogno
-        </a>
-    </div>
-
-    <!-- Recent Dreams -->
-    {% if recent_dreams %}
-    <div class="card">
-        <div class="card-header">
-            <h2 class="card-title">Sogni Recenti</h2>
-            <p class="card-subtitle">I tuoi ultimi sogni interpretati</p>
-        </div>
-        
-        <div class="grid">
-            {% for dream in recent_dreams %}
-            <div class="dream-item" role="button" tabindex="0" 
-                 onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'"
-                 onkeydown="if(event.key==='Enter' || event.key===' '){window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}';}"
-                 aria-label="Visualizza sogno: {{ dream.title }}">
-                <h3 class="dream-title">{{ dream.title }}</h3>
-                <p class="dream-preview">
-                    {{ dream.content[:100] }}{% if dream.content|length > 100 %}...{% endif %}
-                </p>
-                <div class="dream-meta">
-                    <div>
-                        {% if dream.mood %}
-                        <span class="mood-badge">
-                            {% if dream.mood == 'felice' %}😊{% endif %}
-                            {% if dream.mood == 'triste' %}😢{% endif %}
-                            {% if dream.mood == 'ansioso' %}😰{% endif %}
-                            {% if dream.mood == 'rabbioso' %}😠{% endif %}
-                            {% if dream.mood == 'confuso' %}😕{% endif %}
-                            {{ dream.mood.title() }}
-                        </span>
-                        {% endif %}
-                    </div>
-                    <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
-                </div>
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ dream_count }}</div>
+                <div class="stat-label">Sogni</div>
             </div>
-            {% endfor %}
+            <div class="stat-card">
+                <div class="stat-number">{{ recent_dreams|length }}</div>
+                <div class="stat-label">Recenti</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ streak_days }}</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ favorite_mood or "😐" }}</div>
+                <div class="stat-label">Mood</div>
+            </div>
         </div>
-        
-        <div class="text-center mt-3">
-            <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary" aria-label="Visualizza tutti i sogni salvati">
-                📚 Tutti i Sogni
+
+        <!-- Quick Actions -->
+        <div class="action-section">
+            <a href="{{ url_for('interpret') }}" class="primary-button">
+                ✨ Interpreta un Nuovo Sogno
             </a>
         </div>
+
+        <!-- Recent Dreams -->
+        {% if recent_dreams %}
+        <div class="section-card">
+            <h2 class="section-title">Sogni Recenti</h2>
+            <p class="section-subtitle">I tuoi ultimi sogni interpretati</p>
+            
+            <div class="dreams-grid">
+                {% for dream in recent_dreams %}
+                <div class="dream-item" onclick="window.location.href='{{ url_for('view_dream', dream_id=dream.id) }}'">
+                    <h3 class="dream-title">{{ dream.title }}</h3>
+                    <p class="dream-preview">
+                        {{ dream.content[:100] }}{% if dream.content|length > 100 %}...{% endif %}
+                    </p>
+                    <div class="dream-meta">
+                        <div>
+                            {% if dream.mood %}
+                            <span class="mood-badge">
+                                {% if dream.mood == 'felice' %}😊{% endif %}
+                                {% if dream.mood == 'triste' %}😢{% endif %}
+                                {% if dream.mood == 'spaventato' %}😨{% endif %}
+                                {% if dream.mood == 'eccitato' %}🤩{% endif %}
+                                {% if dream.mood == 'confuso' %}😵‍💫{% endif %}
+                                {% if dream.mood == 'neutro' %}😐{% endif %}
+                                {{ dream.mood.title() }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <small class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('dreams_history') }}" class="secondary-button">
+                    Vedi Tutti i Sogni
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="section-card">
+            <div class="empty-state">
+                <div class="empty-icon">🌙</div>
+                <h3>Nessun sogno ancora</h3>
+                <p>Inizia interpretando il tuo primo sogno!</p>
+                <a href="{{ url_for('interpret') }}" class="primary-button">
+                    ✨ Interpreta il Primo Sogno
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <!-- Empty State -->
-    <div class="card text-center">
-        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">💤</div>
-        <h3 class="mb-2">Nessun sogno ancora</h3>
-        <p class="text-muted mb-3">Inizia il tuo viaggio onirico interpretando il primo sogno</p>
-        <a href="{{ url_for('interpret') }}" class="btn btn-primary">
-            Interpreta il Primo Sogno
-        </a>
-    </div>
-    {% endif %}
 </div>
-{% endblock %}
+
+<style>
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    max-width: 375px;
+    margin: 0 auto;
+    position: relative;
+    color: white;
+}
+
+.main-content {
+    padding: 20px 24px 40px;
+}
+
+/* Typography */
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #888;
+    margin: 0 0 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: white;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0 0 20px;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Action Section */
+.action-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+.secondary-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.secondary-button:hover {
+    background: rgba(255,255,255,0.15);
+    text-decoration: none;
+    color: white;
+}
+
+/* Section Card */
+.section-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+/* Dreams Grid */
+.dreams-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dream-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dream-item:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+.dream-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: white;
+}
+
+.dream-preview {
+    font-size: 14px;
+    color: #aaa;
+    line-height: 1.4;
+    margin: 0 0 12px;
+}
+
+.dream-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mood-badge {
+    background: rgba(0, 122, 255, 0.2);
+    color: #007AFF;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dream-date {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    color: white;
+    margin: 0 0 8px;
+}
+
+.empty-state p {
+    color: #888;
+    margin: 0 0 24px;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .page-container {
+        max-width: 100%;
+    }
+    
+    .main-content {
+        padding: 20px 16px 40px;
+    }
+    
+    .stats-grid {
+        gap: 12px;
+    }
+}
+
+@media (min-width: 376px) {
+    .page-container {
+        border-radius: 20px;
+        margin-top: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+}
+</style>
+
+</body>
+</html>

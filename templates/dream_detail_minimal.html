@@ -1,136 +1,436 @@
-{% extends "base_minimal.html" %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>{{ dream.title }} - Dream Interpreter</title>
+    <meta name="theme-color" content="#000000">
+</head>
+<body style="margin: 0; padding: 0; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 
-{% block content %}
-<div class="container-sm">
-    <!-- Back Navigation -->
-    <div class="mb-3">
-        <a href="{{ url_for('dreams_history') }}" class="btn btn-secondary btn-sm">
-            ← Back to Dreams
-        </a>
-    </div>
+<div class="page-container">
+    {% set welcome_text = "Dream Details" %}
+    {% include 'unified_header.html' %}
 
-    <!-- Dream Card -->
-    <div class="card">
-        <div class="card-header">
-            <h1 class="card-title">{{ dream.title }}</h1>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.5rem;">
-                {% if dream.mood %}
-                <span class="mood-badge">
-                    {% if dream.mood == 'felice' %}😊{% endif %}
-                    {% if dream.mood == 'triste' %}😢{% endif %}
-                    {% if dream.mood == 'ansioso' %}😰{% endif %}
-                    {% if dream.mood == 'rabbioso' %}😠{% endif %}
-                    {% if dream.mood == 'confuso' %}😕{% endif %}
-                    {{ dream.mood.title() }}
-                </span>
-                {% endif %}
-                {% if dream.interpretation_style %}
-                <span class="mood-badge">{{ dream.interpretation_style.title() }}</span>
-                {% endif %}
-                <small class="text-muted">{{ dream.created_at.strftime('%d/%m/%Y alle %H:%M') }}</small>
-            </div>
-        </div>
-
-        <!-- Dream Content -->
-        <div class="mb-4">
-            <h3 class="mb-2">🌙 Your Dream</h3>
-            <div style="background: var(--surface-light); padding: var(--spacing-lg); border-radius: var(--radius); border-left: 4px solid var(--primary); line-height: 1.7;">
-                {{ dream.content|nl2br|safe }}
-            </div>
-        </div>
-
-        <!-- Interpretation -->
-        {% if dream.interpretation %}
-        <div class="mb-4">
-            <h3 class="mb-2">🔮 Interpretation</h3>
-            <div style="background: rgba(var(--primary-rgb), 0.05); padding: var(--spacing-lg); border-radius: var(--radius); border-left: 4px solid var(--primary-light); line-height: 1.7;">
-                {{ dream.interpretation|nl2br|safe }}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Actions -->
-        <div class="text-center" style="border-top: 1px solid var(--border); padding-top: var(--spacing-lg);">
-            <a href="{{ url_for('interpret') }}" class="btn btn-primary">
-                ✨ Interpret New Dream
+    <div class="main-content">
+        <!-- Back Navigation -->
+        <div class="back-nav">
+            <a href="{{ url_for('dreams_history') }}" class="back-button">
+                ← Back to Dreams
             </a>
-            <button data-dream-id="{{ dream.id }}" class="delete-btn btn btn-secondary" style="color: var(--error);">
-                🗑️ Delete Dream
-            </button>
+        </div>
+
+        <!-- Dream Card -->
+        <div class="dream-card">
+            <div class="dream-header">
+                <h1 class="dream-title">{{ dream.title }}</h1>
+                <div class="dream-meta">
+                    {% if dream.mood %}
+                    <span class="mood-badge">
+                        {% if dream.mood == 'felice' %}😊{% endif %}
+                        {% if dream.mood == 'triste' %}😢{% endif %}
+                        {% if dream.mood == 'spaventato' %}😨{% endif %}
+                        {% if dream.mood == 'eccitato' %}🤩{% endif %}
+                        {% if dream.mood == 'confuso' %}😵‍💫{% endif %}
+                        {% if dream.mood == 'neutro' %}😐{% endif %}
+                        {{ dream.mood.title() }}
+                    </span>
+                    {% endif %}
+                    {% if dream.interpretation_style %}
+                    <span class="style-badge">{{ dream.interpretation_style.title() }}</span>
+                    {% endif %}
+                    <small class="dream-date">{{ dream.created_at.strftime('%d/%m/%Y alle %H:%M') }}</small>
+                </div>
+            </div>
+
+            <!-- Dream Content -->
+            <div class="content-section">
+                <h3 class="section-title">🌙 Your Dream</h3>
+                <div class="dream-content">
+                    {{ dream.content|nl2br|safe }}
+                </div>
+            </div>
+
+            <!-- Interpretation -->
+            {% if dream.interpretation %}
+            <div class="content-section">
+                <h3 class="section-title">🔮 Interpretation</h3>
+                <div class="interpretation-content">
+                    {{ dream.interpretation|nl2br|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="action-section">
+                <a href="{{ url_for('interpret') }}" class="primary-button">
+                    ✨ Interpret New Dream
+                </a>
+                <button data-dream-id="{{ dream.id }}" class="delete-button" onclick="showDeleteModal()">
+                    🗑️ Delete Dream
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteDreamModal" class="modal-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
-    <div class="card" style="max-width: 400px; width: 90%; margin: 0;">
-        <h3 class="mb-3">Confirm Deletion</h3>
-        <p class="text-muted mb-3">Are you sure you want to delete this dream? This action cannot be undone.</p>
-        <div class="text-center">
-            <button onclick="confirmDelete()" class="btn btn-primary" style="background: var(--error);">
+<div id="deleteDreamModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 class="modal-title">Confirm Deletion</h3>
+        <p class="modal-text">Are you sure you want to delete this dream? This action cannot be undone.</p>
+        <div class="modal-actions">
+            <button onclick="confirmDelete()" class="confirm-delete-button">
                 Delete
             </button>
-            <button onclick="closeDreamDeleteModal()" class="btn btn-secondary">
+            <button onclick="hideDeleteModal()" class="cancel-button">
                 Cancel
             </button>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+<style>
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-container {
+    background: #000;
+    min-height: 100vh;
+    max-width: 375px;
+    margin: 0 auto;
+    position: relative;
+    color: white;
+}
+
+.main-content {
+    padding: 20px 24px 40px;
+}
+
+/* Back Navigation */
+.back-nav {
+    margin-bottom: 20px;
+}
+
+.back-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.back-button:hover {
+    background: rgba(255,255,255,0.15);
+    text-decoration: none;
+    color: white;
+}
+
+/* Dream Card */
+.dream-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.dream-header {
+    margin-bottom: 24px;
+}
+
+.dream-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: white;
+    line-height: 1.3;
+}
+
+.dream-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.mood-badge {
+    background: rgba(0, 122, 255, 0.2);
+    color: #007AFF;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.style-badge {
+    background: rgba(88, 86, 214, 0.2);
+    color: #5856D6;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dream-date {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Content Sections */
+.content-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: white;
+}
+
+.dream-content {
+    background: rgba(0, 122, 255, 0.05);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    border-left: 4px solid #007AFF;
+    padding: 20px;
+    border-radius: 12px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    font-size: 15px;
+}
+
+.interpretation-content {
+    background: rgba(88, 86, 214, 0.05);
+    border: 1px solid rgba(88, 86, 214, 0.2);
+    border-left: 4px solid #5856D6;
+    padding: 20px;
+    border-radius: 12px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    font-size: 15px;
+}
+
+/* Actions */
+.action-section {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+.delete-button {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+    background: rgba(255, 59, 48, 0.2);
+    border-color: rgba(255, 59, 48, 0.5);
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    padding: 20px;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-card {
+    background: #1c1c1e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 350px;
+    width: 100%;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: white;
+}
+
+.modal-text {
+    color: #888;
+    margin: 0 0 24px;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.confirm-delete-button {
+    background: #FF3B30;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.confirm-delete-button:hover {
+    background: #d70015;
+    transform: translateY(-1px);
+}
+
+.cancel-button {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .page-container {
+        max-width: 100%;
+    }
+    
+    .main-content {
+        padding: 20px 16px 40px;
+    }
+    
+    .dream-card {
+        padding: 20px;
+    }
+}
+
+@media (min-width: 376px) {
+    .page-container {
+        border-radius: 20px;
+        margin-top: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+}
+</style>
+
 <script>
-let dreamToDelete = null;
+let currentDreamId = null;
 
-function deleteDream(dreamId) {
-    dreamToDelete = dreamId;
+function showDeleteModal() {
+    currentDreamId = document.querySelector('[data-dream-id]').getAttribute('data-dream-id');
     document.getElementById('deleteDreamModal').classList.remove('hidden');
 }
 
-// Add event listener for delete button
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteBtn = document.querySelector('.delete-btn');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', function() {
-            const dreamId = this.getAttribute('data-dream-id');
-            deleteDream(dreamId);
-        });
+function hideDeleteModal() {
+    document.getElementById('deleteDreamModal').classList.add('hidden');
+    currentDreamId = null;
+}
+
+function confirmDelete() {
+    if (!currentDreamId) return;
+    
+    fetch(`/dream/${currentDreamId}/delete`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect to dreams history
+            window.location.href = '/dreams';
+        } else {
+            alert('Error deleting dream: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting dream. Please try again.');
+    })
+    .finally(() => {
+        hideDeleteModal();
+    });
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteDreamModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideDeleteModal();
     }
 });
 
-function closeDreamDeleteModal() {
-    dreamToDelete = null;
-    document.getElementById('deleteDreamModal').classList.add('hidden');
-}
-
-async function confirmDelete() {
-    if (!dreamToDelete) return;
-    
-    try {
-        const response = await fetch(`/dream/${dreamToDelete}/delete`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            window.location.href = '/dreams';
-        } else {
-            alert(result.error || 'Error during deletion');
-        }
-    } catch (error) {
-        alert('Connection error');
-    }
-    
-    closeDreamDeleteModal();
-}
-
-// Close modal on outside click
-document.getElementById('deleteDreamModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDreamDeleteModal();
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideDeleteModal();
     }
 });
 </script>
-{% endblock %}
+
+</body>
+</html>
