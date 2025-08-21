@@ -520,7 +520,8 @@ function interpretDream() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            window.location.href = `/dream/${data.dream_id}`;
+            // Redirect to the dreams history page to see the new interpretation
+            window.location.href = '/dreams_history';
         } else {
             alert('Errore durante l\'interpretazione: ' + (data.error || 'Errore sconosciuto'));
         }
@@ -604,7 +605,7 @@ async function processVoiceRecording(audioBlob) {
         
         if (data.success) {
             closeVoiceModal();
-            window.location.href = '/dreams';
+            window.location.href = '/dreams_history';
         } else {
             alert('Errore durante l\'elaborazione: ' + (data.error || 'Errore sconosciuto'));
             document.getElementById('voiceStatus').textContent = 'Errore. Riprova.';
