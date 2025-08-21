@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, f
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 from models import db, User, Dream
-from dream_interpreter import interpret_dream
+from simple_interpreter import fast_interpret_dream
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -212,7 +212,7 @@ def interpret():
         title = data.get('title', '').strip()
         
         # Generate interpretation
-        interpretation = interpret_dream(dream_text, mood=mood, style=style)
+        interpretation = fast_interpret_dream(dream_text, mood=mood, style=style)
         
         # Save dream to database
         dream = Dream()
@@ -287,7 +287,7 @@ def voice_interpret():
     style = 'psicologico'
     
     # Generate interpretation
-    interpretation = interpret_dream(voice_transcript, mood=mood, style=style)
+    interpretation = fast_interpret_dream(voice_transcript, mood=mood, style=style)
     
     # Save dream to database
     dream = Dream()
@@ -306,6 +306,7 @@ def voice_interpret():
     return redirect(url_for('dreams_history'))
 
 @app.route('/dreams')
+@app.route('/dreams_history') 
 @login_required
 def dreams_history():
     """Show user's dream history."""
@@ -316,6 +317,7 @@ def dreams_history():
     return render_template('dreams_minimal.html', dreams=dreams)
 
 @app.route('/dream/<int:dream_id>')
+@app.route('/view_dream/<int:dream_id>')
 @login_required
 def view_dream(dream_id):
     """View a specific dream and its interpretation."""
