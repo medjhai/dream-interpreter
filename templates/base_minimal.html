@@ -22,7 +22,7 @@
                 <ul class="nav-menu" id="navMenu" role="menu">
                     <li role="none"><a href="{{ url_for('interpret') }}" class="nav-link" role="menuitem" aria-label="Interpreta un nuovo sogno">✨ Nuovo Sogno</a></li>
                     <li role="none"><a href="{{ url_for('profile') }}" class="nav-link" role="menuitem" aria-label="Visualizza e modifica profilo">👤 Profilo</a></li>
-                    <li role="none"><a href="#" class="nav-link" role="menuitem" aria-label="Accedi alle impostazioni" onclick="showSettings(event)">⚙️ Impostazioni</a></li>
+                    <li role="none"><a href="{{ url_for('settings') }}" class="nav-link" role="menuitem" aria-label="Accedi alle impostazioni">⚙️ Impostazioni</a></li>
                 </ul>
                 
                 <button class="nav-toggle" onclick="toggleNav()" aria-label="Apri menu di navigazione" aria-expanded="false" aria-controls="navMenu">
@@ -125,12 +125,7 @@
         }
     });
     
-    // Settings Modal
-    function showSettings(event) {
-        event.preventDefault();
-        showToast('Pannello impostazioni in sviluppo', 'info');
-        // In futuro: aprirà un modal con le impostazioni
-    }
+    // Settings navigation (removed - now using direct link)
     
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
