@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Home - Interprete dei Sogni</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='minimal.css') }}">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Interpreta i tuoi sogni con analisi psicologica avanzata">
+    <style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Hide navbar for immersive experience */
+    .navbar {
+        display: none;
+    }
+    
+    /* Full screen home */
+    .dreamy-home {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Mobile menu toggle for this page only */
+    .home-menu-toggle {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 2000;
+        background: rgba(var(--surface-rgb), 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .home-menu-toggle:hover {
+        background: rgba(var(--primary-rgb), 0.1);
+        transform: scale(1.05);
+    }
+    
+    /* Navigation for home page */
+    .home-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(var(--surface-rgb), 0.98);
+        backdrop-filter: blur(20px);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1999;
+    }
+    
+    .home-nav.open {
+        display: flex;
+    }
+    
+    .home-nav-link {
+        padding: 1.5rem 2rem;
+        margin: 0.5rem 0;
+        font-size: 1.3rem;
+        color: var(--text);
+        text-decoration: none;
+        border-radius: var(--radius);
+        background: rgba(var(--primary-rgb), 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        min-width: 200px;
+        text-align: center;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: menuItemSlideIn 0.5s ease-out forwards;
+    }
+    
+    .home-nav-link:nth-child(1) { animation-delay: 0.1s; }
+    .home-nav-link:nth-child(2) { animation-delay: 0.2s; }
+    .home-nav-link:nth-child(3) { animation-delay: 0.3s; }
+    .home-nav-link:nth-child(4) { animation-delay: 0.4s; }
+    
+    .home-nav-link:hover {
+        background: rgba(var(--primary-rgb), 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.3);
+    }
+    
+    .home-nav-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 2rem;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .home-nav-close:hover {
+        background: rgba(var(--danger), 0.1);
+        color: var(--danger);
+    }
+    </style>
+</head>
+<body>
+    <!-- Home Navigation Toggle -->
+    <button class="home-menu-toggle" onclick="toggleHomeNav()" aria-label="Apri menu">
+        ☰
+    </button>
+    
+    <!-- Full Screen Navigation -->
+    <nav class="home-nav" id="homeNav">
+        <button class="home-nav-close" onclick="toggleHomeNav()" aria-label="Chiudi menu">
+            ×
+        </button>
+        <a href="{{ url_for('interpret') }}" class="home-nav-link">✨ Nuovo Sogno</a>
+        <a href="{{ url_for('profile') }}" class="home-nav-link">👤 Profilo</a>
+        <a href="{{ url_for('settings') }}" class="home-nav-link">⚙️ Impostazioni</a>
+        <a href="{{ url_for('dashboard') }}" class="home-nav-link">📊 Dashboard</a>
+    </nav>
+
+    <!-- Dreamy Home Content -->
+    <div class="dreamy-home">
+        <!-- Floating Dream Circles -->
+        <div class="dreamy-circles">
+            <div class="dream-circle"></div>
+            <div class="dream-circle"></div>
+            <div class="dream-circle"></div>
+            <div class="dream-circle"></div>
+            <div class="dream-circle"></div>
+            <div class="dream-circle"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="home-content">
+            <h1 class="home-title">🌙 Interprete dei Sogni</h1>
+            <p class="home-subtitle">
+                Scopri i significati nascosti nei tuoi sogni attraverso un'analisi psicologica approfondita e personalizzata
+            </p>
+            <a href="{{ url_for('interpret') }}" class="dream-button" aria-label="Inizia a interpretare un sogno">
+                ✨ Interpreta Dream
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Home navigation toggle
+        function toggleHomeNav() {
+            const nav = document.getElementById('homeNav');
+            nav.classList.toggle('open');
+        }
+
+        // Close nav when clicking on a link
+        document.querySelectorAll('.home-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('homeNav').classList.remove('open');
+            });
+        });
+
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 3000) {
+            const savedDuration = localStorage.getItem('toastDuration');
+            if (savedDuration) {
+                duration = parseInt(savedDuration);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icon = {
+                'success': '✅',
+                'error': '❌', 
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            }[type] || 'ℹ️';
+            
+            toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${message}</span>`;
+            
+            const container = document.getElementById('toastContainer');
+            container.appendChild(toast);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, duration);
+            
+            // Remove on click
+            toast.addEventListener('click', () => {
+                toast.remove();
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                window.location.href = '{{ url_for("interpret") }}';
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('homeNav').classList.remove('open');
+            }
+        });
+        
+        // Welcome message
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                showToast('Benvenuto nella tua oasi onirica! ✨', 'info', 4000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

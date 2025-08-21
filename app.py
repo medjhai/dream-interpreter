@@ -69,8 +69,14 @@ def days_since(date):
 def index():
     """Main page - shows login or dashboard based on authentication status."""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('home'))
     return render_template('landing_minimal.html')
+
+@app.route('/home')
+@login_required
+def home():
+    """Dreamy home page with floating circles."""
+    return render_template('home_minimal.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
