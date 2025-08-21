@@ -242,8 +242,8 @@ def voice_interpret():
     dream_title = f"Voice Dream - {datetime.now().strftime('%m/%d/%Y %H:%M')}"
     
     # Default mood and style for voice dreams (user can edit later)
-    mood = 'neutral'
-    style = 'psychological'
+    mood = 'neutro'
+    style = 'psicologico'
     
     # Generate interpretation
     interpretation = interpret_dream(voice_transcript, mood=mood, style=style)

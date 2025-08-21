@@ -231,8 +231,8 @@
             
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'en-US';
-            recognition.maxAlternatives = 1;
+            recognition.lang = 'it-IT';
+            recognition.maxAlternatives = 3;
             
             recognition.onstart = function() {
                 isRecording = true;
@@ -259,7 +259,8 @@
                 if (recordingTimeout) {
                     clearTimeout(recordingTimeout);
                 }
-                recordingTimeout = setTimeout(stopVoiceRecording, 3000);
+                // Give more time for pauses in speech
+                recordingTimeout = setTimeout(stopVoiceRecording, 5000);
             };
             
             recognition.onerror = function(event) {
@@ -267,6 +268,13 @@
                 if (event.error === 'no-speech') {
                     // Continue listening for speech
                     return;
+                } else if (event.error === 'aborted') {
+                    // User stopped recording, don't show error
+                    return;
+                } else if (event.error === 'not-allowed') {
+                    alert('Accesso al microfono negato. Per favore consenti l\'accesso al microfono.');
+                } else if (event.error === 'network') {
+                    alert('Errore di connessione. Controlla la tua connessione internet e riprova.');
                 }
                 stopVoiceRecording();
             };
