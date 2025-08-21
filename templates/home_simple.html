@@ -275,6 +275,17 @@ body {
     transform: scale(0.98);
 }
 
+.hourglass-animation {
+    display: inline-block;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Voice Section */
 .voice-section {
     text-align: center;
@@ -516,10 +527,10 @@ function interpretDream() {
         return;
     }
     
-    // Show loading state
-    button.innerHTML = '⏳';
+    // Show loading state with animated hourglass
+    button.innerHTML = '<div class="hourglass-animation">⏳</div>';
     button.disabled = true;
-    button.style.opacity = '0.7';
+    button.style.opacity = '0.8';
     
     // Create form data
     const formData = {
@@ -544,10 +555,10 @@ function interpretDream() {
             button.innerHTML = '✓';
             button.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
             
-            // Redirect to the dreams history page to see the new interpretation
+            // Redirect directly to the dream interpretation page
             setTimeout(() => {
-                window.location.href = '/dreams_history';
-            }, 1000);
+                window.location.href = '/view_dream/' + data.dream_id;
+            }, 800);
         } else {
             // Reset button state
             button.innerHTML = '➤';
