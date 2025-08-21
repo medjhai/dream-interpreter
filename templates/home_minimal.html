@@ -121,6 +121,127 @@
         background: rgba(var(--danger), 0.1);
         color: var(--danger);
     }
+    
+    /* Action Buttons Container */
+    .action-buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin: 3rem auto;
+        max-width: 320px;
+        width: 100%;
+        padding: 0 1rem;
+    }
+    
+    @media (min-width: 640px) {
+        .action-buttons-container {
+            flex-direction: row;
+            max-width: 600px;
+            gap: 2rem;
+        }
+    }
+    
+    /* Unified Action Button Style */
+    .action-btn {
+        flex: 1;
+        min-height: 120px;
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.2);
+        border-radius: 20px;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-4px);
+        border-color: rgba(255,255,255,0.4);
+        background: rgba(255,255,255,0.15);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+    
+    .action-btn:active {
+        transform: translateY(-2px);
+    }
+    
+    .action-btn .btn-icon {
+        font-size: 2.5rem;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-btn .btn-text {
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+        text-align: center;
+    }
+    
+    .action-btn .btn-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        color: var(--text-light);
+        font-weight: 500;
+        text-align: center;
+    }
+    
+    /* Voice Button Specific Styling */
+    .action-btn-voice {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+    
+    .action-btn-voice:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+        border-color: rgba(102, 126, 234, 0.5);
+    }
+    
+    .action-btn-voice.recording {
+        animation: pulse 1.5s infinite;
+        background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(192, 57, 43, 0.3));
+        border-color: rgba(231, 76, 60, 0.5);
+    }
+    
+    /* Text Button Specific Styling */
+    .action-btn-text {
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+        border-color: rgba(46, 204, 113, 0.3);
+    }
+    
+    .action-btn-text:hover {
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.3));
+        border-color: rgba(46, 204, 113, 0.5);
+    }
+    
+    @media (max-width: 639px) {
+        .action-btn {
+            min-height: 100px;
+            padding: 1.25rem;
+        }
+        
+        .action-btn .btn-icon {
+            font-size: 2rem;
+        }
+        
+        .action-btn .btn-text {
+            font-size: 1.1rem;
+        }
+        
+        .action-btn .btn-subtitle {
+            font-size: 0.85rem;
+        }
+    }
     </style>
 </head>
 <body>
@@ -166,18 +287,20 @@
                 <div class="wave wave-3"></div>
             </div>
             
-            <!-- Voice Recording Button (Main) -->
-            <div class="voice-record-container">
-                <button onclick="startVoiceRecording()" class="voice-record-btn" aria-label="Tap to record">
-                    <div class="voice-icon">🎤</div>
+            <!-- Action Buttons -->
+            <div class="action-buttons-container">
+                <button onclick="startVoiceRecording()" class="action-btn action-btn-voice" aria-label="Record your dream using voice input">
+                    <div class="btn-icon" aria-hidden="true">🎤</div>
+                    <div class="btn-text"><strong>Record Dream</strong></div>
+                    <div class="btn-subtitle">Speak naturally</div>
                 </button>
-                <p class="tap-text">TAP TO RECORD</p>
+                
+                <button onclick="window.location.href='{{ url_for('interpret') }}'" class="action-btn action-btn-text" aria-label="Write your dream using text input">
+                    <div class="btn-icon" aria-hidden="true">✍️</div>
+                    <div class="btn-text"><strong>Write Dream</strong></div>
+                    <div class="btn-subtitle">Type your story</div>
+                </button>
             </div>
-            
-            <!-- Text Button (Secondary) -->
-            <button onclick="window.location.href='{{ url_for('interpret') }}'" class="use-text-btn">
-                Use text
-            </button>
         </div>
     </div>
 
@@ -353,7 +476,7 @@
         }
 
         function updateRecordingButton(recording) {
-            const button = document.querySelector('.voice-record-btn');
+            const button = document.querySelector('.action-btn-voice');
             const icon = document.querySelector('.voice-icon');
             const text = document.querySelector('.tap-text');
             if (recording) {
